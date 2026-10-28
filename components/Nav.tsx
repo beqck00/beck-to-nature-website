@@ -20,9 +20,9 @@ export default function Nav() {
           <img className="wordmark" src="/logo/beck-to-nature-wordmark.svg" alt="" />
         </a>
         <nav className="links" aria-label="Sections">
+          <a href="#check">Readiness check</a>
           <a href="#story">Our story</a>
           <a href="#services">Services</a>
-          <a href="#check">Readiness check</a>
           <a href="#team">Team</a>
           <a href="#contact">Contact</a>
         </nav>

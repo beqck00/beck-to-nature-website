@@ -46,6 +46,13 @@ export default function Home() {
               </div>
             </Reveal>
           </div>
+          <div className="wrap hero-check" id="check">
+            <Reveal className="head" delay={0.08}>
+              <h2>Is your company ready for the US?</h2>
+              <p className="lede">Six short questions, about a minute. You get the US trade shows that fit, what is missing, and an indicative budget.</p>
+            </Reveal>
+            <ReadinessCheck />
+          </div>
           <div className="wrap">
             <Reveal delay={0.12}>
               <PhotoSlot className="hero-photo" title="Main photo" hint="The founders at a US trade show, or a real booth from a past show." />
@@ -112,16 +119,6 @@ export default function Home() {
                 </Reveal>
               ))}
             </div>
-          </div>
-        </section>
-
-        <section id="check">
-          <div className="wrap">
-            <Reveal className="head">
-              <h2>Is your company ready for the US?</h2>
-              <p className="lede">Six short questions, about a minute. You get the US trade shows that fit, what is missing, and an indicative budget.</p>
-            </Reveal>
-            <ReadinessCheck />
           </div>
         </section>
 
