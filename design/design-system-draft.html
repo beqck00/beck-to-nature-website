@@ -337,10 +337,29 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
 .map text{font-family:var(--font);font-size:2.5px;fill:var(--ink-2);letter-spacing:-.01em}
 .map text.strong{fill:var(--ink)}
 .map .land-ring{fill:none;stroke:#F3E2B8;stroke-width:.25;opacity:0}
-@media (max-width:700px){.map text{font-size:4.2px}}
+@media (max-width:700px){.map text{font-size:3.4px}}
 .dial-sec{padding-top:var(--s9)}
 @media (max-width:700px){.dial-sec{padding-top:var(--s6)}}
 .dial-sec .dial{max-width:1000px;margin-inline:auto}
+
+/* Map as the hero background */
+.hero{position:relative;isolation:isolate;min-height:min(92vh,920px);display:flex;flex-direction:column;justify-content:center}
+.hero>h1,.hero>.hero-row{position:relative;z-index:1}
+@media (min-width:981px){.hero .hero-row{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+.field{overflow-x:clip}
+.map-bg{position:absolute;z-index:0;top:50%;right:calc(var(--gr) * -1);width:74%;transform:translateY(-40%);pointer-events:none}
+.map-bg text{font-size:1.75px}
+.map-bg text.minor{display:none}
+.map-bg .d{fill:#2D2B28}
+.map-bg .d.near{fill:#463E33}
+.hero::before{content:"";position:absolute;z-index:0;inset:0 auto 0 calc(var(--gl) * -1);width:62%;pointer-events:none;
+  background:linear-gradient(90deg,rgba(10,10,10,.92) 0%,rgba(10,10,10,.75) 45%,rgba(10,10,10,0) 100%)}
+@media (max-width:980px){
+  .hero{min-height:0;padding-bottom:calc((100vw) * .6)}
+  .map-bg{top:auto;bottom:0;right:calc(var(--gr) * -1);width:calc(100% + var(--gl) + var(--gr));transform:none}
+  .map-bg text{font-size:3.6px}
+  .hero::before{width:100%;inset:0 calc(var(--gr) * -1) 40% calc(var(--gl) * -1);background:linear-gradient(180deg,rgba(10,10,10,.6),rgba(10,10,10,.85) 70%,rgba(10,10,10,0))}
+}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:1ms!important;animation:none!important;scroll-behavior:auto!important}
@@ -376,17 +395,7 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
   <!-- DRAFT WEBSITE -->
   <main class="view" id="view-draft">
     <section class="hero frame" aria-labelledby="h1">
-      <h1 id="h1" class="rv" data-speed="-0.12"><span class="metal-text">Take your products</span><br class="br-d"> to America.</h1>
-      <div class="hero-row">
-      <div>
-        <p class="hero-sub rv">We did it ourselves first. Now we take Central European manufacturers to the right US trade show and their first American orders.</p>
-        <div class="hero-ctas rv">
-          <a class="btn btn-brass" href="#draft" data-jump="contact">Book a free call</a>
-          <a class="btn btn-glass" href="#draft" data-jump="check">Check your US readiness</a>
-        </div>
-        <div class="proof rv"><span>Family-owned, Hungarian–American</span><span>Budapest and <span class="ph">[Wisconsin]</span></span><span>Member of <span class="ph">[AmCham Hungary]</span></span></div>
-      </div>
-      <figure class="map rv" data-speed="0.04" aria-label="Map: the logo figure jumps from Budapest across the Atlantic to Chicago">
+      <figure class="map map-bg" data-speed="0.06" aria-label="Map: the logo figure jumps from Budapest across the Atlantic to Chicago">
         <svg id="map" viewBox="-3 -15 124 70" role="img" aria-hidden="true">
           <defs>
             <radialGradient id="cityglow"><stop offset="0" stop-color="#F3E2B8" stop-opacity=".9"/><stop offset=".35" stop-color="#C5A373" stop-opacity=".45"/><stop offset="1" stop-color="#C5A373" stop-opacity="0"/></radialGradient>
@@ -397,9 +406,19 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
           <g id="map-dots"></g>
           <path id="trail" fill="none" stroke="url(#trailgrad)" stroke-width=".42" stroke-linecap="round" stroke-dasharray=".1 1.2" mask="url(#trailmask)"/>
           <g id="cities"></g>
-          <g id="hopper"><g id="hop-body"><use href="#figsym" x="-2.6" y="-6.2" width="5.2" height="6.2"/></g></g>
+          <g id="hopper"><g id="hop-body"><use href="#figsym" x="-2.1" y="-5" width="4.2" height="5"/></g></g>
         </svg>
       </figure>
+      <h1 id="h1" class="rv" data-speed="-0.12"><span class="metal-text">Take your products</span><br class="br-d"> to America.</h1>
+      <div class="hero-row">
+      <div>
+        <p class="hero-sub rv">We did it ourselves first. Now we take Central European manufacturers to the right US trade show and their first American orders.</p>
+        <div class="hero-ctas rv">
+          <a class="btn btn-brass" href="#draft" data-jump="contact">Book a free call</a>
+          <a class="btn btn-glass" href="#draft" data-jump="check">Check your US readiness</a>
+        </div>
+        <div class="proof rv"><span>Family-owned, Hungarian–American</span><span>Budapest and <span class="ph">[Wisconsin]</span></span><span>Member of <span class="ph">[AmCham Hungary]</span></span></div>
+      </div>
       </div>
     </section>
 
@@ -860,14 +879,14 @@ document.querySelectorAll('.btn').forEach(b => b.addEventListener('pointerdown',
     xs.split(',').forEach(xi => { const x = +xi * M.D; html += `<circle class="d${near(x, y) ? ' near' : ''}" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r=".34"/>`; });
   });
   dotsG.innerHTML = html;
-  const list = [['budapest', 'Budapest', 1.15, 'home', 'middle'], ['vienna', '', .75], ['prague', '', .75], ['warsaw', '', .75], ['chicago', 'Chicago', 1, 'strong', 'end'], ['lasvegas', 'Las Vegas', .75, '', 'middle'], ['orlando', 'Orlando', .75, '', 'middle']];
+  const list = [['budapest', 'Budapest', 1.15, 'home', 'middle'], ['vienna', '', .75], ['prague', '', .75], ['warsaw', '', .75], ['chicago', 'Chicago', 1, 'strong', 'start'], ['lasvegas', 'Las Vegas', .75, 'minor', 'middle'], ['orlando', 'Orlando', .75, 'minor', 'middle']];
   citiesG.innerHTML = list.map(([k, label, r, cls, anchor], i) => {
     const [x, y] = C[k];
-    const lx = anchor === 'end' ? x - 2.2 : anchor === 'start' ? x + 2.2 : x, ly = anchor === 'middle' ? y + 3.6 : y + .9;
+    const lx = anchor === 'end' ? x - 2.2 : anchor === 'start' ? x + 2.2 : x, ly = anchor === 'middle' ? y + 3.2 : y + .7;
     return `<circle cx="${x}" cy="${y}" r="${r * 3.2}" fill="url(#cityglow)"/>` +
       `<circle class="ring" cx="${x}" cy="${y}" r="${r * 1.1}" style="animation-delay:${(i * .45).toFixed(2)}s"/>` +
       `<circle class="city-core ${cls === 'home' ? 'home' : ''}" cx="${x}" cy="${y}" r="${r * .62}"/>` +
-      (label ? `<text x="${lx}" y="${ly}" text-anchor="${anchor}" class="${cls ? 'strong' : ''}">${label}</text>` : '');
+      (label ? `<text x="${lx}" y="${ly}" text-anchor="${anchor}" class="${cls === 'minor' ? 'minor' : cls ? 'strong' : ''}">${label}</text>` : '');
   }).join('') + `<circle class="land-ring" id="land-ring" cx="${C.chicago[0]}" cy="${C.chicago[1]}" r="1"/>`;
 
   const [bx, by] = C.budapest, [ex, ey] = C.chicago, cx = (bx + ex) / 2, cy = Math.min(by, ey) - 30;
