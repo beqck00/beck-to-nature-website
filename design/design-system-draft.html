@@ -298,6 +298,18 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 12px 30px -8px rgba(0,0,0,.8);transition:opacity var(--duration-slow) var(--ease),transform var(--duration-slow) var(--ease),filter var(--duration-slow) var(--ease)}
 .toast.show{opacity:1;transform:translate(-50%,0);filter:none}
 
+/* Panels: solid black surfaces, separated from the field by soft tone steps only (no glass) */
+.glass{background:linear-gradient(180deg,#171717 0%,#121212 100%);-webkit-backdrop-filter:none;backdrop-filter:none;
+  box-shadow:inset 0 1px 0 rgba(255,244,214,.05),0 24px 48px -32px rgba(0,0,0,.8)}
+.glass::before{display:none}
+.glass.lit::after{background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(255,244,214,.05),transparent 60%)}
+.glass.lit:hover{transform:none}
+.plan.feature{background:linear-gradient(180deg,#1D1C1C 0%,#141414 100%)}
+.btn-glass{background:#1D1C1C;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:inset 0 1px 0 rgba(255,244,214,.06)}
+.btn-glass:hover{background:#232323}
+.nav-inner,.switch{background:#121212}
+.glass-demo .glass{background:#161616}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:1ms!important;animation:none!important;scroll-behavior:auto!important}
   .js .rv.pre{opacity:1;transform:none;filter:none}
@@ -527,8 +539,8 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
     </div>
 
     <div class="sys-block">
-      <div><h3>Liquid glass and light</h3><p>A thick pane: it blurs and lifts what is behind it, its rim catches light at the top-left and bottom-right, and a curved reflection runs across the top. On cards a soft light follows the pointer and the pane lifts 2px.</p></div>
-      <div class="glass-demo" aria-hidden="true"><span class="orb"></span><span class="orb orb-2"></span><div class="glass lit">Liquid glass over moving light</div></div>
+      <div><h3>Surfaces and light</h3><p>Panels are solid black, a soft gradient from #171717 to #121212, set off from the field by a tone step and a faint lit top edge. Light comes from soft spotlights; on cards a faint light follows the pointer.</p></div>
+      <div class="glass-demo" aria-hidden="true"><span class="orb"></span><span class="orb orb-2"></span><div class="glass lit">A solid panel in moving light</div></div>
     </div>
 
     <div class="sys-block">
@@ -570,7 +582,7 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
       <div><h3>Rules</h3></div>
       <ul class="rules">
         <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>No colour besides black and brass, including the logo.</li>
-        <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Two blacks never meet in a hard line; use a gradient or glass between them.</li>
+        <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Two blacks never meet in a hard line; use a gradient or a soft tone step between them.</li>
         <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Polished brass only for the main action, key words, figures and the needle.</li>
         <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Running text is flat warm white #EEE9DF or #B5AC9C, never metallic, so it stays readable.</li>
         <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Every tap target is at least 44px; no text below 14px.</li>
