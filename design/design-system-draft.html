@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>[hidden]{display:none!important}</style>
 <title>Beck To Nature Design System</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -125,6 +126,8 @@ p{margin:0;text-wrap:pretty}
 .js .rv.pre{opacity:0;transform:translateY(14px);filter:blur(3px)}
 .js .glass.rv.pre{transform:translateY(18px) scale(.985)}
 .js .steps .rv.pre{transform:translateX(-16px)}
+.js .plan li.rv.pre{transform:translateX(-10px)}
+.js .foot .rv.pre{transform:translateY(10px)}
 
 /* Hero */
 .hero{padding-block:var(--s9) var(--s8)}
@@ -361,9 +364,102 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
   .hero::before{width:100%;inset:0 calc(var(--gr) * -1) 40% calc(var(--gl) * -1);background:linear-gradient(180deg,rgba(10,10,10,.6),rgba(10,10,10,.85) 70%,rgba(10,10,10,0))}
 }
 
+/* Moving logo strip */
+.partners{padding-block:var(--s8) 0}
+.partners>p{font-size:15px;color:var(--ink-2);margin-bottom:var(--s4)}
+.marquee{display:flex;overflow:hidden;gap:var(--s3);-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.marquee-track{display:flex;gap:var(--s3);flex:none;margin:0;padding:0;list-style:none;animation:marquee 40s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee .logo-slot{width:220px;flex:none}
+@keyframes marquee{to{transform:translateX(calc(-100% - var(--s3)))}}
+
+/* Flight route */
+.flight{position:relative;margin:0 0 var(--s5)}
+.flight-labels{display:flex;justify-content:space-between;font-size:15px;margin-bottom:var(--s2)}
+.flight-labels b{font-weight:400;color:var(--ink)}
+.flight-svg{display:block;width:100%;height:96px;overflow:visible}
+.flight-base{fill:none;stroke:#2C2C2C;stroke-width:2;stroke-dasharray:2 7;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.flight-trail{fill:none;stroke:#C5A373;stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 4px rgba(197,163,115,.5))}
+.flight-nodes{position:absolute;left:0;right:0;top:0;height:0}
+.flight-nodes i{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#2C2C2C;transition:background-color var(--duration-fast) var(--ease),box-shadow var(--duration-fast) var(--ease)}
+.flight-nodes i.on{background:var(--b-light);box-shadow:0 0 0 5px rgba(197,163,115,.16)}
+.plane{position:absolute;left:0;top:0;width:30px;height:30px;fill:url(#silv);filter:drop-shadow(0 4px 8px rgba(0,0,0,.6)) drop-shadow(0 0 8px rgba(217,188,134,.35));will-change:transform}
+
+/* Inquiry */
+.iq{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--s3);align-items:start}
+.iq-form{padding:var(--s6);display:grid;gap:var(--s5)}
+.iq-progress{display:flex;align-items:center;gap:var(--s4);font-size:14px;color:var(--ink-2)}
+.iq-progress .bar{flex:1;height:4px;border-radius:2px;background:#232323;overflow:hidden}
+.iq-progress .bar i{display:block;height:100%;background:var(--brush),var(--metal-h);transform-origin:left;transform:scaleX(0);transition:transform var(--duration-slow) var(--ease)}
+.f{display:grid;gap:var(--s2);border:0;margin:0;padding:0;min-width:0}
+.f-label{display:flex;align-items:center;gap:var(--s2);font-size:15px;color:var(--ink);padding:0}
+.f-label .opt{color:var(--ink-3);font-size:14px}
+.ftick{margin-left:auto;width:22px;height:22px}
+.ftick svg{width:22px;height:22px;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ftick circle{stroke:#2C2C2C;stroke-width:1.4;transition:stroke var(--duration-fast) var(--ease),fill var(--duration-fast) var(--ease)}
+.ftick path{stroke:#140E05;stroke-width:2;stroke-dasharray:14;stroke-dashoffset:14;transition:stroke-dashoffset var(--duration-very-slow) var(--ease) 80ms}
+.f.done .ftick circle{stroke:#D9BC86;fill:#C5A373}
+.f.done .ftick path{stroke-dashoffset:0}
+.f input,.f textarea,.select select{width:100%;min-height:52px;border-radius:var(--r-md);border:0;padding:14px 16px;font:inherit;font-size:16px;color:var(--ink);background:#0E0E0E;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.7),inset 0 0 0 1px rgba(236,220,182,.08);transition:box-shadow var(--duration-fast) var(--ease)}
+.f textarea{resize:vertical;min-height:96px;line-height:1.5}
+.f input::placeholder,.f textarea::placeholder{color:var(--ink-3)}
+.f input:focus,.f textarea:focus,.select select:focus{outline:none;box-shadow:inset 0 1px 2px rgba(0,0,0,.7),inset 0 0 0 1px rgba(217,188,134,.55),0 0 0 4px rgba(197,163,115,.12)}
+.f.done input,.f.done textarea,.f.done select{box-shadow:inset 0 1px 2px rgba(0,0,0,.7),inset 0 0 0 1px rgba(217,188,134,.28)}
+.select{position:relative}
+.select select{appearance:none;-webkit-appearance:none;padding-right:44px;cursor:pointer}
+.select select:invalid,.select select option[disabled]{color:var(--ink-3)}
+.select::after{content:"";position:absolute;right:18px;top:50%;width:8px;height:8px;margin-top:-6px;border-right:1.5px solid var(--ink-2);border-bottom:1.5px solid var(--ink-2);transform:rotate(45deg);pointer-events:none}
+.chips-opt{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.chip-opt{position:relative}
+.chip-opt input{position:absolute;opacity:0;width:1px;height:1px}
+.chip-opt span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:var(--r-pill);font-size:15px;color:var(--ink-2);background:#0E0E0E;box-shadow:inset 0 0 0 1px rgba(236,220,182,.1);cursor:pointer;transition:color var(--duration-quick) var(--ease),box-shadow var(--duration-quick) var(--ease),transform var(--duration-press) var(--ease)}
+.chip-opt span:active{transform:scale(.96)}
+.chip-opt input:checked+span{color:#140E05;background:var(--brush),var(--metal-h);box-shadow:inset 0 1px 0 rgba(255,244,214,.9)}
+.chip-opt input:focus-visible+span{outline:2px solid var(--b-light);outline-offset:3px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}
+.f-error{min-height:1.5em;font-size:15px;color:#E8B4A0}
+.f.shake{animation:shake 420ms cubic-bezier(.36,.07,.19,.97)}
+@keyframes shake{20%,80%{transform:translateX(-4px)}35%,65%{transform:translateX(6px)}50%{transform:translateX(-6px)}}
+.iq-send{justify-self:start;min-width:200px}
+.iq-note{font-size:14px;color:var(--ink-3)}
+.iq-side{display:grid;gap:var(--s3)}
+.iq-map{margin:0;padding:var(--s4) var(--s4) var(--s4)}
+.iq-map svg{display:block;width:100%;height:auto}
+.iq-map .d{fill:#2D2B28}
+.iq-map figcaption{font-size:15px;color:var(--ink-2);padding:var(--s2) var(--s2) 0}
+.pin-ring{fill:none;stroke:#F3E2B8;stroke-width:.22;transform-box:fill-box;transform-origin:center;animation:ring 2.6s var(--ease) infinite}
+.iq-view{padding:var(--s6);display:grid;gap:var(--s4)}
+.iq-view-head{display:flex;align-items:center;justify-content:space-between}
+.ai{font-size:14px;color:#140E05;background:var(--brush),var(--metal-h);border-radius:var(--r-pill);padding:2px 10px}
+.iq-empty p{color:var(--ink-2);font-size:16px}
+.iq-dl{margin:0;display:grid;gap:var(--s4);transition:opacity var(--duration-slow) var(--ease),filter var(--duration-slow) var(--ease),transform var(--duration-slow) var(--ease)}
+.swap-in .iq-dl{opacity:0;filter:blur(3px);transform:translateY(6px)}
+.iq-dl dt{font-size:14px;color:var(--ink-3)}
+.iq-dl dd{margin:2px 0 0;font-size:16px}
+.iq-dl dd.stage{font-size:22px;letter-spacing:-.02em;background:var(--metal);-webkit-background-clip:text;background-clip:text;color:transparent}
+.iq-fine{font-size:14px;color:var(--ink-3)}
+@media (max-width:980px){.iq{grid-template-columns:1fr}}
+@media (max-width:560px){.f-row{grid-template-columns:1fr}.iq-form,.iq-view{padding:var(--s5)}}
+
+/* Reward */
+.reward{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:24px;background:rgba(5,5,5,.7);opacity:0;transition:opacity var(--duration-slow) var(--ease)}
+.reward[hidden]{display:none}
+.reward.show{opacity:1}
+.reward canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.reward-card{position:relative;max-width:440px;width:100%;padding:var(--s7) var(--s6);display:grid;justify-items:center;text-align:center;gap:var(--s3);transform:scale(.92) translateY(12px);transition:transform 600ms cubic-bezier(.34,1.36,.64,1)}
+.reward.show .reward-card{transform:none}
+.reward-check{width:88px;height:88px;fill:none;stroke-linecap:round;stroke-linejoin:round;margin-bottom:var(--s2)}
+.reward-check circle{stroke:#C5A373;stroke-width:2.5;stroke-dasharray:176;stroke-dashoffset:176;transition:stroke-dashoffset 700ms var(--ease) 150ms}
+.reward-check path{stroke:#F3E2B8;stroke-width:4;stroke-dasharray:40;stroke-dashoffset:40;transition:stroke-dashoffset 450ms var(--ease) 700ms;filter:drop-shadow(0 0 6px rgba(217,188,134,.6))}
+.reward.show .reward-check circle,.reward.show .reward-check path{stroke-dashoffset:0}
+.reward-card h3{font-size:30px;background:var(--metal);-webkit-background-clip:text;background-clip:text;color:transparent}
+.reward-card p{color:var(--ink-2)}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:1ms!important;animation:none!important;scroll-behavior:auto!important}
   .js .rv.pre{opacity:1;transform:none;filter:none}
+  .marquee{overflow-x:auto}.marquee-track[aria-hidden]{display:none}
 }
 </style>
 
@@ -388,14 +484,14 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
         <a href="#draft" data-jump="pricing">Pricing</a>
         <a href="#draft" data-jump="faq">FAQ</a>
       </nav>
-      <a class="btn btn-brass btn-sm" href="#draft" data-jump="contact">Book a free call</a>
+      <a class="btn btn-brass btn-sm" href="#draft" data-jump="inquiry">Start an inquiry</a>
     </div>
   </header>
 
   <!-- DRAFT WEBSITE -->
   <main class="view" id="view-draft">
     <section class="hero frame" aria-labelledby="h1">
-      <figure class="map map-bg" data-speed="0.06" aria-label="Map: the logo figure jumps from Budapest across the Atlantic to Chicago">
+      <figure class="map map-bg" data-speed="0.06" aria-label="Map: the logo figure jumps from Central Europe across the Atlantic to the United States">
         <svg id="map" viewBox="-3 -15 124 70" role="img" aria-hidden="true">
           <defs>
             <radialGradient id="cityglow"><stop offset="0" stop-color="#F3E2B8" stop-opacity=".9"/><stop offset=".35" stop-color="#C5A373" stop-opacity=".45"/><stop offset="1" stop-color="#C5A373" stop-opacity="0"/></radialGradient>
@@ -414,38 +510,19 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
       <div>
         <p class="hero-sub rv">We did it ourselves first. Now we take Central European manufacturers to the right US trade show and their first American orders.</p>
         <div class="hero-ctas rv">
-          <a class="btn btn-brass" href="#draft" data-jump="contact">Book a free call</a>
-          <a class="btn btn-glass" href="#draft" data-jump="check">Check your US readiness</a>
+          <a class="btn btn-brass" href="#draft" data-jump="inquiry">Start your inquiry</a>
+          <a class="btn btn-glass" href="#draft" data-jump="how">How it works</a>
         </div>
         <div class="proof rv"><span>Family-owned, Hungarian–American</span><span>Budapest and <span class="ph">[Wisconsin]</span></span><span>Member of <span class="ph">[AmCham Hungary]</span></span></div>
       </div>
       </div>
     </section>
 
-    <section class="dial-sec frame" id="check" aria-labelledby="dial-q">
-      <div class="dial glass lit rv">
-        <div class="dial-head">
-          <h2 class="dial-q" id="dial-q">When do you want to stand at your first US show?</h2>
-          <div class="readout" aria-hidden="true"><span class="digits" id="digits"></span><span class="unit" id="unit">months</span></div>
-        </div>
-        <div class="track" id="track" role="slider" tabindex="0" aria-labelledby="dial-q" aria-valuemin="3" aria-valuemax="24" aria-valuenow="9" aria-valuetext="9 months">
-          <div class="ruler" id="ruler"></div>
-          <div class="needle"></div>
-        </div>
-        <div class="dial-foot">
-          <p class="verdict" aria-live="polite"><span class="verdict-text" id="verdict"></span></p>
-          <button class="sound" id="sound" type="button" aria-pressed="false">
-            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="wave" d="M16.5 8.5a5 5 0 0 1 0 7" opacity=".35"/></svg>
-            <span id="sound-label">Sound off</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <section class="partners frame" aria-labelledby="pt-h">
-      <div class="partners-row rv">
-        <p id="pt-h">Trusted by manufacturers from Hungary and beyond</p>
-        <div class="logo-slot glass">[Client logo]</div><div class="logo-slot glass">[Client logo]</div><div class="logo-slot glass">[Partner logo]</div><div class="logo-slot glass">[Partner logo]</div><div class="logo-slot glass">[Association logo]</div>
+    <section class="partners" aria-labelledby="pt-h">
+      <p id="pt-h" class="frame rv">Trusted by manufacturers from Hungary and beyond</p>
+      <div class="marquee rv" aria-label="Client and partner logos">
+        <ul class="marquee-track"><li class="logo-slot glass">[Client logo]</li><li class="logo-slot glass">[Partner logo]</li><li class="logo-slot glass">[Association logo]</li><li class="logo-slot glass">[Client logo]</li><li class="logo-slot glass">[Trade show logo]</li><li class="logo-slot glass">[Partner logo]</li></ul>
+        <ul class="marquee-track" aria-hidden="true"><li class="logo-slot glass">[Client logo]</li><li class="logo-slot glass">[Partner logo]</li><li class="logo-slot glass">[Association logo]</li><li class="logo-slot glass">[Client logo]</li><li class="logo-slot glass">[Trade show logo]</li><li class="logo-slot glass">[Partner logo]</li></ul>
       </div>
     </section>
 
@@ -479,10 +556,15 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
 
     <section class="block frame" id="how" aria-labelledby="hw-h">
       <div class="head center rv" data-speed="0.05"><h2 id="hw-h">How it works</h2><p>Three steps from first call to first American order.</p></div>
-      <div class="route" id="route" aria-hidden="true">
-        <span><b>Budapest</b></span>
-        <span><b>Your first US order</b></span>
-        <div class="route-track"><i class="route-fill"></i><i class="route-node" style="left:16.6%"></i><i class="route-node" style="left:50%"></i><i class="route-node" style="left:83.3%"></i><span class="route-dot"></span></div>
+      <div class="flight rv" id="route" aria-hidden="true">
+        <div class="flight-labels"><b>Your factory</b><b>Your first US order</b></div>
+        <svg class="flight-svg" viewBox="0 0 1000 120" preserveAspectRatio="none">
+          <defs><mask id="fmask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="120"><path id="flight-reveal" fill="none" stroke="#fff" stroke-width="10"/></mask></defs>
+          <path id="flight-base" class="flight-base" d="M16 86 C 110 86, 140 34, 230 34 S 360 96, 500 92 S 640 22, 760 26 S 900 88, 984 80"/>
+          <path class="flight-trail" mask="url(#fmask)" d="M16 86 C 110 86, 140 34, 230 34 S 360 96, 500 92 S 640 22, 760 26 S 900 88, 984 80"/>
+        </svg>
+        <div class="flight-nodes"><i></i><i></i><i></i></div>
+        <svg class="plane" id="plane" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
       </div>
       <ol class="steps">
         <li class="glass lit rv"><h3>Assess and choose</h3><p>We review your product and certifications, tell you honestly whether the US makes sense now, and pick the one show where your buyers are.</p></li>
@@ -498,36 +580,36 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
           <h3>Readiness review</h3>
           <p class="price num"><span class="ph">[€ …]</span></p>
           <ul>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Product and certification review</li>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Honest go or not-yet</li>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Shortlist of US shows</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Product and certification review</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Honest go or not-yet</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Shortlist of US shows</li>
           </ul>
-          <a class="btn btn-glass" href="#draft" data-jump="contact">Book a free call</a>
+          <a class="btn btn-glass" href="#draft" data-jump="inquiry">Request a proposal</a>
         </article>
         <article class="plan feature glass lit rv" data-speed="-0.03">
           <span class="plan-tag">Best for a first show</span>
           <h3>Show package</h3>
           <p class="price num"><span class="ph">[€25,000 – €45,000]</span></p>
           <ul>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Show selection and booth</li>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Freight and logistics</li>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Pre-booked buyer meetings</li>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>We join you at the booth</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Show selection and booth</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Freight and logistics</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Pre-booked buyer meetings</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>We join you at the booth</li>
           </ul>
-          <a class="btn btn-brass" href="#draft" data-jump="contact">Book a free call</a>
+          <a class="btn btn-brass" href="#draft" data-jump="inquiry">Request a proposal</a>
         </article>
         <article class="plan glass lit rv" data-speed="0.03">
           <h3>Follow-up retainer</h3>
           <p class="price num"><span class="ph">[€5,000 – €10,000]</span><span class="muted" style="font-size:16px;letter-spacing:0"> / month</span></p>
           <ul>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Every lead followed up</li>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>US business-hours representation</li>
-            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Monthly report</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Every lead followed up</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>US business-hours representation</li>
+            <li class="rv"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Monthly report</li>
           </ul>
-          <a class="btn btn-glass" href="#draft" data-jump="contact">Book a free call</a>
+          <a class="btn btn-glass" href="#draft" data-jump="inquiry">Request a proposal</a>
         </article>
       </div>
-      <p class="plan-note">Bracketed ranges come from the readiness check’s example result and need your confirmation. Our fees only, not booth space, freight or travel. You get a written quote after a call.</p>
+      <p class="plan-note">Bracketed ranges come from the readiness check’s example result and need your confirmation. Our fees only, not booth space, freight or travel. You get a written proposal after your inquiry.</p>
     </section>
 
     <section class="block frame" aria-labelledby="q-h">
@@ -549,12 +631,61 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
       </div>
     </section>
 
+    <section class="block frame" id="inquiry" aria-labelledby="iq-h">
+      <div class="head rv" data-speed="0.05"><h2 id="iq-h">Start your inquiry</h2><p>Tell us about your product. You get a rough first view straight away, and a personal reply from us within <span class="ph">[two business days]</span>.</p></div>
+      <div class="iq">
+        <form class="iq-form glass rv" id="iq-form" novalidate>
+          <div class="iq-progress" aria-live="polite"><span id="iq-count">0 of 7 complete</span><span class="bar"><i id="iq-bar"></i></span></div>
+          <div class="f" data-field="iq-company"><label class="f-label" for="iq-company">Company name<span class="ftick" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4l2.6 2.6L14.2 7.3"/></svg></span></label><input id="iq-company" name="company" type="text" autocomplete="organization" placeholder="e.g. Kovács Medical Kft."></div>
+          <div class="f" data-field="iq-country"><label class="f-label" for="iq-country">Where you make it<span class="ftick" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4l2.6 2.6L14.2 7.3"/></svg></span></label><div class="select"><select id="iq-country" name="country"><option value="" selected disabled>Choose a country</option><option data-lon="19.04" data-lat="47.5">Hungary</option><option data-lon="16.37" data-lat="48.21">Austria</option><option data-lon="14.42" data-lat="50.08">Czechia</option><option data-lon="17.11" data-lat="48.15">Slovakia</option><option data-lon="21.01" data-lat="52.23">Poland</option><option data-lon="14.51" data-lat="46.06">Slovenia</option><option data-lon="15.98" data-lat="45.81">Croatia</option><option data-lon="26.1" data-lat="44.43">Romania</option><option data-lon="20.46" data-lat="44.79">Serbia</option><option data-lon="13.4" data-lat="52.52">Germany</option><option data-lon="" data-lat="">Another country</option></select></div></div>
+          <div class="f" data-field="iq-industry"><label class="f-label" for="iq-industry">What you make<span class="ftick" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4l2.6 2.6L14.2 7.3"/></svg></span></label><div class="select"><select id="iq-industry" name="industry"><option value="" selected disabled>Pick the closest match</option><option>Medical devices and imaging</option><option>Industrial machinery and components</option><option>Furniture and home products</option><option>Energy and clean technology</option><option>Food and beverage</option><option>Consumer goods</option><option>Software and electronics</option><option>Something else</option></select></div></div>
+          <div class="f" data-field="iq-product"><label class="f-label" for="iq-product">Your main product, in a sentence<span class="ftick" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4l2.6 2.6L14.2 7.3"/></svg></span></label><textarea id="iq-product" name="product" rows="3" placeholder="Who buys it, and where you sell it today"></textarea></div>
+          <fieldset class="f" data-field="iq-certs"><legend class="f-label">Certifications you already have <span class="opt">optional</span><span class="ftick" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4l2.6 2.6L14.2 7.3"/></svg></span></legend><div class="chips-opt"><label class="chip-opt"><input type="checkbox" name="certs" value="CE marking"><span>CE marking</span></label><label class="chip-opt"><input type="checkbox" name="certs" value="ISO 9001"><span>ISO 9001</span></label><label class="chip-opt"><input type="checkbox" name="certs" value="ISO 13485"><span>ISO 13485</span></label><label class="chip-opt"><input type="checkbox" name="certs" value="FDA clearance in progress"><span>FDA clearance in progress</span></label><label class="chip-opt"><input type="checkbox" name="certs" value="FDA cleared"><span>FDA cleared</span></label><label class="chip-opt"><input type="checkbox" name="certs" value="UL listing"><span>UL listing</span></label></div></fieldset>
+          <div class="f" data-field="iq-timeline"><label class="f-label" for="iq-timeline">When you'd like to exhibit<span class="ftick" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4l2.6 2.6L14.2 7.3"/></svg></span></label><div class="select"><select id="iq-timeline" name="timeline"><option value="" selected disabled>Choose a timeframe</option><option>Within 6 months</option><option>In 6 to 12 months</option><option>In 12 to 24 months</option><option>Just exploring for now</option></select></div></div>
+          <div class="f-row">
+            <div class="f" data-field="iq-name"><label class="f-label" for="iq-name">Your name<span class="ftick" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4l2.6 2.6L14.2 7.3"/></svg></span></label><input id="iq-name" name="name" type="text" autocomplete="name"></div>
+            <div class="f" data-field="iq-email"><label class="f-label" for="iq-email">Work email<span class="ftick" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4l2.6 2.6L14.2 7.3"/></svg></span></label><input id="iq-email" name="email" type="email" autocomplete="email" placeholder="name@company.com"></div>
+          </div>
+          <p class="f-error" id="iq-error" role="alert"></p>
+          <button class="btn btn-brass iq-send" type="submit">Send inquiry</button>
+          <p class="iq-note">Draft: nothing is sent yet.</p>
+        </form>
+        <aside class="iq-side">
+          <figure class="iq-map glass rv" aria-label="Map of your route to the US">
+            <svg id="iq-map" viewBox="-3 -12 124 66" aria-hidden="true">
+              <defs><linearGradient id="iqtrail" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#917248"/><stop offset=".5" stop-color="#F3E2B8"/><stop offset="1" stop-color="#C5A373"/></linearGradient></defs>
+              <g id="iq-dots"></g>
+              <path id="iq-arc" fill="none" stroke="url(#iqtrail)" stroke-width=".5" stroke-linecap="round" stroke-dasharray=".1 1.2"/>
+              <g id="iq-us"><circle r="3" fill="url(#cityglow)"/><circle r=".8" class="city-core"/></g>
+              <g id="iq-pin" opacity="0"><circle r="3.4" fill="url(#cityglow)"/><circle r="1" class="city-core home"/><circle class="pin-ring" r="1.2"/></g>
+            </svg>
+            <figcaption id="iq-route">Choose where you make it to see your route</figcaption>
+          </figure>
+          <div class="iq-view glass lit rv" aria-live="polite">
+            <div class="iq-view-head"><h3>Your rough first view</h3><span class="ai">AI</span></div>
+            <div id="iq-view-body" class="iq-empty"><p>Fill in a few fields and a rough view appears here: the show that fits, how ready you look, and an indicative budget.</p></div>
+            <p class="iq-fine">On the live site Claude writes this from your answers. In this draft it is simple example logic, and every figure in brackets needs your confirmation.</p>
+          </div>
+        </aside>
+      </div>
+      <div class="reward" id="reward" hidden>
+        <canvas id="burst" aria-hidden="true"></canvas>
+        <div class="reward-card glass" role="status">
+          <svg class="reward-check" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"/><path d="M20 33l8 8 17-18"/></svg>
+          <h3 id="reward-title">Inquiry received</h3>
+          <p id="reward-text">We'll reply personally within <span class="ph">[two business days]</span>.</p>
+          <p class="iq-note">Draft: nothing was sent.</p>
+          <button class="btn btn-glass btn-sm" type="button" id="reward-close">Done</button>
+        </div>
+      </div>
+    </section>
+
     <section class="block frame" id="contact" aria-labelledby="ct-h">
       <div class="cta glass rv" data-speed="0.04">
         <div class="beam" aria-hidden="true"></div>
         <h2 id="ct-h"><span class="metal-text">Let's talk about</span> your US plans</h2>
-        <p>A free 30-minute call. You get an honest view on whether the US is the right next step, and which show to start with.</p>
-        <a class="btn btn-brass" href="#draft" data-jump="contact">Book a free call</a>
+        <p>Tell us about your product. We reply personally within <span class="ph">[two business days]</span> with an honest view on whether the US is the right next step, and which show to start with.</p>
+        <a class="btn btn-brass" href="#draft" data-jump="inquiry">Start your inquiry</a>
         <div class="copy-line" id="copy-line"><span id="email">hello@becktonature.com</span>
           <button class="copy-btn btn-glass" type="button" id="copy" aria-label="Copy email address"><span class="swap" aria-hidden="true">
             <svg class="ic a" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
@@ -569,8 +700,8 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
           <a class="brand" href="#draft" aria-label="Beck To Nature, back to top"><svg xmlns="http://www.w3.org/2000/svg" viewBox="240.91 82.59 325.12 391.97" aria-hidden="true"><path d="M513.19 174.31 C511.40 174.13 509.64 174.14 507.93 174.30 C506.21 174.47 504.53 174.82 502.88 175.30 C501.23 175.78 499.61 176.43 498.01 177.19 C496.41 177.95 494.84 178.86 493.28 179.85 C491.73 180.85 490.19 181.97 488.66 183.17 C487.13 184.36 485.62 185.67 484.11 187.02 C482.60 188.38 481.10 189.82 479.59 191.29 C478.09 192.77 476.59 194.31 475.08 195.87 C473.57 197.43 472.05 199.03 470.52 200.63 C469.00 202.23 467.46 203.86 465.90 205.46 C464.34 207.06 462.77 208.67 461.17 210.24 C459.57 211.80 457.95 213.36 456.29 214.85 C454.64 216.34 452.96 217.80 451.24 219.18 C449.52 220.56 447.77 221.87 445.98 223.11 C444.19 224.34 442.36 225.50 440.51 226.58 C438.65 227.67 436.77 228.67 434.86 229.59 C432.96 230.52 431.03 231.37 429.09 232.13 C427.15 232.90 425.18 233.58 423.22 234.19 C421.25 234.79 419.27 235.31 417.29 235.75 C415.31 236.19 413.32 236.55 411.34 236.82 C409.36 237.09 407.37 237.28 405.40 237.38 C403.43 237.48 401.47 237.50 399.52 237.43 C397.57 237.36 395.64 237.20 393.73 236.95 C391.82 236.71 389.92 236.37 388.06 235.95 C386.20 235.52 384.37 235.00 382.57 234.40 C380.76 233.80 379.00 233.09 377.26 232.32 C375.51 231.55 373.80 230.68 372.11 229.76 C370.42 228.83 368.76 227.83 367.11 226.77 C365.46 225.71 363.84 224.58 362.22 223.41 C360.61 222.24 359.01 221.01 357.42 219.75 C355.82 218.48 354.24 217.17 352.67 215.83 C351.09 214.49 349.52 213.11 347.94 211.71 C346.37 210.32 344.80 208.89 343.22 207.47 C341.64 206.04 340.06 204.58 338.47 203.14 C336.88 201.69 335.28 200.23 333.67 198.79 C332.05 197.34 330.43 195.90 328.78 194.47 C327.13 193.05 325.47 191.64 323.78 190.26 C322.09 188.88 320.38 187.51 318.64 186.19 C316.90 184.87 315.12 183.56 313.34 182.35 C311.56 181.14 309.75 179.96 307.95 178.93 C306.15 177.90 304.34 176.93 302.55 176.15 C300.77 175.37 298.99 174.70 297.25 174.26 C295.51 173.81 293.78 173.51 292.12 173.47 C290.45 173.43 288.82 173.58 287.26 174.02 C285.70 174.45 284.18 175.17 282.76 176.07 C281.34 176.97 279.99 178.14 278.75 179.42 C277.52 180.71 276.36 182.20 275.35 183.76 C274.34 185.32 273.44 187.05 272.70 188.78 C271.95 190.51 271.34 192.35 270.91 194.15 C270.47 195.95 270.20 197.79 270.11 199.57 C270.02 201.35 270.12 203.10 270.37 204.82 C270.62 206.54 271.04 208.22 271.59 209.89 C272.14 211.56 272.85 213.20 273.66 214.82 C274.47 216.45 275.42 218.05 276.45 219.64 C277.48 221.23 278.63 222.80 279.85 224.37 C281.06 225.94 282.38 227.50 283.74 229.06 C285.10 230.61 286.54 232.16 288.00 233.72 C289.46 235.28 290.99 236.83 292.51 238.39 C294.04 239.96 295.61 241.53 297.16 243.11 C298.72 244.69 300.29 246.29 301.83 247.90 C303.37 249.51 304.92 251.14 306.40 252.79 C307.89 254.45 309.36 256.12 310.75 257.82 C312.15 259.52 313.51 261.25 314.77 263.01 C316.04 264.78 317.23 266.57 318.34 268.40 C319.46 270.22 320.49 272.08 321.44 273.95 C322.40 275.83 323.27 277.74 324.06 279.65 C324.86 281.57 325.57 283.52 326.21 285.46 C326.84 287.41 327.40 289.38 327.87 291.35 C328.35 293.32 328.74 295.30 329.06 297.28 C329.38 299.26 329.61 301.24 329.77 303.22 C329.92 305.20 329.99 307.17 329.99 309.14 C329.98 311.10 329.90 313.06 329.73 315.00 C329.56 316.94 329.31 318.87 328.99 320.77 C328.66 322.68 328.25 324.57 327.76 326.43 C327.27 328.29 326.69 330.12 326.04 331.93 C325.40 333.73 324.66 335.51 323.87 337.26 C323.07 339.02 322.19 340.75 321.27 342.46 C320.34 344.17 319.34 345.86 318.30 347.54 C317.26 349.22 316.16 350.88 315.02 352.53 C313.88 354.18 312.69 355.81 311.47 357.45 C310.25 359.08 308.99 360.70 307.71 362.32 C306.42 363.95 305.10 365.56 303.77 367.18 C302.44 368.80 301.09 370.42 299.72 372.04 C298.36 373.67 296.98 375.30 295.61 376.94 C294.24 378.58 292.85 380.22 291.48 381.89 C290.11 383.55 288.73 385.22 287.38 386.91 C286.03 388.61 284.68 390.31 283.37 392.05 C282.06 393.78 280.75 395.53 279.49 397.31 C278.24 399.08 276.99 400.88 275.85 402.69 C274.71 404.50 273.60 406.33 272.65 408.14 C271.69 409.96 270.81 411.79 270.11 413.59 C269.42 415.40 268.83 417.20 268.47 418.97 C268.11 420.74 267.90 422.50 267.94 424.21 C267.99 425.92 268.26 427.61 268.76 429.23 C269.26 430.86 270.03 432.46 270.95 433.95 C271.87 435.45 273.02 436.89 274.27 438.21 C275.51 439.52 276.95 440.76 278.43 441.84 C279.92 442.93 281.54 443.91 283.16 444.71 C284.79 445.51 286.51 446.18 288.18 446.64 C289.85 447.10 291.55 447.39 293.20 447.49 C294.85 447.59 296.48 447.48 298.09 447.22 C299.70 446.97 301.28 446.53 302.86 445.96 C304.43 445.39 305.99 444.65 307.53 443.81 C309.08 442.97 310.61 441.98 312.14 440.91 C313.67 439.83 315.19 438.64 316.71 437.37 C318.23 436.11 319.74 434.73 321.26 433.32 C322.77 431.90 324.29 430.40 325.81 428.88 C327.34 427.35 328.87 425.76 330.41 424.17 C331.95 422.57 333.50 420.93 335.06 419.31 C336.63 417.69 338.21 416.04 339.80 414.43 C341.40 412.81 343.02 411.20 344.66 409.64 C346.30 408.08 347.96 406.54 349.65 405.07 C351.34 403.61 353.06 402.18 354.81 400.85 C356.56 399.51 358.34 398.25 360.15 397.07 C361.95 395.90 363.79 394.80 365.65 393.78 C367.51 392.76 369.40 391.83 371.29 390.97 C373.19 390.11 375.11 389.34 377.04 388.64 C378.97 387.95 380.91 387.34 382.86 386.80 C384.81 386.27 386.77 385.82 388.73 385.45 C390.68 385.08 392.65 384.79 394.60 384.58 C396.56 384.37 398.51 384.24 400.46 384.20 C402.40 384.15 404.34 384.19 406.26 384.31 C408.19 384.42 410.10 384.62 411.99 384.90 C413.88 385.18 415.76 385.55 417.60 385.99 C419.45 386.44 421.28 386.97 423.08 387.57 C424.88 388.17 426.65 388.87 428.40 389.62 C430.15 390.37 431.88 391.20 433.60 392.09 C435.31 392.98 437.00 393.94 438.68 394.94 C440.37 395.95 442.03 397.02 443.69 398.13 C445.34 399.24 446.98 400.40 448.62 401.60 C450.26 402.80 451.89 404.04 453.52 405.31 C455.14 406.58 456.76 407.89 458.39 409.22 C460.01 410.54 461.63 411.90 463.25 413.27 C464.88 414.64 466.51 416.03 468.14 417.43 C469.78 418.82 471.42 420.23 473.07 421.64 C474.72 423.05 476.38 424.46 478.06 425.86 C479.73 427.27 481.42 428.67 483.13 430.05 C484.84 431.43 486.56 432.82 488.30 434.16 C490.04 435.49 491.81 436.83 493.57 438.07 C495.33 439.30 497.11 440.50 498.88 441.56 C500.64 442.62 502.41 443.60 504.16 444.40 C505.90 445.21 507.64 445.90 509.35 446.37 C511.06 446.85 512.75 447.17 514.40 447.24 C516.05 447.30 517.67 447.16 519.24 446.76 C520.80 446.36 522.34 445.68 523.79 444.83 C525.23 443.99 526.64 442.89 527.92 441.68 C529.21 440.47 530.43 439.06 531.50 437.58 C532.58 436.10 533.57 434.46 534.40 432.81 C535.22 431.16 535.94 429.39 536.46 427.66 C536.99 425.92 537.38 424.14 537.57 422.40 C537.76 420.67 537.76 418.96 537.62 417.27 C537.47 415.59 537.14 413.93 536.69 412.28 C536.24 410.64 535.62 409.02 534.90 407.41 C534.18 405.80 533.31 404.21 532.36 402.62 C531.41 401.04 530.33 399.46 529.18 397.89 C528.04 396.32 526.79 394.76 525.49 393.20 C524.18 391.64 522.80 390.08 521.38 388.51 C519.96 386.95 518.47 385.38 516.98 383.80 C515.48 382.23 513.93 380.65 512.40 379.05 C510.86 377.45 509.29 375.84 507.75 374.22 C506.21 372.59 504.65 370.95 503.15 369.28 C501.64 367.62 500.14 365.93 498.71 364.22 C497.27 362.51 495.87 360.77 494.54 359.00 C493.22 357.23 491.95 355.43 490.76 353.60 C489.58 351.77 488.46 349.91 487.43 348.02 C486.39 346.14 485.42 344.23 484.54 342.30 C483.65 340.38 482.84 338.43 482.10 336.47 C481.37 334.51 480.71 332.53 480.12 330.56 C479.54 328.58 479.04 326.58 478.61 324.59 C478.19 322.60 477.84 320.61 477.57 318.62 C477.30 316.63 477.11 314.64 477.00 312.66 C476.89 310.68 476.86 308.71 476.92 306.75 C476.97 304.80 477.10 302.85 477.32 300.93 C477.53 299.00 477.83 297.09 478.21 295.21 C478.59 293.34 479.06 291.48 479.60 289.65 C480.15 287.82 480.78 286.03 481.48 284.25 C482.18 282.47 482.96 280.72 483.80 278.99 C484.64 277.26 485.55 275.55 486.52 273.85 C487.48 272.15 488.51 270.48 489.58 268.81 C490.66 267.14 491.79 265.49 492.95 263.84 C494.12 262.19 495.34 260.56 496.58 258.92 C497.82 257.29 499.11 255.67 500.42 254.04 C501.72 252.41 503.07 250.79 504.42 249.16 C505.77 247.53 507.15 245.90 508.54 244.27 C509.92 242.63 511.33 240.99 512.73 239.34 C514.13 237.68 515.54 236.02 516.95 234.34 C518.35 232.67 519.75 230.98 521.14 229.27 C522.53 227.56 523.92 225.84 525.27 224.09 C526.62 222.34 527.98 220.57 529.25 218.80 C530.51 217.02 531.76 215.23 532.86 213.44 C533.97 211.66 535.01 209.87 535.86 208.10 C536.71 206.33 537.46 204.56 537.97 202.83 C538.49 201.10 538.86 199.38 538.96 197.71 C539.05 196.04 538.95 194.39 538.55 192.80 C538.16 191.22 537.47 189.66 536.60 188.19 C535.72 186.73 534.58 185.31 533.31 184.01 C532.05 182.71 530.56 181.48 529.01 180.39 C527.46 179.30 525.74 178.30 524.01 177.47 C522.28 176.64 520.44 175.92 518.63 175.40 C516.83 174.87 514.97 174.49 513.19 174.31 Z" fill="url(#silv)"/><circle cx="401.98" cy="155.13" r="45.51" fill="url(#silv)"/></svg><span>Beck To Nature</span></a>
           <p class="muted" style="font-size:15px;margin-top:var(--s3);max-width:34ch">Taking Central European manufacturers to their first US trade show and their first American orders.</p>
         </div>
-        <div><h4>Company</h4><ul><li><a href="#draft" data-jump="services">Services</a></li><li><a href="#draft" data-jump="how">How it works</a></li><li><a href="#draft" data-jump="pricing">Pricing</a></li><li><a href="#draft" data-jump="faq">FAQ</a></li></ul></div>
-        <div><h4>Legal</h4><ul><li><a href="#draft">Privacy policy</a></li><li><a href="#draft">Cookie notice</a></li><li><a href="#draft">Terms of use</a></li></ul></div>
+        <div class="rv"><h4>Company</h4><ul><li><a href="#draft" data-jump="services">Services</a></li><li><a href="#draft" data-jump="how">How it works</a></li><li><a href="#draft" data-jump="pricing">Pricing</a></li><li><a href="#draft" data-jump="faq">FAQ</a></li></ul></div>
+        <div class="rv"><h4>Legal</h4><ul><li><a href="#draft">Privacy policy</a></li><li><a href="#draft">Cookie notice</a></li><li><a href="#draft">Terms of use</a></li></ul></div>
         <div>
           <h4>US market notes, once a month</h4>
           <form class="news" id="news" novalidate><label for="news-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Email address</label><input id="news-email" type="email" placeholder="Your work email" autocomplete="email"><button class="btn btn-brass btn-sm" type="submit">Subscribe</button></form>
@@ -619,7 +750,7 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
     <div class="sys-block">
       <div><h3>Tactile controls</h3><p>Brass buttons have a lit top edge and a shaded base. Pressed, they sink one pixel and shrink slightly.</p></div>
       <div class="demo-row">
-        <button class="btn btn-brass" type="button">Book a free call</button>
+        <button class="btn btn-brass" type="button">Start your inquiry</button>
         <button class="btn btn-glass" type="button">Check your US readiness</button>
         <button class="btn btn-brass btn-sm" type="button" disabled>Sending</button>
       </div>
@@ -634,7 +765,7 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
           <div><small>Heading 68</small><span style="font-size:clamp(28px,3vw,44px);line-height:1.05;letter-spacing:-.04em">Everything you need to sell in the US</span></div>
           <div><small>Title 26</small><span style="font-size:var(--t-h3);letter-spacing:-.02em">Meetings booked before you fly</span></div>
           <div><small>Body 18</small><span class="muted">We invite distributors and buyers in advance and join every meeting with you.</span></div>
-          <div><small>Small 15</small><span class="muted" style="font-size:15px">Indicative only. You get a written quote after a call.</span></div>
+          <div><small>Small 15</small><span class="muted" style="font-size:15px">Indicative only. You get a written proposal after your inquiry.</span></div>
         </div>
       </div>
     </div>
@@ -643,13 +774,15 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
       <div><h3>Motion</h3><p>Quick and physical. Everything switches off with Reduce Motion.</p></div>
       <div class="motion-list">
         <div><b style="font-weight:400">Press</b><span class="num">200 ms</span><span>Sinks 1px, scales to 98%</span></div>
+        <div><b style="font-weight:400">Logo strip</b><span class="num">40 s loop</span><span>Logos glide round and round; pause on hover</span></div>
         <div><b style="font-weight:400">Brass sweep</b><span class="num">700 ms</span><span>A band of light crosses the metal on hover</span></div>
-        <div><b style="font-weight:400">Number roll</b><span class="num">200 ms</span><span>Only the changed digit moves, with a slight blur</span></div>
+        <div><b style="font-weight:400">Field tick</b><span class="num">500 ms</span><span>A brass circle fills and the check draws when a field is complete</span></div>
+        <div><b style="font-weight:400">Celebration</b><span class="num">2.2 s</span><span>After sending an inquiry: brass confetti, the check draws, one short vibration</span></div>
         <div><b style="font-weight:400">Spotlight</b><span class="num">400 ms</span><span>Fades in on hover, follows the cursor</span></div>
         <div><b style="font-weight:400">Scroll depth</b><span class="num">live</span><span>Headline, cards and footer drift at slightly different speeds, up to a few dozen pixels</span></div>
         <div><b style="font-weight:400">Brass light</b><span class="num">live</span><span>The light on brass text moves as the page scrolls</span></div>
-        <div><b style="font-weight:400">Map jump</b><span class="num">7 s loop</span><span>The logo crouches in Budapest, jumps across the Atlantic leaving a brass trail, lands in Chicago with a squash and a ring of light; pauses when off screen</span></div>
-        <div><b style="font-weight:400">The route</b><span class="num">live</span><span>A brass line draws from Budapest to the first US order across the three steps</span></div>
+        <div><b style="font-weight:400">Map jump</b><span class="num">7 s loop</span><span>The logo crouches in Central Europe, jumps across the Atlantic leaving a brass trail, lands in the US with a squash and a ring of light; pauses when off screen</span></div>
+        <div><b style="font-weight:400">The flight</b><span class="num">live</span><span>A plane flies an up-and-down route from your factory to your first US order as you scroll</span></div>
         <div><b style="font-weight:400">Accordion</b><span class="num">400 ms</span><span>Grows in place, plus turns to a cross</span></div>
         <div><b style="font-weight:400">Entrance</b><span class="num">600 ms</span><span>Rises 14px out of a soft blur, 80 ms apart</span></div>
       </div>
@@ -744,109 +877,28 @@ document.querySelectorAll('.glass.lit').forEach(el => el.addEventListener('point
 /* Press feel on touch devices */
 document.querySelectorAll('.btn').forEach(b => b.addEventListener('pointerdown', () => buzz(6)));
 
-/* The dial */
+/* Scroll motion: depth drift, light moving over brass, and the plane */
 (() => {
-  const MIN = 3, MAX = 24, STEP = 52;
-  const track = document.getElementById('track'), ruler = document.getElementById('ruler');
-  const digitsEl = document.getElementById('digits'), unit = document.getElementById('unit'), verdict = document.getElementById('verdict');
-  const soundBtn = document.getElementById('sound'), soundLabel = document.getElementById('sound-label'), wave = document.getElementById('wave');
-  let html = '';
-  for (let m = 0; m <= 27; m += 0.5) {
-    const major = m % 1 === 0;
-    html += `<span class="tick${major ? ' major' : ''}" style="left:${m * STEP}px"></span>`;
-    if (major && m >= MIN && m <= MAX && m % 3 === 0) html += `<span class="tick-label" style="left:${m * STEP}px">${m}</span>`;
-  }
-  ruler.innerHTML = html;
-  digitsEl.innerHTML = [0,1].map(() => `<span class="digit"><span class="strip">${[...Array(10).keys()].map(d => `<span>${d}</span>`).join('')}</span></span>`).join('');
-  const cols = [...digitsEl.children]; const shown = [null, null];
-  const setDigits = n => {
-    const s = String(n).padStart(2, '0');
-    [0,1].forEach(i => {
-      const d = +s[i], col = cols[i];
-      col.classList.toggle('hidden', i === 0 && n < 10);
-      if (shown[i] === d) return;
-      if (!reduce && shown[i] !== null) { col.classList.add('moving'); clearTimeout(col._t); col._t = setTimeout(() => col.classList.remove('moving'), 200); }
-      col.firstElementChild.style.transform = `translateY(${-d}em)`; shown[i] = d;
-    });
-  };
-  const lines = [
-    [3, 5, 'Tight. One show is still possible if booth space is available, with fewer meetings booked in advance.'],
-    [6, 9, 'Comfortable. Enough time to choose the show, book space and invite buyers before you fly.'],
-    [10, 15, 'Ideal for the large annual shows, which often sell booth space many months ahead.'],
-    [16, 24, 'Time to plan properly: product checks, certifications and a show calendar for the year.']
-  ];
-  let lineIdx = -1;
-  const setVerdict = n => {
-    const i = lines.findIndex(([a, b]) => n >= a && n <= b);
-    if (i === lineIdx) return; lineIdx = i;
-    if (reduce) { verdict.textContent = lines[i][2]; return; }
-    verdict.classList.add('out');
-    setTimeout(() => { verdict.textContent = lines[i][2]; verdict.classList.remove('out'); }, 150);
-  };
-  let ctx = null, soundOn = false;
-  soundBtn.addEventListener('click', () => {
-    soundOn = !soundOn; soundBtn.setAttribute('aria-pressed', soundOn);
-    soundLabel.textContent = soundOn ? 'Sound on' : 'Sound off'; wave.setAttribute('opacity', soundOn ? '1' : '.35');
-    if (soundOn && !ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
-    if (ctx && ctx.state === 'suspended') ctx.resume();
-  });
-  const tick = () => {
-    buzz(4);
-    if (!soundOn || !ctx) return;
-    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = 'triangle'; o.frequency.setValueAtTime(1800, t); o.frequency.exponentialRampToValueAtTime(900, t + .03);
-    g.gain.setValueAtTime(.05, t); g.gain.exponentialRampToValueAtTime(.0001, t + .05);
-    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + .06);
-  };
-  let pos = 9 * STEP, value = 9, raf = null;
-  const render = () => {
-    ruler.style.transform = `translateX(${track.clientWidth / 2 - pos}px)`;
-    const v = Math.min(MAX, Math.max(MIN, Math.round(pos / STEP)));
-    if (v !== value) { value = v; tick(); }
-    setDigits(value); setVerdict(value);
-    track.setAttribute('aria-valuenow', value); track.setAttribute('aria-valuetext', `${value} months`);
-  };
-  const clampPos = p => Math.min(MAX * STEP + STEP * .4, Math.max(MIN * STEP - STEP * .4, p));
-  const animateTo = (target, dur = 250) => {
-    cancelAnimationFrame(raf);
-    if (reduce) { pos = target; render(); return; }
-    const from = pos, t0 = performance.now(), ease = t => 1 - Math.pow(1 - t, 3);
-    const step = now => { const t = Math.min(1, (now - t0) / dur); pos = from + (target - from) * ease(t); render(); if (t < 1) raf = requestAnimationFrame(step); };
-    raf = requestAnimationFrame(step);
-  };
-  const snap = () => animateTo(Math.min(MAX, Math.max(MIN, Math.round(pos / STEP))) * STEP);
-  let dragging = false, lastX = 0, lastT = 0, vel = 0;
-  track.addEventListener('pointerdown', e => { dragging = true; cancelAnimationFrame(raf); track.setPointerCapture(e.pointerId); lastX = e.clientX; lastT = performance.now(); vel = 0; });
-  track.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    const now = performance.now(), dx = e.clientX - lastX;
-    pos = clampPos(pos - dx); vel = -dx / Math.max(1, now - lastT); lastX = e.clientX; lastT = now; render();
-  });
-  const release = () => {
-    if (!dragging) return; dragging = false;
-    if (reduce || Math.abs(vel) < .05) return snap();
-    let v = vel * 16;
-    const glide = () => { v *= .94; pos = clampPos(pos + v); render();
-      if (Math.abs(v) > .6 && pos > MIN * STEP - STEP * .4 && pos < MAX * STEP + STEP * .4) raf = requestAnimationFrame(glide); else snap(); };
-    raf = requestAnimationFrame(glide);
-  };
-  track.addEventListener('pointerup', release); track.addEventListener('pointercancel', release);
-  track.addEventListener('keydown', e => {
-    if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); return animateTo((e.key === 'Home' ? MIN : MAX) * STEP); }
-    const k = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 3, PageDown: -3 }[e.key];
-    if (!k) return; e.preventDefault(); animateTo(Math.min(MAX, Math.max(MIN, value + k)) * STEP, 200);
-  });
-  addEventListener('resize', render);
-  render();
-})();
-
-/* Scroll motion: depth drift, light moving over brass, and the route */
-(() => {
-  if (reduce) { document.documentElement.style.setProperty('--route', 1); document.querySelectorAll('.route-node').forEach(n => n.classList.add('on')); return; }
   const root = document.documentElement;
+  const route = document.getElementById('route'), base = document.getElementById('flight-base'), reveal = document.getElementById('flight-reveal');
+  const plane = document.getElementById('plane'), svg = route.querySelector('.flight-svg'), nodes = [...route.querySelectorAll('.flight-nodes i')], steps = [...document.querySelectorAll('.steps li')];
+  reveal.setAttribute('d', base.getAttribute('d'));
+  const L = base.getTotalLength(); reveal.style.strokeDasharray = L;
+  const marks = [.17, .5, .83];
+  // place the step nodes on the curve
+  const at = f => base.getPointAtLength(L * f);
+  const box = () => { const r = svg.getBoundingClientRect(), f = route.getBoundingClientRect(); return { w: r.width, h: r.height, top: r.top - f.top, left: r.left - f.left }; };
+  const placeNodes = () => { const b = box(); marks.forEach((m, i) => { const p = at(m); nodes[i].style.left = (b.left + p.x / 1000 * b.w) + 'px'; nodes[i].style.top = (b.top + p.y / 120 * b.h) + 'px'; }); };
+  const setPlane = p => {
+    const bx = box(), w = bx.w, h = bx.h, a = at(p), b = at(Math.min(1, p + .01)), c = at(Math.max(0, p - .01));
+    const ang = Math.atan2((b.y - c.y) / 120 * h, (b.x - c.x) / 1000 * w) * 180 / Math.PI;
+    plane.style.transform = `translate(${(bx.left + a.x / 1000 * w).toFixed(1)}px, ${(bx.top + a.y / 120 * h).toFixed(1)}px) translate(-50%, -50%) rotate(${(ang + 90).toFixed(1)}deg)`;
+    reveal.style.strokeDashoffset = (L * (1 - p)).toFixed(1);
+    marks.forEach((m, i) => { const on = p >= m - .01; nodes[i].classList.toggle('on', on); steps[i] && steps[i].classList.toggle('on', on); });
+  };
+  placeNodes();
+  if (reduce) { setPlane(1); addEventListener('resize', () => { placeNodes(); setPlane(1); }); return; }
   const items = [...document.querySelectorAll('[data-speed]')].map(el => ({ el, k: parseFloat(el.dataset.speed) }));
-  const route = document.getElementById('route'), nodes = [...route.querySelectorAll('.route-node')], steps = [...document.querySelectorAll('.steps li')];
-  const marks = [.166, .5, .833];
   let queued = false;
   const frame = () => {
     queued = false;
@@ -855,16 +907,99 @@ document.querySelectorAll('.btn').forEach(b => b.addEventListener('pointerdown',
     items.forEach(({ el, k }) => {
       const r = el.getBoundingClientRect();
       if (r.bottom < -200 || r.top > vh + 200) return;
-      const off = (r.top + r.height / 2) - vh / 2;
-      el.style.translate = `0 ${(off * k).toFixed(1)}px`;
+      el.style.translate = `0 ${(((r.top + r.height / 2) - vh / 2) * k).toFixed(1)}px`;
     });
     const rr = route.getBoundingClientRect();
-    const p = Math.min(1, Math.max(0, (vh * 0.85 - rr.top) / (vh * 0.7)));
-    route.style.setProperty('--route', p.toFixed(3));
-    marks.forEach((m, i) => { const on = p >= m; nodes[i].classList.toggle('on', on); steps[i] && steps[i].classList.toggle('on', on); });
+    setPlane(Math.min(1, Math.max(0, (vh * 0.85 - rr.top) / (vh * 0.7))));
   };
   const ask = () => { if (!queued) { queued = true; requestAnimationFrame(frame); } };
-  addEventListener('scroll', ask, { passive: true }); addEventListener('resize', ask); frame();
+  addEventListener('scroll', ask, { passive: true }); addEventListener('resize', () => { placeNodes(); ask(); }); frame();
+})();
+
+/* Inquiry: ticks, live map, rough view, reward */
+(() => {
+  const MAP = {"D": 1.15, "enc": "0:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,34,35,36,37,38,39,40,47,48,49,50,51,52,53,54,55,56,57,68,69,70,88,89,90,91,92,93,94,95,96,97,98,99,100,101;1:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,27,28,32,33,34,35,36,37,38,48,49,50,51,52,53,54,66,67,68,69,70,71,88,89,90,91,92,93,96,97,98,99,100,101;2:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,26,27,29,36,38,39,48,49,50,51,52,53,54,68,87,88,89,90,91,92,95,96,97,98,99,100,101,102;3:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,28,36,37,38,49,50,51,52,53,84,85,86,87,88,89,90,91,94,95,96,97,98,99,100,101,102;4:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,32,33,34,35,50,51,52,53,84,85,86,87,88,89,90,94,95,96,97,98,99,100,101,102;5:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,32,33,34,35,36,52,53,84,85,86,87,88,89,90,91,94,95,99,100,101,102;6:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,32,33,34,35,36,40,78,84,85,86,88,89,90,91,95,96,97,98,99,100,101,102;7:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,32,33,34,35,36,37,38,39,40,41,77,88,89,90,96,97,98,99,100,101,102;8:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,33,34,35,36,37,38,39,40,77,78,86,88,89,90,94,95,96,97,98,99,100,101,102;9:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,32,33,34,35,36,37,38,39,40,41,42,78,86,87,94,95,96,97,98,99,100,101,102;10:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,31,32,33,34,35,36,37,38,39,40,41,42,43,44,75,76,78,79,86,87,91,93,94,95,96,97,98,99,100,101,102;11:1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,74,75,76,79,80,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;12:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,74,75,76,78,79,80,81,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;13:1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,45,78,79,80,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;14:1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,40,44,45,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;15:2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,38,39,44,45,46,78,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;16:3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,46,47,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;17:3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,101,102;18:3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,41,80,81,82,83,84,85,86,87,90,91,92,93,94,95,96,97,98,101,102;19:3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,39,80,81,82,83,84,85,87,90,91,92,93,94,95,96,97;20:3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,75,76,77,78,79,80,81,82,87,88,92,93,94,95,96,97;21:3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,75,76,77,78,79,80,81,82,88,89,90,93,94,95,96,97,101,102;22:3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,75,76,77,78,79,80,86,90,91,93,94,97,99,100,101,102;23:3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,75,76,77,78,79,82,86,93,94,97,98,99,100,101,102;24:4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,75,76,77,78,79,90,93,94,97,98,99,100,101,102;25:4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,75,76,77,78,86,89,94,98,99,100,101,102;26:4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,81,82,83,84,85,86;27:5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,77,78,79,80,81,82,83,84,85,86,101;28:7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,76,77,78,79,80,81,82,83,84,85,86;29:7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,75,76,77,78,79,80,81,82,83,84,85,86,87,88,94,102;30:8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,93,94,95,96,100,102;31:8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,27,28,29,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,93,94,95,96,97,98,99,100,101,102;32:10,11,12,13,14,15,16,17,18,19,20,29,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;33:8,9,11,12,13,14,15,16,17,18,19,29,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100;34:9,10,12,13,14,15,16,17,18,19,29,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101;35:10,12,13,14,15,16,17,18,19,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101;36:13,14,15,16,17,18,19,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;37:14,15,16,17,18,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;38:14,15,16,17,18,29,30,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;39:15,16,17,18,19,24,25,31,32,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;40:15,16,17,18,19,24,25,32,33,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;41:16,17,18,19,20,23,24,25,35,36,37,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;42:17,18,19,20,21,22,23,24,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102;43:19,20,21,22,23,24,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102"};
+  const K = Math.cos(44 * Math.PI / 180), P = (lon, lat) => [(lon + 128) * K, 66 - lat];
+  const dots = document.getElementById('iq-dots');
+  let h = '';
+  MAP.enc.split(';').forEach(row => { const [r, xs] = row.split(':'); xs.split(',').forEach(x => { h += `<circle class="d" cx="${(+x * MAP.D).toFixed(2)}" cy="${(+r * MAP.D).toFixed(2)}" r=".34"/>`; }); });
+  dots.innerHTML = h;
+  const form = document.getElementById('iq-form'), pin = document.getElementById('iq-pin'), arc = document.getElementById('iq-arc'), us = document.getElementById('iq-us'), routeCap = document.getElementById('iq-route');
+  const count = document.getElementById('iq-count'), bar = document.getElementById('iq-bar'), view = document.getElementById('iq-view-body'), err = document.getElementById('iq-error');
+  const $ = id => document.getElementById(id);
+  const chicago = P(-87.63, 41.88), usMid = P(-95, 39);
+  const required = ['iq-company', 'iq-country', 'iq-industry', 'iq-product', 'iq-timeline', 'iq-name', 'iq-email'];
+  const valid = id => { const el = $(id); if (!el) return false; const v = (el.value || '').trim(); if (id === 'iq-email') return /^\S+@\S+\.\S+$/.test(v); if (id === 'iq-product') return v.length >= 8; return v.length > 0; };
+  const certs = () => [...form.querySelectorAll('input[name="certs"]:checked')].map(c => c.value);
+  let pinAnim;
+  const drawRoute = () => {
+    const opt = $('iq-country').selectedOptions[0];
+    const dest = $('iq-industry').value === 'Medical devices and imaging' ? chicago : usMid;
+    us.setAttribute('transform', `translate(${dest[0]} ${dest[1]})`);
+    if (!opt || !opt.value) return;
+    const lon = parseFloat(opt.dataset.lon), lat = parseFloat(opt.dataset.lat);
+    const from = isNaN(lon) ? P(10, 50) : P(lon, lat);
+    const cx = (from[0] + dest[0]) / 2, cy = Math.min(from[1], dest[1]) - 24;
+    arc.setAttribute('d', `M${from[0]} ${from[1]} Q${cx} ${cy} ${dest[0]} ${dest[1]}`);
+    const L = arc.getTotalLength(); arc.style.strokeDasharray = `.1 1.2`;
+    pin.setAttribute('opacity', 1);
+    cancelAnimationFrame(pinAnim);
+    if (reduce) { pin.setAttribute('transform', `translate(${from[0]} ${from[1]})`); }
+    else { const t0 = performance.now(); const step = now => { const t = Math.min(1, (now - t0) / 650); const drop = (1 - t) * 10, bounce = Math.sin(t * Math.PI * 2.5) * (1 - t) * 1.6; pin.setAttribute('transform', `translate(${from[0]} ${(from[1] - drop - Math.abs(bounce)).toFixed(2)})`); if (t < 1) pinAnim = requestAnimationFrame(step); }; pinAnim = requestAnimationFrame(step); }
+    routeCap.textContent = `${isNaN(lon) ? 'Your country' : opt.value} → ${dest === chicago ? 'Chicago, for RSNA' : 'the United States'}`;
+  };
+  const roughView = () => {
+    const ind = $('iq-industry').value, tl = $('iq-timeline').value, c = certs();
+    if (!ind && !tl) { view.className = 'iq-empty'; view.innerHTML = '<p>Fill in a few fields and a rough view appears here: the show that fits, how ready you look, and an indicative budget.</p>'; return; }
+    const strong = c.includes('FDA cleared') || c.includes('UL listing') || (c.includes('ISO 13485') && c.includes('CE marking')) || (c.includes('ISO 9001') && c.includes('CE marking'));
+    const stage = !c.length ? 'Groundwork first' : (strong && tl !== 'Within 6 months') ? 'Ready to exhibit' : 'Ready with preparation';
+    const show = ind === 'Medical devices and imaging' ? 'RSNA Annual Meeting, Chicago · late Nov to early Dec' : ind ? '<span class="ph">[The leading US show for your sector]</span>' : '—';
+    const gap = c.includes('FDA clearance in progress') ? 'FDA status decides whether you can sell at the show or only exhibit.' : !c.length ? 'Certifications for the US market come first.' : tl === 'Within 6 months' ? 'Tight timing: booth space and meetings need booking now.' : 'Time to book space and invite buyers before you fly.';
+    view.className = '';
+    view.innerHTML = `<dl class="iq-dl"><div><dt>Readiness</dt><dd class="stage">${stage}</dd></div><div><dt>Show that fits</dt><dd>${show}</dd></div><div><dt>First thing to solve</dt><dd>${gap}</dd></div><div><dt>Indicative budget</dt><dd><span class="ph">[€25,000 – €45,000]</span> per show</dd></div></dl>`;
+    if (!reduce) { view.classList.add('swap-in'); requestAnimationFrame(() => requestAnimationFrame(() => view.classList.remove('swap-in'))); }
+  };
+  const update = () => {
+    let n = 0;
+    required.forEach(id => { const ok = valid(id); if (ok) n++; const f = form.querySelector(`[data-field="${id}"]`); if (f.classList.contains('done') !== ok) { f.classList.toggle('done', ok); if (ok) buzz(6); } });
+    form.querySelector('[data-field="iq-certs"]').classList.toggle('done', certs().length > 0);
+    count.textContent = `${n} of ${required.length} complete`; bar.style.transform = `scaleX(${n / required.length})`;
+  };
+  form.addEventListener('input', () => { update(); if (err.textContent && required.every(valid)) err.textContent = ''; });
+  form.addEventListener('change', e => { update(); if (['iq-country', 'iq-industry'].includes(e.target.id)) drawRoute(); if (['iq-industry', 'iq-timeline'].includes(e.target.id) || e.target.name === 'certs') roughView(); });
+  drawRoute();
+  // Reward
+  const reward = $('reward'), canvas = $('burst');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const missing = required.filter(id => !valid(id));
+    if (missing.length) {
+      err.textContent = missing.includes('iq-email') && $('iq-email').value ? 'Check the email address, for example name@company.com.' : `Fill in ${missing.length} more field${missing.length > 1 ? 's' : ''} to send your inquiry.`;
+      const f = form.querySelector(`[data-field="${missing[0]}"]`); f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); $(missing[0]).focus({ preventScroll: false }); buzz([10, 40, 10]);
+      return;
+    }
+    err.textContent = '';
+    $('reward-title').textContent = `Thank you, ${$('iq-name').value.trim().split(' ')[0]}`;
+    reward.hidden = false; requestAnimationFrame(() => reward.classList.add('show'));
+    buzz([12, 60, 24]);
+    if (!reduce) celebrate(canvas);
+    $('reward-close').focus();
+  });
+  $('reward-close').addEventListener('click', () => { reward.classList.remove('show'); setTimeout(() => { reward.hidden = true; }, 400); form.reset(); update(); roughView(); pin.setAttribute('opacity', 0); arc.removeAttribute('d'); routeCap.textContent = 'Choose where you make it to see your route'; });
+  function celebrate(cv) {
+    const ctx = cv.getContext('2d'), dpr = Math.min(2, devicePixelRatio || 1);
+    const W = cv.clientWidth, H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.scale(dpr, dpr);
+    const cols = ['#F3E2B8', '#D9BC86', '#C5A373', '#AA885A', '#917248', '#EEE9DF'];
+    const parts = [...Array(140)].map(() => { const a = Math.random() * Math.PI * 2, v = 4 + Math.random() * 9; return { x: W / 2, y: H / 2, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 3, s: 3 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cols[(Math.random() * cols.length) | 0], shape: Math.random() < .5 }; });
+    const t0 = performance.now();
+    (function tick(now) {
+      const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
+      parts.forEach(p => { p.vx *= .985; p.vy = p.vy * .985 + .22; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save(); ctx.globalAlpha = Math.max(0, 1 - t / 2.2); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+        if (p.shape) ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); else { ctx.beginPath(); ctx.arc(0, 0, p.s / 3, 0, 7); ctx.fill(); } ctx.restore(); });
+      if (t < 2.2) requestAnimationFrame(tick); else ctx.clearRect(0, 0, W, H);
+    })(t0);
+  }
 })();
 
 /* Hero map */
@@ -879,7 +1014,7 @@ document.querySelectorAll('.btn').forEach(b => b.addEventListener('pointerdown',
     xs.split(',').forEach(xi => { const x = +xi * M.D; html += `<circle class="d${near(x, y) ? ' near' : ''}" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r=".34"/>`; });
   });
   dotsG.innerHTML = html;
-  const list = [['budapest', 'Budapest', 1.15, 'home', 'middle'], ['vienna', '', .75], ['prague', '', .75], ['warsaw', '', .75], ['chicago', 'Chicago', 1, 'strong', 'start'], ['lasvegas', 'Las Vegas', .75, 'minor', 'middle'], ['orlando', 'Orlando', .75, 'minor', 'middle']];
+  const list = [['budapest', '', 1.15, 'home'], ['vienna', '', .75], ['prague', '', .75], ['warsaw', '', .75], ['chicago', '', 1, 'strong'], ['lasvegas', '', .75], ['orlando', '', .75]];
   citiesG.innerHTML = list.map(([k, label, r, cls, anchor], i) => {
     const [x, y] = C[k];
     const lx = anchor === 'end' ? x - 2.2 : anchor === 'start' ? x + 2.2 : x, ly = anchor === 'middle' ? y + 3.2 : y + .7;
