@@ -7,3 +7,4 @@ Three people take turns working on this repo, each with their own Claude account
 - Never commit `.env.local` or any API key.
 - Placeholder text the owners still need to fill in is wrapped in `<Ph>[...]</Ph>` in `app/page.tsx`; keep that convention.
 - Styles live in `app/globals.css` and follow the original draft (`index.html`); match its look rather than introducing a new design.
+- A redesign is approved but not built yet: black with brushed brass, liquid glass and soft spotlights. The approved draft and its design system are in `design/design-system-draft.html`; when the redesign is built, it replaces the line above.

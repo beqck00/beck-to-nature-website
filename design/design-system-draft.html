@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Beck To Nature Design System</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..700&display=swap">
+<style>
+/* Layout: one frame with equal 24–48px margins; every black blends into the next through gradients; light comes from soft spotlights; silver is the only colour */
+:root{
+  color-scheme:dark;
+  /* Blacks */
+  --k0:#050505; --k1:#0A0A0A; --k2:#111111; --k3:#161616; --k4:#1D1C1C; --k5:#232323; --k6:#2C2C2C;
+  /* Brass, sampled from the brushed brass reference, plus one specular highlight */
+  --b-shadow:#392713; --b-dark:#5B4527; --b-deep:#725934; --b-core:#917248; --b-mid:#AA885A; --b-bright:#C5A373; --b-light:#D9BC86; --b-spec:#F3E2B8;
+  --ink:#EEE9DF; --ink-2:#B5AC9C; --ink-3:#958D7F;
+  --brush:repeating-linear-gradient(180deg,rgba(255,240,205,.07) 0 1px,rgba(40,25,5,.06) 1px 2px,rgba(255,240,205,0) 2px 3px);
+  --metal:linear-gradient(180deg,#F3E2B8 0%,#D9BC86 28%,#917248 54%,#C5A373 76%,#E6CC98 100%);
+  --metal-h:linear-gradient(100deg,#8A6B42 0%,#C5A373 20%,#F3E2B8 34%,#AA885A 52%,#D9BC86 70%,#917248 88%,#B8965F 100%);
+  --glass:rgba(237,237,237,.045);
+  --glass-edge:linear-gradient(180deg,rgba(236,220,182,.28),rgba(236,220,182,.06) 40%,rgba(236,220,182,.03) 70%,rgba(236,220,182,.12));
+  --font:"Neue Montreal","Host Grotesk","Helvetica Neue",Arial,sans-serif;
+  --t-display:clamp(48px,7.2vw,112px); --t-h2:clamp(34px,4.6vw,68px); --t-h3:clamp(20px,1.8vw,26px);
+  --r-pill:999px; --r-xl:28px; --r-lg:20px; --r-md:14px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:64px; --s9:96px; --s10:144px;
+  --duration-quick:150ms; --duration-press:200ms; --duration-fast:250ms; --duration-slow:400ms; --duration-very-slow:600ms;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --gl:max(20px,env(safe-area-inset-left,0px)); --gr:max(20px,env(safe-area-inset-right,0px));
+}
+@media (min-width:900px){:root{--gl:max(48px,env(safe-area-inset-left,0px));--gr:max(48px,env(safe-area-inset-right,0px))}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px;scrollbar-color:#2C2C2C #0A0A0A}
+body{margin:0;background:var(--k1);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--k1)}
+::selection{background:var(--b-light);color:#140E05}
+:focus-visible{outline:2px solid var(--b-light);outline-offset:3px;border-radius:8px}
+a{color:inherit;text-underline-offset:4px;text-decoration-thickness:1px}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+h2{font-size:var(--t-h2);line-height:1.02;letter-spacing:-.04em}
+h3{font-size:var(--t-h3);line-height:1.2;letter-spacing:-.02em}
+p{margin:0;text-wrap:pretty}
+.frame{padding-left:var(--gl);padding-right:var(--gr);max-width:1520px;margin-inline:auto}
+.muted{color:var(--ink-2)}
+.num{font-variant-numeric:tabular-nums}
+.ph{color:var(--ink-3);background:rgba(236,220,182,.05);border-radius:6px;padding:0 6px;box-shadow:inset 0 0 0 1px rgba(236,220,182,.1)}
+.ic{width:24px;height:24px;flex:none;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.metal-text{background:var(--metal);-webkit-background-clip:text;background-clip:text;color:transparent}
+.view[hidden]{display:none!important}
+
+/* The ground: one continuous black field, lit from above, never cut into hard bands */
+.field{position:relative;isolation:isolate;background:
+  radial-gradient(60% 40% at 50% 0%,rgba(236,220,182,.10),rgba(236,220,182,0) 70%),
+  linear-gradient(180deg,#050505 0%,#0A0A0A 8%,#111111 22%,#0A0A0A 38%,#161616 52%,#0A0A0A 66%,#111111 82%,#050505 100%)}
+.spot{position:absolute;pointer-events:none;border-radius:50%;filter:blur(40px);z-index:-1}
+.halftone{position:absolute;inset:0 auto auto 0;width:min(520px,70vw);height:420px;z-index:-1;pointer-events:none;opacity:.35;
+  background-image:radial-gradient(rgba(236,220,182,.55) 1px,transparent 1.6px);background-size:9px 9px;
+  -webkit-mask-image:radial-gradient(100% 100% at 0 0,#000 0%,transparent 70%);mask-image:radial-gradient(100% 100% at 0 0,#000 0%,transparent 70%)}
+
+/* Liquid glass */
+.glass{position:relative;background:linear-gradient(180deg,rgba(236,220,182,.07),rgba(236,220,182,.025));
+  -webkit-backdrop-filter:blur(22px) saturate(140%);backdrop-filter:blur(22px) saturate(140%);
+  border-radius:var(--r-xl);box-shadow:0 1px 0 rgba(236,220,182,.10) inset,0 -1px 0 rgba(0,0,0,.5) inset,0 24px 48px -24px rgba(0,0,0,.8)}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:var(--glass-edge);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.glass.lit::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity var(--duration-slow) var(--ease);
+  background:radial-gradient(380px circle at var(--mx,50%) var(--my,0%),rgba(236,220,182,.10),transparent 60%)}
+.glass.lit:hover::after{opacity:1}
+
+/* Tactile buttons */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 26px;border-radius:var(--r-pill);border:0;font:inherit;font-size:16px;cursor:pointer;text-decoration:none;white-space:nowrap;
+  transition:transform var(--duration-press) var(--ease),box-shadow var(--duration-press) var(--ease),filter var(--duration-quick) var(--ease)}
+.btn-brass{color:#140E05;background:var(--brush),var(--metal-h);
+  box-shadow:inset 0 1px 0 rgba(255,244,214,.95),inset 0 -2px 3px rgba(40,25,5,.4),0 1px 0 rgba(0,0,0,.6),0 10px 26px -8px rgba(197,163,115,.45)}
+.btn-brass::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,244,214,.55),rgba(255,244,214,0) 45%,rgba(40,25,5,.25));mix-blend-mode:soft-light;pointer-events:none}
+.btn-brass:hover{filter:brightness(1.06)}
+.btn-brass:active{transform:translateY(1px) scale(.98);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 2px 6px rgba(0,0,0,.35),0 0 0 rgba(0,0,0,0),0 4px 12px -6px rgba(236,220,182,.2)}
+.btn-glass{color:var(--ink);background:linear-gradient(180deg,rgba(236,220,182,.10),rgba(236,220,182,.03));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  box-shadow:inset 0 1px 0 rgba(236,220,182,.18),inset 0 0 0 1px rgba(236,220,182,.08),0 8px 20px -10px rgba(0,0,0,.8)}
+.btn-glass:hover{box-shadow:inset 0 1px 0 rgba(236,220,182,.24),inset 0 0 0 1px rgba(236,220,182,.16),0 8px 20px -10px rgba(0,0,0,.8)}
+.btn-glass:active{transform:translateY(1px) scale(.98)}
+.btn-sm{height:42px;padding:0 18px;font-size:15px}
+.btn[disabled]{filter:grayscale(1) brightness(.55);cursor:not-allowed;transform:none}
+
+/* Nav */
+.nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:50;margin-top:12px}
+.nav-inner{display:flex;align-items:center;gap:var(--s5);height:64px;padding:0 10px 0 20px;border-radius:var(--r-pill)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:17px;letter-spacing:-.01em}
+.brand svg{width:20px;height:auto}
+.nav-links{display:flex;gap:var(--s5);margin-left:auto;font-size:15px}
+.nav-links a{text-decoration:none;color:var(--ink-2);transition:color var(--duration-quick) var(--ease)}
+.nav-links a:hover{color:var(--ink)}
+@media (max-width:860px){.nav-links{display:none}.nav-inner .btn{margin-left:auto}}
+
+/* View switch */
+.switch{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:55;display:flex;padding:5px;border-radius:var(--r-pill);gap:4px}
+.switch a{position:relative;z-index:1;text-decoration:none;font-size:14px;white-space:nowrap;padding:9px 16px;border-radius:var(--r-pill);color:var(--ink-2);transition:color var(--duration-fast) var(--ease)}
+.switch a[aria-current="page"]{color:#140E05}
+.switch .pill{position:absolute;top:5px;bottom:5px;left:5px;border-radius:var(--r-pill);background:var(--brush),var(--metal-h);box-shadow:inset 0 1px 0 rgba(255,244,214,.95);transition:transform var(--duration-fast) var(--ease),width var(--duration-fast) var(--ease)}
+
+/* Reveal: visible at rest, animated only below the fold */
+.rv{transition:opacity var(--duration-very-slow) var(--ease),transform var(--duration-very-slow) var(--ease),filter var(--duration-very-slow) var(--ease)}
+.js .rv.pre{opacity:0;transform:translateY(14px);filter:blur(3px)}
+
+/* Hero */
+.hero{padding-block:var(--s9) var(--s8);display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:var(--s7);align-items:center}
+.hero h1{font-size:var(--t-display);line-height:.98;letter-spacing:-.05em}
+.hero-sub{font-size:20px;color:var(--ink-2);max-width:40ch;margin-top:var(--s5)}
+.hero-ctas{display:flex;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s6)}
+.proof{display:flex;gap:var(--s2) var(--s5);flex-wrap:wrap;margin-top:var(--s6);font-size:15px;color:var(--ink-2)}
+.proof>span{display:inline-flex;align-items:center;gap:8px}
+.proof>span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--b-bright);box-shadow:0 0 8px rgba(236,220,182,.6)}
+@media (max-width:980px){.hero{grid-template-columns:1fr;padding-block:var(--s8) var(--s7)}}
+
+/* Dial */
+.dial{padding:var(--s6) 0 var(--s5);overflow:hidden;transition:box-shadow var(--duration-fast) var(--ease)}
+.dial:hover,.dial:focus-within{box-shadow:0 1px 0 rgba(236,220,182,.16) inset,0 -1px 0 rgba(0,0,0,.5) inset,0 0 0 6px rgba(236,220,182,.025),0 30px 60px -24px rgba(0,0,0,.9)}
+.dial-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s4);padding-inline:var(--s6);flex-wrap:wrap}
+.dial-q{font-size:20px;letter-spacing:-.015em;max-width:20ch}
+.readout{display:flex;align-items:baseline;gap:10px}
+.digits{display:inline-flex;font-size:clamp(64px,7vw,104px);line-height:1;letter-spacing:-.04em;height:1em;overflow:hidden}
+.digit{display:block;height:1em;overflow:hidden;width:.6em;text-align:center}
+.digit .strip{display:flex;flex-direction:column;transition:transform var(--duration-press) var(--ease),filter var(--duration-press) var(--ease)}
+.digit .strip span{height:1em;display:block;background:var(--metal);-webkit-background-clip:text;background-clip:text;color:transparent}
+.digit.moving .strip{filter:blur(2px)}
+.digit.hidden{width:0}
+.unit{font-size:18px;color:var(--ink-2)}
+.track{position:relative;height:112px;margin-top:var(--s4);cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent)}
+.track:active{cursor:grabbing}
+.ruler{position:absolute;left:0;top:0;height:100%;will-change:transform}
+.tick{position:absolute;bottom:38px;width:1px;background:#3A332A;height:14px;transform:translateX(-.5px)}
+.tick.major{height:36px;background:#725934}
+.tick-label{position:absolute;bottom:8px;font-size:14px;color:var(--ink-3);transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.needle{position:absolute;left:50%;top:6px;bottom:32px;width:4px;margin-left:-2px;border-radius:2px;background:linear-gradient(90deg,#725934,#F3E2B8 45%,#AA885A);box-shadow:0 0 14px rgba(217,188,134,.55);pointer-events:none}
+.needle::after{content:"";position:absolute;left:50%;top:-7px;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF6DE,#D9BC86 40%,#725934);box-shadow:0 0 12px rgba(236,220,182,.5)}
+.dial-foot{display:flex;justify-content:space-between;align-items:center;gap:var(--s4);padding:var(--s3) var(--s6) 0;flex-wrap:wrap}
+.verdict{font-size:16px;max-width:46ch;min-height:2lh;color:var(--ink)}
+.verdict-text{display:inline-block;transition:opacity var(--duration-quick) ease-in-out,filter var(--duration-quick) ease-in-out,transform var(--duration-quick) ease-in-out}
+.verdict-text.out{opacity:0;filter:blur(2px);transform:translateY(-4px)}
+.sound{display:inline-flex;align-items:center;gap:8px;background:none;border:0;color:var(--ink-2);font:inherit;font-size:14px;cursor:pointer;padding:8px 0}
+.sound:hover,.sound[aria-pressed="true"]{color:var(--ink)}
+
+/* Sections */
+section.block{padding-block:var(--s10) 0}
+.head{display:grid;gap:var(--s4);max-width:760px;margin-bottom:var(--s8)}
+.head p{color:var(--ink-2);font-size:19px;max-width:52ch}
+.center{margin-inline:auto;text-align:center;justify-items:center}
+
+/* Partners */
+.partners{padding-block:var(--s8) 0}
+.partners-row{display:grid;grid-template-columns:auto repeat(5,minmax(0,1fr));gap:var(--s3);align-items:center}
+.partners-row>p{font-size:15px;color:var(--ink-2);padding-right:var(--s4);max-width:16ch}
+.logo-slot{height:72px;border-radius:var(--r-lg);display:grid;place-items:center;font-size:13px;color:var(--ink-3)}
+@media (max-width:900px){.partners-row{grid-template-columns:repeat(2,minmax(0,1fr))}.partners-row>p{grid-column:1/-1}}
+
+/* Bento */
+.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--s3)}
+.tile{padding:var(--s6);display:grid;gap:var(--s3);align-content:start;min-height:260px;overflow:hidden}
+.tile h3{margin-top:auto}
+.tile p{color:var(--ink-2);font-size:16px;max-width:44ch}
+.tile .incl{font-size:14px;color:var(--ink-3)}
+.t-a{grid-column:span 4}.t-b{grid-column:span 2}.t-c{grid-column:span 2}.t-d{grid-column:span 4}
+.tile-ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#140E05;background:var(--brush),var(--metal);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 18px -8px rgba(236,220,182,.3)}
+.tile-ic .ic{stroke-width:1.75}
+.big-figure{font-size:clamp(64px,8vw,120px);line-height:.9;letter-spacing:-.05em}
+@media (max-width:900px){.bento{grid-template-columns:1fr}.t-a,.t-b,.t-c,.t-d{grid-column:auto}.tile{min-height:0}}
+
+/* Steps */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3);counter-reset:s}
+.steps li{counter-increment:s;padding:var(--s6);display:grid;gap:var(--s3);align-content:start}
+.steps li::before{content:counter(s);font-size:64px;line-height:1;letter-spacing:-.05em;background:var(--metal);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+.steps p{color:var(--ink-2);font-size:16px}
+@media (max-width:900px){.steps{grid-template-columns:1fr}}
+
+/* Pricing */
+.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3);align-items:stretch}
+.plan{padding:var(--s6);display:grid;gap:var(--s4);align-content:start}
+.plan .price{font-size:clamp(28px,2.6vw,38px);letter-spacing:-.035em;line-height:1.05}
+.plan ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:16px;color:var(--ink-2)}
+.plan li{display:flex;gap:10px}
+.plan li .ic{width:20px;height:20px;color:var(--b-light);margin-top:2px}
+.plan .btn{margin-top:var(--s3);width:100%}
+.plan.feature{transform:translateY(-12px);background:linear-gradient(180deg,rgba(236,220,182,.12),rgba(236,220,182,.03))}
+.plan.feature::before{background:linear-gradient(180deg,rgba(236,220,182,.7),rgba(236,220,182,.1) 50%,rgba(236,220,182,.3))}
+.plan-tag{justify-self:start;font-size:13px;color:#140E05;background:var(--brush),var(--metal-h);border-radius:var(--r-pill);padding:4px 12px}
+.plan-note{font-size:14px;color:var(--ink-3);margin-top:var(--s5);text-align:center}
+@media (max-width:900px){.plans{grid-template-columns:1fr}.plan.feature{transform:none}}
+
+/* Quotes */
+.quotes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3)}
+.quote{padding:var(--s6);display:grid;gap:var(--s5);align-content:space-between;min-height:240px}
+.quote p{font-size:19px;letter-spacing:-.01em;color:var(--ink-3)}
+.who{display:flex;align-items:center;gap:12px;font-size:15px;color:var(--ink-3)}
+.who i{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a342b,#161616)}
+@media (max-width:900px){.quotes{grid-template-columns:1fr}.quote{min-height:0}}
+
+/* FAQ */
+.faq{max-width:860px;margin-inline:auto;display:grid;gap:var(--s2)}
+.acc{border-radius:var(--r-lg)}
+.acc-btn{width:100%;display:flex;justify-content:space-between;align-items:center;gap:var(--s4);background:none;border:0;color:var(--ink);font:inherit;font-size:18px;text-align:left;padding:var(--s5);cursor:pointer;border-radius:inherit}
+.acc-btn .ic{transition:transform var(--duration-fast) var(--ease);color:var(--ink-2)}
+.acc-btn[aria-expanded="true"] .ic{transform:rotate(45deg)}
+.acc-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--duration-slow) var(--ease)}
+.acc-panel>div{overflow:hidden}
+.acc-panel p{color:var(--ink-2);font-size:16px;padding:0 var(--s5) var(--s5);max-width:66ch}
+.acc.open .acc-panel{grid-template-rows:1fr}
+
+/* CTA */
+.cta{position:relative;overflow:hidden;padding:var(--s9) var(--s6);text-align:center;display:grid;justify-items:center;gap:var(--s5);border-radius:36px}
+.cta h2{max-width:16ch}
+.cta p{color:var(--ink-2);max-width:48ch}
+.cta .beam{position:absolute;inset:-40% 20% auto;height:120%;background:radial-gradient(50% 50% at 50% 0%,rgba(236,220,182,.22),transparent 70%);pointer-events:none;z-index:-1}
+.copy-line{display:flex;align-items:center;gap:var(--s3);font-size:16px;color:var(--ink-2)}
+.copy-btn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;color:var(--ink)}
+.swap{position:relative;width:20px;height:20px}
+.swap svg{position:absolute;inset:0;width:20px;height:20px;transition:opacity var(--duration-fast) ease-in-out,transform var(--duration-fast) var(--ease),filter var(--duration-fast) ease-in-out}
+.swap .b{opacity:0;transform:scale(.6);filter:blur(2px)}
+.done .swap .a{opacity:0;transform:scale(.6);filter:blur(2px)}
+.done .swap .b{opacity:1;transform:none;filter:none}
+
+/* Footer */
+footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
+.foot{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,.8fr)) minmax(0,1.4fr);gap:var(--s7)}
+.foot h4{margin:0 0 var(--s3);font-weight:400;font-size:15px;color:var(--ink-3)}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:15px}
+.foot ul a{text-decoration:none;color:var(--ink-2)}
+.foot ul a:hover{color:var(--ink)}
+.news{display:flex;gap:8px;margin-top:var(--s3)}
+.news input{flex:1;min-width:0;height:48px;border-radius:var(--r-pill);border:0;padding:0 18px;font:inherit;font-size:15px;color:var(--ink);background:rgba(236,220,182,.05);box-shadow:inset 0 1px 2px rgba(0,0,0,.6),inset 0 0 0 1px rgba(236,220,182,.08)}
+.news input::placeholder{color:var(--ink-3)}
+.news input:focus{outline:none;box-shadow:inset 0 1px 2px rgba(0,0,0,.6),inset 0 0 0 1px rgba(236,220,182,.35)}
+.news-msg{font-size:14px;color:var(--ink-3);margin-top:8px;min-height:1.5em}
+.foot-name{font-size:clamp(56px,12vw,200px);line-height:.85;letter-spacing:-.06em;margin-top:var(--s9);background:linear-gradient(180deg,#2C2C2C,#0A0A0A 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.foot-meta{display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;font-size:14px;color:var(--ink-3);margin-top:var(--s5)}
+@media (max-width:900px){.foot{grid-template-columns:1fr 1fr}.foot>div:first-child,.foot>div:last-child{grid-column:1/-1}}
+
+/* System view */
+.sys{padding-block:var(--s8) var(--s10)}
+.sys-block{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:var(--s7);padding-block:var(--s8)}
+.sys-block>div:first-child p{color:var(--ink-2);font-size:15px;margin-top:var(--s3);max-width:32ch}
+@media (max-width:900px){.sys-block{grid-template-columns:1fr;gap:var(--s5)}}
+.ramp{height:180px;border-radius:var(--r-xl);background:linear-gradient(90deg,#050505,#0A0A0A,#111111,#161616,#1D1C1C,#232323,#2C2C2C);box-shadow:inset 0 1px 0 rgba(236,220,182,.08)}
+.ramp-keys{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));font-size:13px;color:var(--ink-3);margin-top:var(--s3);font-variant-numeric:tabular-nums}
+.bar{height:120px;border-radius:var(--r-pill);background:var(--brush),var(--metal-h);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 4px rgba(0,0,0,.3),0 20px 40px -20px rgba(236,220,182,.25)}
+.bar.v{background:var(--brush),var(--metal);margin-top:var(--s4)}
+.chips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--s3);margin-top:var(--s5)}
+.chip{display:grid;gap:6px;font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.chip i{display:block;height:36px;border-radius:var(--r-pill);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+@media (max-width:640px){.chips{grid-template-columns:repeat(3,minmax(0,1fr))}.ramp-keys{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.rules{list-style:none;margin:0;padding:0;display:grid;gap:var(--s3)}
+.rules li{display:flex;gap:var(--s3);color:var(--ink-2);font-size:16px}
+.rules li .ic{color:var(--b-light);width:20px;height:20px;margin-top:3px}
+.demo-row{display:flex;gap:var(--s3);flex-wrap:wrap;align-items:center}
+.glass-demo{position:relative;height:260px;border-radius:var(--r-xl);overflow:hidden;background:#0A0A0A}
+.glass-demo .orb{position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#F3E2B8,#917248 45%,#1D1C1C 75%);animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate(10%,10%)}to{transform:translate(160%,-20%)}}
+.glass-demo .glass{position:absolute;inset:40px 12%;display:grid;place-items:center;font-size:18px}
+.type-spec{font-size:clamp(56px,11vw,168px);line-height:.9;letter-spacing:-.055em}
+.scale{display:grid;gap:var(--s4);margin-top:var(--s6)}
+.scale div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:var(--s4);align-items:baseline}
+.scale small{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+@media (max-width:600px){.scale div{grid-template-columns:1fr;gap:2px}}
+.motion-list{display:grid;font-size:16px}
+.motion-list div{display:grid;grid-template-columns:minmax(0,1fr) 80px minmax(0,1.6fr);gap:var(--s4);padding-block:var(--s3);box-shadow:0 1px 0 rgba(236,220,182,.06)}
+.motion-list span{color:var(--ink-2)}
+@media (max-width:640px){.motion-list div{grid-template-columns:minmax(0,1fr) 70px}.motion-list div span:last-child{grid-column:1/-1}}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);opacity:0;filter:blur(2px);color:#140E05;background:var(--brush),var(--metal-h);padding:12px 20px;border-radius:var(--r-pill);font-size:15px;z-index:70;pointer-events:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 12px 30px -8px rgba(0,0,0,.8);transition:opacity var(--duration-slow) var(--ease),transform var(--duration-slow) var(--ease),filter var(--duration-slow) var(--ease)}
+.toast.show{opacity:1;transform:translate(-50%,0);filter:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:1ms!important;animation:none!important;scroll-behavior:auto!important}
+  .js .rv.pre{opacity:1;transform:none;filter:none}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="silv" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F3E2B8"/><stop offset=".35" stop-color="#D9BC86"/><stop offset=".58" stop-color="#917248"/><stop offset=".8" stop-color="#C5A373"/><stop offset="1" stop-color="#E6CC98"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="field">
+  <div class="halftone" aria-hidden="true"></div>
+  <div class="spot" style="width:520px;height:520px;top:-180px;right:6%;background:rgba(236,220,182,.07)" aria-hidden="true"></div>
+
+  <header class="nav frame">
+    <div class="nav-inner glass">
+      <a class="brand" href="#draft" aria-label="Beck To Nature, back to top"><svg xmlns="http://www.w3.org/2000/svg" viewBox="240.91 82.59 325.12 391.97" aria-hidden="true"><path d="M513.19 174.31 C511.40 174.13 509.64 174.14 507.93 174.30 C506.21 174.47 504.53 174.82 502.88 175.30 C501.23 175.78 499.61 176.43 498.01 177.19 C496.41 177.95 494.84 178.86 493.28 179.85 C491.73 180.85 490.19 181.97 488.66 183.17 C487.13 184.36 485.62 185.67 484.11 187.02 C482.60 188.38 481.10 189.82 479.59 191.29 C478.09 192.77 476.59 194.31 475.08 195.87 C473.57 197.43 472.05 199.03 470.52 200.63 C469.00 202.23 467.46 203.86 465.90 205.46 C464.34 207.06 462.77 208.67 461.17 210.24 C459.57 211.80 457.95 213.36 456.29 214.85 C454.64 216.34 452.96 217.80 451.24 219.18 C449.52 220.56 447.77 221.87 445.98 223.11 C444.19 224.34 442.36 225.50 440.51 226.58 C438.65 227.67 436.77 228.67 434.86 229.59 C432.96 230.52 431.03 231.37 429.09 232.13 C427.15 232.90 425.18 233.58 423.22 234.19 C421.25 234.79 419.27 235.31 417.29 235.75 C415.31 236.19 413.32 236.55 411.34 236.82 C409.36 237.09 407.37 237.28 405.40 237.38 C403.43 237.48 401.47 237.50 399.52 237.43 C397.57 237.36 395.64 237.20 393.73 236.95 C391.82 236.71 389.92 236.37 388.06 235.95 C386.20 235.52 384.37 235.00 382.57 234.40 C380.76 233.80 379.00 233.09 377.26 232.32 C375.51 231.55 373.80 230.68 372.11 229.76 C370.42 228.83 368.76 227.83 367.11 226.77 C365.46 225.71 363.84 224.58 362.22 223.41 C360.61 222.24 359.01 221.01 357.42 219.75 C355.82 218.48 354.24 217.17 352.67 215.83 C351.09 214.49 349.52 213.11 347.94 211.71 C346.37 210.32 344.80 208.89 343.22 207.47 C341.64 206.04 340.06 204.58 338.47 203.14 C336.88 201.69 335.28 200.23 333.67 198.79 C332.05 197.34 330.43 195.90 328.78 194.47 C327.13 193.05 325.47 191.64 323.78 190.26 C322.09 188.88 320.38 187.51 318.64 186.19 C316.90 184.87 315.12 183.56 313.34 182.35 C311.56 181.14 309.75 179.96 307.95 178.93 C306.15 177.90 304.34 176.93 302.55 176.15 C300.77 175.37 298.99 174.70 297.25 174.26 C295.51 173.81 293.78 173.51 292.12 173.47 C290.45 173.43 288.82 173.58 287.26 174.02 C285.70 174.45 284.18 175.17 282.76 176.07 C281.34 176.97 279.99 178.14 278.75 179.42 C277.52 180.71 276.36 182.20 275.35 183.76 C274.34 185.32 273.44 187.05 272.70 188.78 C271.95 190.51 271.34 192.35 270.91 194.15 C270.47 195.95 270.20 197.79 270.11 199.57 C270.02 201.35 270.12 203.10 270.37 204.82 C270.62 206.54 271.04 208.22 271.59 209.89 C272.14 211.56 272.85 213.20 273.66 214.82 C274.47 216.45 275.42 218.05 276.45 219.64 C277.48 221.23 278.63 222.80 279.85 224.37 C281.06 225.94 282.38 227.50 283.74 229.06 C285.10 230.61 286.54 232.16 288.00 233.72 C289.46 235.28 290.99 236.83 292.51 238.39 C294.04 239.96 295.61 241.53 297.16 243.11 C298.72 244.69 300.29 246.29 301.83 247.90 C303.37 249.51 304.92 251.14 306.40 252.79 C307.89 254.45 309.36 256.12 310.75 257.82 C312.15 259.52 313.51 261.25 314.77 263.01 C316.04 264.78 317.23 266.57 318.34 268.40 C319.46 270.22 320.49 272.08 321.44 273.95 C322.40 275.83 323.27 277.74 324.06 279.65 C324.86 281.57 325.57 283.52 326.21 285.46 C326.84 287.41 327.40 289.38 327.87 291.35 C328.35 293.32 328.74 295.30 329.06 297.28 C329.38 299.26 329.61 301.24 329.77 303.22 C329.92 305.20 329.99 307.17 329.99 309.14 C329.98 311.10 329.90 313.06 329.73 315.00 C329.56 316.94 329.31 318.87 328.99 320.77 C328.66 322.68 328.25 324.57 327.76 326.43 C327.27 328.29 326.69 330.12 326.04 331.93 C325.40 333.73 324.66 335.51 323.87 337.26 C323.07 339.02 322.19 340.75 321.27 342.46 C320.34 344.17 319.34 345.86 318.30 347.54 C317.26 349.22 316.16 350.88 315.02 352.53 C313.88 354.18 312.69 355.81 311.47 357.45 C310.25 359.08 308.99 360.70 307.71 362.32 C306.42 363.95 305.10 365.56 303.77 367.18 C302.44 368.80 301.09 370.42 299.72 372.04 C298.36 373.67 296.98 375.30 295.61 376.94 C294.24 378.58 292.85 380.22 291.48 381.89 C290.11 383.55 288.73 385.22 287.38 386.91 C286.03 388.61 284.68 390.31 283.37 392.05 C282.06 393.78 280.75 395.53 279.49 397.31 C278.24 399.08 276.99 400.88 275.85 402.69 C274.71 404.50 273.60 406.33 272.65 408.14 C271.69 409.96 270.81 411.79 270.11 413.59 C269.42 415.40 268.83 417.20 268.47 418.97 C268.11 420.74 267.90 422.50 267.94 424.21 C267.99 425.92 268.26 427.61 268.76 429.23 C269.26 430.86 270.03 432.46 270.95 433.95 C271.87 435.45 273.02 436.89 274.27 438.21 C275.51 439.52 276.95 440.76 278.43 441.84 C279.92 442.93 281.54 443.91 283.16 444.71 C284.79 445.51 286.51 446.18 288.18 446.64 C289.85 447.10 291.55 447.39 293.20 447.49 C294.85 447.59 296.48 447.48 298.09 447.22 C299.70 446.97 301.28 446.53 302.86 445.96 C304.43 445.39 305.99 444.65 307.53 443.81 C309.08 442.97 310.61 441.98 312.14 440.91 C313.67 439.83 315.19 438.64 316.71 437.37 C318.23 436.11 319.74 434.73 321.26 433.32 C322.77 431.90 324.29 430.40 325.81 428.88 C327.34 427.35 328.87 425.76 330.41 424.17 C331.95 422.57 333.50 420.93 335.06 419.31 C336.63 417.69 338.21 416.04 339.80 414.43 C341.40 412.81 343.02 411.20 344.66 409.64 C346.30 408.08 347.96 406.54 349.65 405.07 C351.34 403.61 353.06 402.18 354.81 400.85 C356.56 399.51 358.34 398.25 360.15 397.07 C361.95 395.90 363.79 394.80 365.65 393.78 C367.51 392.76 369.40 391.83 371.29 390.97 C373.19 390.11 375.11 389.34 377.04 388.64 C378.97 387.95 380.91 387.34 382.86 386.80 C384.81 386.27 386.77 385.82 388.73 385.45 C390.68 385.08 392.65 384.79 394.60 384.58 C396.56 384.37 398.51 384.24 400.46 384.20 C402.40 384.15 404.34 384.19 406.26 384.31 C408.19 384.42 410.10 384.62 411.99 384.90 C413.88 385.18 415.76 385.55 417.60 385.99 C419.45 386.44 421.28 386.97 423.08 387.57 C424.88 388.17 426.65 388.87 428.40 389.62 C430.15 390.37 431.88 391.20 433.60 392.09 C435.31 392.98 437.00 393.94 438.68 394.94 C440.37 395.95 442.03 397.02 443.69 398.13 C445.34 399.24 446.98 400.40 448.62 401.60 C450.26 402.80 451.89 404.04 453.52 405.31 C455.14 406.58 456.76 407.89 458.39 409.22 C460.01 410.54 461.63 411.90 463.25 413.27 C464.88 414.64 466.51 416.03 468.14 417.43 C469.78 418.82 471.42 420.23 473.07 421.64 C474.72 423.05 476.38 424.46 478.06 425.86 C479.73 427.27 481.42 428.67 483.13 430.05 C484.84 431.43 486.56 432.82 488.30 434.16 C490.04 435.49 491.81 436.83 493.57 438.07 C495.33 439.30 497.11 440.50 498.88 441.56 C500.64 442.62 502.41 443.60 504.16 444.40 C505.90 445.21 507.64 445.90 509.35 446.37 C511.06 446.85 512.75 447.17 514.40 447.24 C516.05 447.30 517.67 447.16 519.24 446.76 C520.80 446.36 522.34 445.68 523.79 444.83 C525.23 443.99 526.64 442.89 527.92 441.68 C529.21 440.47 530.43 439.06 531.50 437.58 C532.58 436.10 533.57 434.46 534.40 432.81 C535.22 431.16 535.94 429.39 536.46 427.66 C536.99 425.92 537.38 424.14 537.57 422.40 C537.76 420.67 537.76 418.96 537.62 417.27 C537.47 415.59 537.14 413.93 536.69 412.28 C536.24 410.64 535.62 409.02 534.90 407.41 C534.18 405.80 533.31 404.21 532.36 402.62 C531.41 401.04 530.33 399.46 529.18 397.89 C528.04 396.32 526.79 394.76 525.49 393.20 C524.18 391.64 522.80 390.08 521.38 388.51 C519.96 386.95 518.47 385.38 516.98 383.80 C515.48 382.23 513.93 380.65 512.40 379.05 C510.86 377.45 509.29 375.84 507.75 374.22 C506.21 372.59 504.65 370.95 503.15 369.28 C501.64 367.62 500.14 365.93 498.71 364.22 C497.27 362.51 495.87 360.77 494.54 359.00 C493.22 357.23 491.95 355.43 490.76 353.60 C489.58 351.77 488.46 349.91 487.43 348.02 C486.39 346.14 485.42 344.23 484.54 342.30 C483.65 340.38 482.84 338.43 482.10 336.47 C481.37 334.51 480.71 332.53 480.12 330.56 C479.54 328.58 479.04 326.58 478.61 324.59 C478.19 322.60 477.84 320.61 477.57 318.62 C477.30 316.63 477.11 314.64 477.00 312.66 C476.89 310.68 476.86 308.71 476.92 306.75 C476.97 304.80 477.10 302.85 477.32 300.93 C477.53 299.00 477.83 297.09 478.21 295.21 C478.59 293.34 479.06 291.48 479.60 289.65 C480.15 287.82 480.78 286.03 481.48 284.25 C482.18 282.47 482.96 280.72 483.80 278.99 C484.64 277.26 485.55 275.55 486.52 273.85 C487.48 272.15 488.51 270.48 489.58 268.81 C490.66 267.14 491.79 265.49 492.95 263.84 C494.12 262.19 495.34 260.56 496.58 258.92 C497.82 257.29 499.11 255.67 500.42 254.04 C501.72 252.41 503.07 250.79 504.42 249.16 C505.77 247.53 507.15 245.90 508.54 244.27 C509.92 242.63 511.33 240.99 512.73 239.34 C514.13 237.68 515.54 236.02 516.95 234.34 C518.35 232.67 519.75 230.98 521.14 229.27 C522.53 227.56 523.92 225.84 525.27 224.09 C526.62 222.34 527.98 220.57 529.25 218.80 C530.51 217.02 531.76 215.23 532.86 213.44 C533.97 211.66 535.01 209.87 535.86 208.10 C536.71 206.33 537.46 204.56 537.97 202.83 C538.49 201.10 538.86 199.38 538.96 197.71 C539.05 196.04 538.95 194.39 538.55 192.80 C538.16 191.22 537.47 189.66 536.60 188.19 C535.72 186.73 534.58 185.31 533.31 184.01 C532.05 182.71 530.56 181.48 529.01 180.39 C527.46 179.30 525.74 178.30 524.01 177.47 C522.28 176.64 520.44 175.92 518.63 175.40 C516.83 174.87 514.97 174.49 513.19 174.31 Z" fill="url(#silv)"/><circle cx="401.98" cy="155.13" r="45.51" fill="url(#silv)"/></svg><span>Beck To Nature</span></a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#draft" data-jump="services">Services</a>
+        <a href="#draft" data-jump="how">How it works</a>
+        <a href="#draft" data-jump="pricing">Pricing</a>
+        <a href="#draft" data-jump="faq">FAQ</a>
+      </nav>
+      <a class="btn btn-brass btn-sm" href="#draft" data-jump="contact">Book a free call</a>
+    </div>
+  </header>
+
+  <!-- DRAFT WEBSITE -->
+  <main class="view" id="view-draft">
+    <section class="hero frame" aria-labelledby="h1">
+      <div>
+        <h1 id="h1" class="rv"><span class="metal-text">Take your products</span> to America.</h1>
+        <p class="hero-sub rv">We did it ourselves first. Now we take Central European manufacturers to the right US trade show and their first American orders.</p>
+        <div class="hero-ctas rv">
+          <a class="btn btn-brass" href="#draft" data-jump="contact">Book a free call</a>
+          <a class="btn btn-glass" href="#draft" data-jump="check">Check your US readiness</a>
+        </div>
+        <div class="proof rv"><span>Family-owned, Hungarian–American</span><span>Budapest and <span class="ph">[Wisconsin]</span></span><span>Member of <span class="ph">[AmCham Hungary]</span></span></div>
+      </div>
+      <div class="dial glass lit rv" id="check">
+        <div class="dial-head">
+          <h2 class="dial-q" id="dial-q">When do you want to stand at your first US show?</h2>
+          <div class="readout" aria-hidden="true"><span class="digits" id="digits"></span><span class="unit" id="unit">months</span></div>
+        </div>
+        <div class="track" id="track" role="slider" tabindex="0" aria-labelledby="dial-q" aria-valuemin="3" aria-valuemax="24" aria-valuenow="9" aria-valuetext="9 months">
+          <div class="ruler" id="ruler"></div>
+          <div class="needle"></div>
+        </div>
+        <div class="dial-foot">
+          <p class="verdict" aria-live="polite"><span class="verdict-text" id="verdict"></span></p>
+          <button class="sound" id="sound" type="button" aria-pressed="false">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="wave" d="M16.5 8.5a5 5 0 0 1 0 7" opacity=".35"/></svg>
+            <span id="sound-label">Sound off</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="partners frame" aria-labelledby="pt-h">
+      <div class="partners-row rv">
+        <p id="pt-h">Trusted by manufacturers from Hungary and beyond</p>
+        <div class="logo-slot glass">[Client logo]</div><div class="logo-slot glass">[Client logo]</div><div class="logo-slot glass">[Partner logo]</div><div class="logo-slot glass">[Partner logo]</div><div class="logo-slot glass">[Association logo]</div>
+      </div>
+    </section>
+
+    <section class="block frame" id="services" aria-labelledby="sv-h">
+      <div class="head rv"><h2 id="sv-h">Everything you need to sell in the US</h2><p>From choosing the right trade show to your first American order, with one family as your point of contact.</p></div>
+      <div class="bento">
+        <article class="tile glass lit t-a rv">
+          <span class="tile-ic" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="11" rx="1.5"/><path d="M12 15v3M8.5 21l3.5-3 3.5 3"/></svg></span>
+          <h3>Stand where your buyers already are</h3>
+          <p>We choose the US show your buyers actually attend, and handle booth space, design, shipping and on-site logistics.</p>
+          <p class="incl">Show selection · booth partners · freight and customs</p>
+        </article>
+        <article class="tile glass lit t-b rv">
+          <span class="big-figure metal-text num" aria-hidden="true">1</span>
+          <h3>One show at a time</h3>
+          <p>Test the US market before you commit to a full launch.</p>
+        </article>
+        <article class="tile glass lit t-c rv">
+          <span class="tile-ic" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.5-3 2.7-4.8 5.5-4.8s5 1.8 5.5 4.8"/><circle cx="16.5" cy="9.5" r="2.3"/><path d="M15.5 14.4c2.6-.2 4.6 1.4 5 4.1"/></svg></span>
+          <h3>Meetings booked before you fly</h3>
+          <p>We invite distributors and buyers in advance and join every meeting with you.</p>
+        </article>
+        <article class="tile glass lit t-d rv">
+          <span class="tile-ic" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20h16M7 16.5v-4M12 16.5V7M17 16.5v-7"/></svg></span>
+          <h3>Leads that turn into orders</h3>
+          <p>Most deals close in the weeks after a show. We follow up every lead and represent you in US business hours, with a monthly report.</p>
+          <p class="incl">Lead follow-up · US-hours calls · regulatory and company-setup partners</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="block frame" id="how" aria-labelledby="hw-h">
+      <div class="head center rv"><h2 id="hw-h">How it works</h2><p>Three steps from first call to first American order.</p></div>
+      <ol class="steps">
+        <li class="glass lit rv"><h3>Assess and choose</h3><p>We review your product and certifications, tell you honestly whether the US makes sense now, and pick the one show where your buyers are.</p></li>
+        <li class="glass lit rv"><h3>Prepare and exhibit</h3><p>Booth, freight, US-ready materials and a calendar of meetings. We are at the booth and in every meeting with you.</p></li>
+        <li class="glass lit rv"><h3>Follow up into orders</h3><p>We turn conversations into distributors and first orders, and report to you every month.</p></li>
+      </ol>
+    </section>
+
+    <section class="block frame" id="pricing" aria-labelledby="pr-h">
+      <div class="head center rv"><h2 id="pr-h">Pricing</h2><p>A fixed fee per show, an optional monthly retainer for follow-up, and where it makes sense, a success fee on deals from our leads.</p></div>
+      <div class="plans">
+        <article class="plan glass lit rv">
+          <h3>Readiness review</h3>
+          <p class="price num"><span class="ph">[€ …]</span></p>
+          <ul>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Product and certification review</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Honest go or not-yet</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Shortlist of US shows</li>
+          </ul>
+          <a class="btn btn-glass" href="#draft" data-jump="contact">Book a free call</a>
+        </article>
+        <article class="plan feature glass lit rv">
+          <span class="plan-tag">Most chosen</span>
+          <h3>Show package</h3>
+          <p class="price num metal-text">€25,000 – €45,000</p>
+          <ul>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Show selection and booth</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Freight and logistics</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Pre-booked buyer meetings</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>We join you at the booth</li>
+          </ul>
+          <a class="btn btn-brass" href="#draft" data-jump="contact">Book a free call</a>
+        </article>
+        <article class="plan glass lit rv">
+          <h3>Follow-up retainer</h3>
+          <p class="price num">€5,000 – €10,000<span class="muted" style="font-size:.45em;letter-spacing:0"> / month</span></p>
+          <ul>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Every lead followed up</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>US business-hours representation</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Monthly report</li>
+          </ul>
+          <a class="btn btn-glass" href="#draft" data-jump="contact">Book a free call</a>
+        </article>
+      </div>
+      <p class="plan-note">Indicative ranges from the readiness check. Our fees only, not booth space, freight or travel. You get a written quote after a call.</p>
+    </section>
+
+    <section class="block frame" aria-labelledby="q-h">
+      <div class="head center rv"><h2 id="q-h">What our clients say</h2><p>Real quotes go here once clients agree to be named.</p></div>
+      <div class="quotes">
+        <figure class="quote glass rv" style="margin:0"><p>“[Quote from a client, in their words, about their first US show.]”</p><figcaption class="who"><i></i><span>[Name], [Company]</span></figcaption></figure>
+        <figure class="quote glass rv" style="margin:0"><p>“[Quote about the buyer meetings or follow-up.]”</p><figcaption class="who"><i></i><span>[Name], [Company]</span></figcaption></figure>
+        <figure class="quote glass rv" style="margin:0"><p>“[Quote about working with the family directly.]”</p><figcaption class="who"><i></i><span>[Name], [Company]</span></figcaption></figure>
+      </div>
+    </section>
+
+    <section class="block frame" id="faq" aria-labelledby="fq-h">
+      <div class="head center rv"><h2 id="fq-h">Questions, answered</h2></div>
+      <div class="faq">
+        <div class="acc glass rv"><button class="acc-btn" type="button" aria-expanded="false" aria-controls="f1">Do you handle FDA approval?<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><div class="acc-panel" id="f1"><div><p>We don't file regulatory submissions ourselves. We work with specialist US regulatory consultants and plan your trade-show presence around where you are in the process. Many companies exhibit before clearance, with clear labelling that the product is not yet for sale in the US.</p></div></div></div>
+        <div class="acc glass rv"><button class="acc-btn" type="button" aria-expanded="false" aria-controls="f2">Which trade shows do you work with?<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><div class="acc-panel" id="f2"><div><p>The one where your buyers are. For radiology and imaging that is usually RSNA in Chicago. For other industries we pick from the major US shows in your sector, based on who attends.</p></div></div></div>
+        <div class="acc glass rv"><button class="acc-btn" type="button" aria-expanded="false" aria-controls="f3">How is pricing structured?<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><div class="acc-panel" id="f3"><div><p>A fixed fee for each trade show, an optional monthly retainer for follow-up, and, where it makes sense, a success fee on deals from our leads. You get a written quote after the first call.</p></div></div></div>
+        <div class="acc glass rv"><button class="acc-btn" type="button" aria-expanded="false" aria-controls="f4">Do we need a US company before the first show?<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><div class="acc-panel" id="f4"><div><p>Usually not. Most companies exhibit first and set up a US entity once there is real demand. We tell you when it is worth doing.</p></div></div></div>
+      </div>
+    </section>
+
+    <section class="block frame" id="contact" aria-labelledby="ct-h">
+      <div class="cta glass rv">
+        <div class="beam" aria-hidden="true"></div>
+        <h2 id="ct-h"><span class="metal-text">Let's talk about</span> your US plans</h2>
+        <p>A free 30-minute call. You get an honest view on whether the US is the right next step, and which show to start with.</p>
+        <a class="btn btn-brass" href="#draft" data-jump="contact">Book a free call</a>
+        <div class="copy-line" id="copy-line"><span id="email">hello@becktonature.com</span>
+          <button class="copy-btn btn-glass" type="button" id="copy" aria-label="Copy email address"><span class="swap" aria-hidden="true">
+            <svg class="ic a" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+            <svg class="ic b" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="frame">
+      <div class="foot">
+        <div>
+          <a class="brand" href="#draft" aria-label="Beck To Nature, back to top"><svg xmlns="http://www.w3.org/2000/svg" viewBox="240.91 82.59 325.12 391.97" aria-hidden="true"><path d="M513.19 174.31 C511.40 174.13 509.64 174.14 507.93 174.30 C506.21 174.47 504.53 174.82 502.88 175.30 C501.23 175.78 499.61 176.43 498.01 177.19 C496.41 177.95 494.84 178.86 493.28 179.85 C491.73 180.85 490.19 181.97 488.66 183.17 C487.13 184.36 485.62 185.67 484.11 187.02 C482.60 188.38 481.10 189.82 479.59 191.29 C478.09 192.77 476.59 194.31 475.08 195.87 C473.57 197.43 472.05 199.03 470.52 200.63 C469.00 202.23 467.46 203.86 465.90 205.46 C464.34 207.06 462.77 208.67 461.17 210.24 C459.57 211.80 457.95 213.36 456.29 214.85 C454.64 216.34 452.96 217.80 451.24 219.18 C449.52 220.56 447.77 221.87 445.98 223.11 C444.19 224.34 442.36 225.50 440.51 226.58 C438.65 227.67 436.77 228.67 434.86 229.59 C432.96 230.52 431.03 231.37 429.09 232.13 C427.15 232.90 425.18 233.58 423.22 234.19 C421.25 234.79 419.27 235.31 417.29 235.75 C415.31 236.19 413.32 236.55 411.34 236.82 C409.36 237.09 407.37 237.28 405.40 237.38 C403.43 237.48 401.47 237.50 399.52 237.43 C397.57 237.36 395.64 237.20 393.73 236.95 C391.82 236.71 389.92 236.37 388.06 235.95 C386.20 235.52 384.37 235.00 382.57 234.40 C380.76 233.80 379.00 233.09 377.26 232.32 C375.51 231.55 373.80 230.68 372.11 229.76 C370.42 228.83 368.76 227.83 367.11 226.77 C365.46 225.71 363.84 224.58 362.22 223.41 C360.61 222.24 359.01 221.01 357.42 219.75 C355.82 218.48 354.24 217.17 352.67 215.83 C351.09 214.49 349.52 213.11 347.94 211.71 C346.37 210.32 344.80 208.89 343.22 207.47 C341.64 206.04 340.06 204.58 338.47 203.14 C336.88 201.69 335.28 200.23 333.67 198.79 C332.05 197.34 330.43 195.90 328.78 194.47 C327.13 193.05 325.47 191.64 323.78 190.26 C322.09 188.88 320.38 187.51 318.64 186.19 C316.90 184.87 315.12 183.56 313.34 182.35 C311.56 181.14 309.75 179.96 307.95 178.93 C306.15 177.90 304.34 176.93 302.55 176.15 C300.77 175.37 298.99 174.70 297.25 174.26 C295.51 173.81 293.78 173.51 292.12 173.47 C290.45 173.43 288.82 173.58 287.26 174.02 C285.70 174.45 284.18 175.17 282.76 176.07 C281.34 176.97 279.99 178.14 278.75 179.42 C277.52 180.71 276.36 182.20 275.35 183.76 C274.34 185.32 273.44 187.05 272.70 188.78 C271.95 190.51 271.34 192.35 270.91 194.15 C270.47 195.95 270.20 197.79 270.11 199.57 C270.02 201.35 270.12 203.10 270.37 204.82 C270.62 206.54 271.04 208.22 271.59 209.89 C272.14 211.56 272.85 213.20 273.66 214.82 C274.47 216.45 275.42 218.05 276.45 219.64 C277.48 221.23 278.63 222.80 279.85 224.37 C281.06 225.94 282.38 227.50 283.74 229.06 C285.10 230.61 286.54 232.16 288.00 233.72 C289.46 235.28 290.99 236.83 292.51 238.39 C294.04 239.96 295.61 241.53 297.16 243.11 C298.72 244.69 300.29 246.29 301.83 247.90 C303.37 249.51 304.92 251.14 306.40 252.79 C307.89 254.45 309.36 256.12 310.75 257.82 C312.15 259.52 313.51 261.25 314.77 263.01 C316.04 264.78 317.23 266.57 318.34 268.40 C319.46 270.22 320.49 272.08 321.44 273.95 C322.40 275.83 323.27 277.74 324.06 279.65 C324.86 281.57 325.57 283.52 326.21 285.46 C326.84 287.41 327.40 289.38 327.87 291.35 C328.35 293.32 328.74 295.30 329.06 297.28 C329.38 299.26 329.61 301.24 329.77 303.22 C329.92 305.20 329.99 307.17 329.99 309.14 C329.98 311.10 329.90 313.06 329.73 315.00 C329.56 316.94 329.31 318.87 328.99 320.77 C328.66 322.68 328.25 324.57 327.76 326.43 C327.27 328.29 326.69 330.12 326.04 331.93 C325.40 333.73 324.66 335.51 323.87 337.26 C323.07 339.02 322.19 340.75 321.27 342.46 C320.34 344.17 319.34 345.86 318.30 347.54 C317.26 349.22 316.16 350.88 315.02 352.53 C313.88 354.18 312.69 355.81 311.47 357.45 C310.25 359.08 308.99 360.70 307.71 362.32 C306.42 363.95 305.10 365.56 303.77 367.18 C302.44 368.80 301.09 370.42 299.72 372.04 C298.36 373.67 296.98 375.30 295.61 376.94 C294.24 378.58 292.85 380.22 291.48 381.89 C290.11 383.55 288.73 385.22 287.38 386.91 C286.03 388.61 284.68 390.31 283.37 392.05 C282.06 393.78 280.75 395.53 279.49 397.31 C278.24 399.08 276.99 400.88 275.85 402.69 C274.71 404.50 273.60 406.33 272.65 408.14 C271.69 409.96 270.81 411.79 270.11 413.59 C269.42 415.40 268.83 417.20 268.47 418.97 C268.11 420.74 267.90 422.50 267.94 424.21 C267.99 425.92 268.26 427.61 268.76 429.23 C269.26 430.86 270.03 432.46 270.95 433.95 C271.87 435.45 273.02 436.89 274.27 438.21 C275.51 439.52 276.95 440.76 278.43 441.84 C279.92 442.93 281.54 443.91 283.16 444.71 C284.79 445.51 286.51 446.18 288.18 446.64 C289.85 447.10 291.55 447.39 293.20 447.49 C294.85 447.59 296.48 447.48 298.09 447.22 C299.70 446.97 301.28 446.53 302.86 445.96 C304.43 445.39 305.99 444.65 307.53 443.81 C309.08 442.97 310.61 441.98 312.14 440.91 C313.67 439.83 315.19 438.64 316.71 437.37 C318.23 436.11 319.74 434.73 321.26 433.32 C322.77 431.90 324.29 430.40 325.81 428.88 C327.34 427.35 328.87 425.76 330.41 424.17 C331.95 422.57 333.50 420.93 335.06 419.31 C336.63 417.69 338.21 416.04 339.80 414.43 C341.40 412.81 343.02 411.20 344.66 409.64 C346.30 408.08 347.96 406.54 349.65 405.07 C351.34 403.61 353.06 402.18 354.81 400.85 C356.56 399.51 358.34 398.25 360.15 397.07 C361.95 395.90 363.79 394.80 365.65 393.78 C367.51 392.76 369.40 391.83 371.29 390.97 C373.19 390.11 375.11 389.34 377.04 388.64 C378.97 387.95 380.91 387.34 382.86 386.80 C384.81 386.27 386.77 385.82 388.73 385.45 C390.68 385.08 392.65 384.79 394.60 384.58 C396.56 384.37 398.51 384.24 400.46 384.20 C402.40 384.15 404.34 384.19 406.26 384.31 C408.19 384.42 410.10 384.62 411.99 384.90 C413.88 385.18 415.76 385.55 417.60 385.99 C419.45 386.44 421.28 386.97 423.08 387.57 C424.88 388.17 426.65 388.87 428.40 389.62 C430.15 390.37 431.88 391.20 433.60 392.09 C435.31 392.98 437.00 393.94 438.68 394.94 C440.37 395.95 442.03 397.02 443.69 398.13 C445.34 399.24 446.98 400.40 448.62 401.60 C450.26 402.80 451.89 404.04 453.52 405.31 C455.14 406.58 456.76 407.89 458.39 409.22 C460.01 410.54 461.63 411.90 463.25 413.27 C464.88 414.64 466.51 416.03 468.14 417.43 C469.78 418.82 471.42 420.23 473.07 421.64 C474.72 423.05 476.38 424.46 478.06 425.86 C479.73 427.27 481.42 428.67 483.13 430.05 C484.84 431.43 486.56 432.82 488.30 434.16 C490.04 435.49 491.81 436.83 493.57 438.07 C495.33 439.30 497.11 440.50 498.88 441.56 C500.64 442.62 502.41 443.60 504.16 444.40 C505.90 445.21 507.64 445.90 509.35 446.37 C511.06 446.85 512.75 447.17 514.40 447.24 C516.05 447.30 517.67 447.16 519.24 446.76 C520.80 446.36 522.34 445.68 523.79 444.83 C525.23 443.99 526.64 442.89 527.92 441.68 C529.21 440.47 530.43 439.06 531.50 437.58 C532.58 436.10 533.57 434.46 534.40 432.81 C535.22 431.16 535.94 429.39 536.46 427.66 C536.99 425.92 537.38 424.14 537.57 422.40 C537.76 420.67 537.76 418.96 537.62 417.27 C537.47 415.59 537.14 413.93 536.69 412.28 C536.24 410.64 535.62 409.02 534.90 407.41 C534.18 405.80 533.31 404.21 532.36 402.62 C531.41 401.04 530.33 399.46 529.18 397.89 C528.04 396.32 526.79 394.76 525.49 393.20 C524.18 391.64 522.80 390.08 521.38 388.51 C519.96 386.95 518.47 385.38 516.98 383.80 C515.48 382.23 513.93 380.65 512.40 379.05 C510.86 377.45 509.29 375.84 507.75 374.22 C506.21 372.59 504.65 370.95 503.15 369.28 C501.64 367.62 500.14 365.93 498.71 364.22 C497.27 362.51 495.87 360.77 494.54 359.00 C493.22 357.23 491.95 355.43 490.76 353.60 C489.58 351.77 488.46 349.91 487.43 348.02 C486.39 346.14 485.42 344.23 484.54 342.30 C483.65 340.38 482.84 338.43 482.10 336.47 C481.37 334.51 480.71 332.53 480.12 330.56 C479.54 328.58 479.04 326.58 478.61 324.59 C478.19 322.60 477.84 320.61 477.57 318.62 C477.30 316.63 477.11 314.64 477.00 312.66 C476.89 310.68 476.86 308.71 476.92 306.75 C476.97 304.80 477.10 302.85 477.32 300.93 C477.53 299.00 477.83 297.09 478.21 295.21 C478.59 293.34 479.06 291.48 479.60 289.65 C480.15 287.82 480.78 286.03 481.48 284.25 C482.18 282.47 482.96 280.72 483.80 278.99 C484.64 277.26 485.55 275.55 486.52 273.85 C487.48 272.15 488.51 270.48 489.58 268.81 C490.66 267.14 491.79 265.49 492.95 263.84 C494.12 262.19 495.34 260.56 496.58 258.92 C497.82 257.29 499.11 255.67 500.42 254.04 C501.72 252.41 503.07 250.79 504.42 249.16 C505.77 247.53 507.15 245.90 508.54 244.27 C509.92 242.63 511.33 240.99 512.73 239.34 C514.13 237.68 515.54 236.02 516.95 234.34 C518.35 232.67 519.75 230.98 521.14 229.27 C522.53 227.56 523.92 225.84 525.27 224.09 C526.62 222.34 527.98 220.57 529.25 218.80 C530.51 217.02 531.76 215.23 532.86 213.44 C533.97 211.66 535.01 209.87 535.86 208.10 C536.71 206.33 537.46 204.56 537.97 202.83 C538.49 201.10 538.86 199.38 538.96 197.71 C539.05 196.04 538.95 194.39 538.55 192.80 C538.16 191.22 537.47 189.66 536.60 188.19 C535.72 186.73 534.58 185.31 533.31 184.01 C532.05 182.71 530.56 181.48 529.01 180.39 C527.46 179.30 525.74 178.30 524.01 177.47 C522.28 176.64 520.44 175.92 518.63 175.40 C516.83 174.87 514.97 174.49 513.19 174.31 Z" fill="url(#silv)"/><circle cx="401.98" cy="155.13" r="45.51" fill="url(#silv)"/></svg><span>Beck To Nature</span></a>
+          <p class="muted" style="font-size:15px;margin-top:var(--s3);max-width:34ch">Taking Central European manufacturers to their first US trade show and their first American orders.</p>
+        </div>
+        <div><h4>Company</h4><ul><li><a href="#draft" data-jump="services">Services</a></li><li><a href="#draft" data-jump="how">How it works</a></li><li><a href="#draft" data-jump="pricing">Pricing</a></li><li><a href="#draft" data-jump="faq">FAQ</a></li></ul></div>
+        <div><h4>Legal</h4><ul><li><a href="#draft">Privacy policy</a></li><li><a href="#draft">Cookie notice</a></li><li><a href="#draft">Terms of use</a></li></ul></div>
+        <div>
+          <h4>US market notes, once a month</h4>
+          <form class="news" id="news" novalidate><label for="news-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Email address</label><input id="news-email" type="email" placeholder="Your work email" autocomplete="email"><button class="btn btn-brass btn-sm" type="submit">Subscribe</button></form>
+          <p class="news-msg" id="news-msg" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="foot-name" aria-hidden="true">Beck To Nature</div>
+      <div class="foot-meta"><span>© 2026 Beck To Nature · Budapest · <span class="ph">[Hartland, Wisconsin]</span></span><span>Approved direction: brass · draft, not live</span></div>
+    </footer>
+  </main>
+
+  <!-- DESIGN SYSTEM -->
+  <main class="view sys frame" id="view-system" hidden>
+    <div class="head" style="margin-bottom:var(--s5)"><h2><span class="metal-text">Black and brass</span></h2><p>The system behind the draft. Blacks never meet in a hard edge; they blend. Brushed brass is the only colour, used sparingly so it shines when it appears.</p></div>
+
+    <div class="sys-block">
+      <div><h3>Black field</h3><p>Seven blacks from #050505 to #2C2C2C. Neighbouring surfaces are at most two steps apart and always meet in a gradient.</p></div>
+      <div><div class="ramp" aria-hidden="true"></div><div class="ramp-keys"><span>#050505</span><span>#0A0A0A</span><span>#111111</span><span>#161616</span><span>#1D1C1C</span><span>#232323</span><span>#2C2C2C</span></div></div>
+    </div>
+
+    <div class="sys-block">
+      <div><h3>Brass</h3><p>Sampled from your brushed brass. Brushed horizontally for buttons and bars, polished vertically for type, numbers and the logo. A fine line texture gives it the brushed grain.</p></div>
+      <div>
+        <div class="bar" aria-hidden="true"></div>
+        <div class="bar v" aria-hidden="true"></div>
+        <div class="chips">
+          <div class="chip"><i style="background:#F3E2B8"></i>#F3E2B8 · highlight</div>
+          <div class="chip"><i style="background:#D9BC86"></i>#D9BC86 · light</div>
+          <div class="chip"><i style="background:#C5A373"></i>#C5A373 · bright</div>
+          <div class="chip"><i style="background:#AA885A"></i>#AA885A · mid</div>
+          <div class="chip"><i style="background:#917248"></i>#917248 · core</div>
+          <div class="chip"><i style="background:#725934"></i>#725934 · deep</div>
+          <div class="chip"><i style="background:#5B4527"></i>#5B4527 · dark</div>
+          <div class="chip"><i style="background:#392713"></i>#392713 · shadow</div>
+          <div class="chip"><i style="background:#EEE9DF"></i>#EEE9DF · text</div>
+          <div class="chip"><i style="background:#B5AC9C"></i>#B5AC9C · secondary text</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sys-block">
+      <div><h3>Liquid glass and light</h3><p>Glass panels blur what is behind them and catch a thin brass-lit edge at the top. A soft spotlight follows the cursor on cards.</p></div>
+      <div class="glass-demo" aria-hidden="true"><span class="orb"></span><div class="glass lit">Liquid glass over moving light</div></div>
+    </div>
+
+    <div class="sys-block">
+      <div><h3>Tactile controls</h3><p>Brass buttons have a lit top edge and a shaded base. Pressed, they sink one pixel and shrink slightly.</p></div>
+      <div class="demo-row">
+        <button class="btn btn-brass" type="button">Book a free call</button>
+        <button class="btn btn-glass" type="button">Check your US readiness</button>
+        <button class="btn btn-brass btn-sm" type="button" disabled>Sending</button>
+      </div>
+    </div>
+
+    <div class="sys-block">
+      <div><h3>Type</h3><p>Neue Montreal throughout. Shown here in Host Grotesk until the licensed font files are added.</p></div>
+      <div>
+        <div class="type-spec metal-text" aria-hidden="true">Aa 2026</div>
+        <div class="scale">
+          <div><small>Display 112</small><span style="font-size:clamp(34px,4.5vw,64px);line-height:1;letter-spacing:-.05em">Take your products to America.</span></div>
+          <div><small>Heading 68</small><span style="font-size:clamp(28px,3vw,44px);line-height:1.05;letter-spacing:-.04em">Everything you need to sell in the US</span></div>
+          <div><small>Title 26</small><span style="font-size:var(--t-h3);letter-spacing:-.02em">Meetings booked before you fly</span></div>
+          <div><small>Body 18</small><span class="muted">We invite distributors and buyers in advance and join every meeting with you.</span></div>
+          <div><small>Small 15</small><span class="muted" style="font-size:15px">Indicative only. You get a written quote after a call.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sys-block">
+      <div><h3>Motion</h3><p>Quick and physical. Everything switches off with Reduce Motion.</p></div>
+      <div class="motion-list">
+        <div><b style="font-weight:400">Press</b><span class="num">200 ms</span><span>Sinks 1px, scales to 98%</span></div>
+        <div><b style="font-weight:400">Number roll</b><span class="num">200 ms</span><span>Only the changed digit moves, with a slight blur</span></div>
+        <div><b style="font-weight:400">Spotlight</b><span class="num">400 ms</span><span>Fades in on hover, follows the cursor</span></div>
+        <div><b style="font-weight:400">Accordion</b><span class="num">400 ms</span><span>Grows in place, plus turns to a cross</span></div>
+        <div><b style="font-weight:400">Entrance</b><span class="num">600 ms</span><span>Rises 14px out of a soft blur, 80 ms apart</span></div>
+      </div>
+    </div>
+
+    <div class="sys-block">
+      <div><h3>Rules</h3></div>
+      <ul class="rules">
+        <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>No colour besides black and brass, including the logo.</li>
+        <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Two blacks never meet in a hard line; use a gradient or glass between them.</li>
+        <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Polished brass only for the main action, key words, figures and the needle.</li>
+        <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Running text is flat warm white #EEE9DF or #B5AC9C, never metallic, so it stays readable.</li>
+        <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>No invented proof: logos, quotes and prices in [brackets] wait for real ones.</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<nav class="switch glass" aria-label="Views">
+  <span class="pill" id="pill" aria-hidden="true"></span>
+  <a href="#draft" id="tab-draft">Website draft</a>
+  <a href="#system" id="tab-system">Design system</a>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite">Email copied</div>
+
+<script>
+document.documentElement.classList.add('js');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+
+/* Views on the hash: #draft (default) and #system */
+(() => {
+  const views = { draft: document.getElementById('view-draft'), system: document.getElementById('view-system') };
+  const tabs = { draft: document.getElementById('tab-draft'), system: document.getElementById('tab-system') };
+  const pill = document.getElementById('pill');
+  const place = (name, animate) => {
+    const t = tabs[name];
+    if (!animate) pill.style.transition = 'none';
+    pill.style.width = t.offsetWidth + 'px';
+    pill.style.transform = `translateX(${t.offsetLeft - 5}px)`;
+    if (!animate) { void pill.offsetWidth; pill.style.transition = ''; }
+  };
+  const show = animate => {
+    const name = location.hash === '#system' ? 'system' : 'draft';
+    Object.entries(views).forEach(([k, v]) => v.hidden = k !== name);
+    Object.entries(tabs).forEach(([k, t]) => k === name ? t.setAttribute('aria-current', 'page') : t.removeAttribute('aria-current'));
+    place(name, animate);
+  };
+  addEventListener('hashchange', () => { show(true); scrollTo(0, 0); });
+  addEventListener('resize', () => show(false));
+  document.fonts && document.fonts.ready.then(() => show(false));
+  show(false);
+  // In-page jumps without changing the hash
+  document.querySelectorAll('[data-jump]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    if (location.hash === '#system') { location.hash = '#draft'; }
+    const el = document.getElementById(a.dataset.jump);
+    setTimeout(() => el && el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }), 30);
+  }));
+})();
+
+/* Entrances */
+(() => {
+  if (reduce) return;
+  const els = [...document.querySelectorAll('#view-draft .rv')];
+  els.forEach(el => { if (el.getBoundingClientRect().top > innerHeight * 0.9) el.classList.add('pre'); });
+  // Reveal on scroll: anything whose top has passed 92% of the viewport, siblings 80 ms apart
+  let ticking = false;
+  const check = () => {
+    ticking = false;
+    const limit = innerHeight * 0.92;
+    const due = els.filter(el => el.classList.contains('pre') && !el._q && el.getBoundingClientRect().top < limit);
+    const groups = new Map();
+    due.forEach(el => { const g = groups.get(el.parentElement) || []; g.push(el); groups.set(el.parentElement, g); });
+    groups.forEach(g => g.forEach((el, i) => { el._q = true; setTimeout(() => el.classList.remove('pre'), i * 80); }));
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(check); } }, { passive: true });
+  addEventListener('resize', check);
+  const hero = [...document.querySelectorAll('.hero .rv')];
+  hero.forEach(el => el.classList.add('pre'));
+  requestAnimationFrame(() => requestAnimationFrame(() => hero.forEach((el, i) => setTimeout(() => el.classList.remove('pre'), 100 + i * 80))));
+})();
+
+/* Spotlight that follows the pointer on glass */
+document.querySelectorAll('.glass.lit').forEach(el => el.addEventListener('pointermove', e => {
+  const r = el.getBoundingClientRect();
+  el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+  el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+}));
+
+/* Press feel on touch devices */
+document.querySelectorAll('.btn').forEach(b => b.addEventListener('pointerdown', () => buzz(6)));
+
+/* The dial */
+(() => {
+  const MIN = 3, MAX = 24, STEP = 52;
+  const track = document.getElementById('track'), ruler = document.getElementById('ruler');
+  const digitsEl = document.getElementById('digits'), unit = document.getElementById('unit'), verdict = document.getElementById('verdict');
+  const soundBtn = document.getElementById('sound'), soundLabel = document.getElementById('sound-label'), wave = document.getElementById('wave');
+  let html = '';
+  for (let m = 0; m <= 27; m += 0.5) {
+    const major = m % 1 === 0;
+    html += `<span class="tick${major ? ' major' : ''}" style="left:${m * STEP}px"></span>`;
+    if (major && m >= MIN && m <= MAX && m % 3 === 0) html += `<span class="tick-label" style="left:${m * STEP}px">${m}</span>`;
+  }
+  ruler.innerHTML = html;
+  digitsEl.innerHTML = [0,1].map(() => `<span class="digit"><span class="strip">${[...Array(10).keys()].map(d => `<span>${d}</span>`).join('')}</span></span>`).join('');
+  const cols = [...digitsEl.children]; const shown = [null, null];
+  const setDigits = n => {
+    const s = String(n).padStart(2, '0');
+    [0,1].forEach(i => {
+      const d = +s[i], col = cols[i];
+      col.classList.toggle('hidden', i === 0 && n < 10);
+      if (shown[i] === d) return;
+      if (!reduce && shown[i] !== null) { col.classList.add('moving'); clearTimeout(col._t); col._t = setTimeout(() => col.classList.remove('moving'), 200); }
+      col.firstElementChild.style.transform = `translateY(${-d}em)`; shown[i] = d;
+    });
+  };
+  const lines = [
+    [3, 5, 'Tight. One show is still possible if booth space is available, with fewer meetings booked in advance.'],
+    [6, 9, 'Comfortable. Enough time to choose the show, book space and invite buyers before you fly.'],
+    [10, 15, 'Ideal for the large annual shows, which often sell booth space many months ahead.'],
+    [16, 24, 'Time to plan properly: product checks, certifications and a show calendar for the year.']
+  ];
+  let lineIdx = -1;
+  const setVerdict = n => {
+    const i = lines.findIndex(([a, b]) => n >= a && n <= b);
+    if (i === lineIdx) return; lineIdx = i;
+    if (reduce) { verdict.textContent = lines[i][2]; return; }
+    verdict.classList.add('out');
+    setTimeout(() => { verdict.textContent = lines[i][2]; verdict.classList.remove('out'); }, 150);
+  };
+  let ctx = null, soundOn = false;
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn; soundBtn.setAttribute('aria-pressed', soundOn);
+    soundLabel.textContent = soundOn ? 'Sound on' : 'Sound off'; wave.setAttribute('opacity', soundOn ? '1' : '.35');
+    if (soundOn && !ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+  });
+  const tick = () => {
+    buzz(4);
+    if (!soundOn || !ctx) return;
+    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'triangle'; o.frequency.setValueAtTime(1800, t); o.frequency.exponentialRampToValueAtTime(900, t + .03);
+    g.gain.setValueAtTime(.05, t); g.gain.exponentialRampToValueAtTime(.0001, t + .05);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + .06);
+  };
+  let pos = 9 * STEP, value = 9, raf = null;
+  const render = () => {
+    ruler.style.transform = `translateX(${track.clientWidth / 2 - pos}px)`;
+    const v = Math.min(MAX, Math.max(MIN, Math.round(pos / STEP)));
+    if (v !== value) { value = v; tick(); }
+    setDigits(value); setVerdict(value);
+    track.setAttribute('aria-valuenow', value); track.setAttribute('aria-valuetext', `${value} months`);
+  };
+  const clampPos = p => Math.min(MAX * STEP + STEP * .4, Math.max(MIN * STEP - STEP * .4, p));
+  const animateTo = (target, dur = 250) => {
+    cancelAnimationFrame(raf);
+    if (reduce) { pos = target; render(); return; }
+    const from = pos, t0 = performance.now(), ease = t => 1 - Math.pow(1 - t, 3);
+    const step = now => { const t = Math.min(1, (now - t0) / dur); pos = from + (target - from) * ease(t); render(); if (t < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  const snap = () => animateTo(Math.min(MAX, Math.max(MIN, Math.round(pos / STEP))) * STEP);
+  let dragging = false, lastX = 0, lastT = 0, vel = 0;
+  track.addEventListener('pointerdown', e => { dragging = true; cancelAnimationFrame(raf); track.setPointerCapture(e.pointerId); lastX = e.clientX; lastT = performance.now(); vel = 0; });
+  track.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const now = performance.now(), dx = e.clientX - lastX;
+    pos = clampPos(pos - dx); vel = -dx / Math.max(1, now - lastT); lastX = e.clientX; lastT = now; render();
+  });
+  const release = () => {
+    if (!dragging) return; dragging = false;
+    if (reduce || Math.abs(vel) < .05) return snap();
+    let v = vel * 16;
+    const glide = () => { v *= .94; pos = clampPos(pos + v); render();
+      if (Math.abs(v) > .6 && pos > MIN * STEP - STEP * .4 && pos < MAX * STEP + STEP * .4) raf = requestAnimationFrame(glide); else snap(); };
+    raf = requestAnimationFrame(glide);
+  };
+  track.addEventListener('pointerup', release); track.addEventListener('pointercancel', release);
+  track.addEventListener('keydown', e => {
+    if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); return animateTo((e.key === 'Home' ? MIN : MAX) * STEP); }
+    const k = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 3, PageDown: -3 }[e.key];
+    if (!k) return; e.preventDefault(); animateTo(Math.min(MAX, Math.max(MIN, value + k)) * STEP, 200);
+  });
+  addEventListener('resize', render);
+  render();
+})();
+
+/* Accordion */
+document.querySelectorAll('.acc-btn').forEach(b => b.addEventListener('click', () => {
+  const open = b.getAttribute('aria-expanded') !== 'true';
+  b.setAttribute('aria-expanded', open); b.closest('.acc').classList.toggle('open', open);
+}));
+
+/* Toast */
+const toast = document.getElementById('toast');
+const say = msg => { toast.textContent = msg; toast.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => toast.classList.remove('show'), 2000); };
+
+/* Copy email */
+(() => {
+  const btn = document.getElementById('copy'), line = document.getElementById('copy-line'), email = document.getElementById('email');
+  btn.addEventListener('click', () => {
+    const fail = () => { getSelection().selectAllChildren(email); say('Select the address to copy it'); };
+    try {
+      navigator.clipboard.writeText(email.textContent).then(() => { line.classList.add('done'); buzz(10); say('Email copied'); setTimeout(() => line.classList.remove('done'), 2000); }, fail);
+    } catch (e) { fail(); }
+  });
+})();
+
+/* Newsletter: draft only, nothing is sent */
+document.getElementById('news').addEventListener('submit', e => {
+  e.preventDefault();
+  const input = document.getElementById('news-email'), msg = document.getElementById('news-msg');
+  msg.textContent = /^\S+@\S+\.\S+$/.test(input.value) ? 'Draft only: sign-up is not connected yet.' : 'Enter an email address like name@company.com.';
+});
+</script>
+
+</html>
