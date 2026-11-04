@@ -476,26 +476,12 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 .fld label{font-size:18px;color:var(--ink-3)}
 .fld input{background:#121110;border-radius:14px}
 .wiz-nav{margin:6px calc(clamp(28px,3vw,48px) * -1) 0;padding:22px clamp(28px,3vw,48px) 0;box-shadow:0 -1px 0 rgba(240,220,180,.09)}
-.wiz-nav .next{min-width:150px;min-height:46px;font-size:19px}
+.wiz-nav .next{min-width:160px;min-height:48px;font-size:19px}
 #wiz>.note{margin-top:-6px}
 @media (max-width:560px){.chip span{min-height:72px}}
 
 /* form: no glow, just a quiet edge */
-form.wiz{background:var(--onyx) center 40%/cover!important;box-shadow:inset 0 0 30px rgba(50,25,0,.5)!important;max-width:720px;width:100%;justify-self:center;min-height:0!important;padding:clamp(24px,2.6vw,36px)!important;gap:22px!important;color:#1E140A}
-form.wiz>*{position:relative;z-index:1}
-form.wiz.lum:not(.lit){filter:none}
-form.wiz.stone:not(.lit)::after{background:rgba(6,5,4,.38)!important}
-form.wiz.stone.lit{box-shadow:inset 0 0 30px rgba(50,25,0,.4),0 0 46px -4px rgba(var(--glow),.55)!important}
-form.wiz .q small,form.wiz .sub,form.wiz .hint{color:#3A2A14!important}
-form.wiz .wiz-top,form.wiz .q,form.wiz .fld label,form.wiz .consent,form.wiz .eu-picked{color:#1E140A}
-form.wiz .note{color:#3A2A14}
-form.wiz .ph{color:#4A3720;background:rgba(255,255,255,.35);box-shadow:none}
-form.wiz .dots li{background:rgba(30,20,10,.22)}form.wiz .dots li.cur{background:rgba(30,20,10,.55)}form.wiz .dots li.done{background:#0A0A0A}
-form.wiz .wiz-nav{box-shadow:0 -1px 0 rgba(30,20,10,.18)}
-form.wiz .err{color:#7A1E0E}
-form.wiz .eu-picked b{color:#0A0A0A}
-form.wiz .consent input{accent-color:#0A0A0A}
-form.wiz .dial{background:#0E0E0D;border-radius:var(--r-md);padding:20px 12px 10px;box-shadow:inset 0 0 0 1px rgba(240,220,180,.08)}
+form.wiz{background:linear-gradient(180deg,rgba(16,14,12,.74),rgba(10,9,8,.84)),var(--onyx) center 40%/cover!important;box-shadow:inset 0 1px 0 rgba(255,236,200,.06),0 0 0 1px rgba(240,220,180,.12),0 30px 60px -40px rgba(0,0,0,.9)!important}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -586,7 +572,7 @@ form.wiz .dial{background:#0E0E0D;border-radius:var(--r-md);padding:20px 12px 10
         <h2 id="iq-h">Start your <em>inquiry.</em></h2>
         <p>Six questions, about a minute. No commitment.</p>
       </div>
-      <form class="card wiz stone rv" id="wiz" novalidate>
+      <form class="card wiz rv" id="wiz" novalidate>
         <div class="wiz-top"><span id="w-count">Question 1 of 6</span><ol class="dots" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li></ol></div>
 
         <fieldset class="step" style="border:0;margin:0;padding:0"><legend class="q">What does your company make?</legend>
@@ -615,7 +601,7 @@ form.wiz .dial{background:#0E0E0D;border-radius:var(--r-md);padding:20px 12px 10
           <div class="fld"><label for="w-country">Or choose from the list</label><select id="w-country" style="min-height:48px;border-radius:14px;background:#0E0E0D;color:var(--ink);border:0;padding:0 14px;font:inherit;box-shadow:inset 0 0 0 1px rgba(240,220,180,.1)"><option value="">Choose a country</option>{{COUNTRIES}}</select></div></div>
 
         <p class="err" id="w-err" role="alert"></p>
-        <div class="wiz-nav"><button type="button" class="btn btn-quiet btn-sm" id="w-back" hidden>Back</button><button type="button" class="btn btn-dark next" id="w-next">Continue</button><button type="submit" class="btn btn-dark next" id="w-send" hidden>Send inquiry</button></div>
+        <div class="wiz-nav"><button type="button" class="btn btn-quiet btn-sm" id="w-back" hidden>Back</button><button type="button" class="btn btn-main next" id="w-next">Continue</button><button type="submit" class="btn btn-main next" id="w-send" hidden>Send inquiry</button></div>
         <p class="note">Demo: nothing is sent. On the live site this goes to <span class="ph">[email]</span>, and anyone who stops after question 2 gets a reminder SMS.</p>
       </form>
     </div>
@@ -721,7 +707,7 @@ const $ = id => document.getElementById(id);
 })();
 
 /* The thread: the signature writes itself in the hero, unwinds into one smooth line that follows the scroll,
-   traces the founder's signature on its way, and ends by writing the signature once more. Everything it has
+   writes the founder's signature on its way (joining it only at the B), and ends by writing the signature once more. Everything it has
    passed is lit; scrolling back up switches things off again. */
 (() => {
   const SIG = {{SIG}}, SW = 860, SH = 410;
@@ -733,13 +719,6 @@ const $ = id => document.getElementById(id);
   const cr = pts => { let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
     for (let i = 0; i < pts.length - 1; i++) { const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
       d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`; } return d; };
-  // the signature as one continuous pen path (B bowls, B stem, e-c, up and down the k stem, k loop and tail)
-  const split = SIG[3].indexOf(' C 664 256');
-  const PEN = [SIG[1], SIG[0], SIG[3].slice(0, split), 'M 646 290 C 647 220 649 150 650 76', 'M 650 76 C 649 150 647 220 646 290', 'M 646 290' + SIG[3].slice(split)];
-  const penPoints = (ox, oy, k) => { const out = [];
-    PEN.forEach(d => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => `${(ox + x * k).toFixed(2)} ${(oy + y * k).toFixed(2)}`)); svg.appendChild(p);
-      const L = p.getTotalLength(), n = Math.max(3, Math.ceil(L / 4)); for (let i = 0; i <= n; i++) { const q = p.getPointAtLength(L * i / n); out.push([q.x, q.y]); } p.remove(); });
-    return out; };
   function build() {
     const W = page.clientWidth, H = page.scrollHeight, narrow = W < 700;
     svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -755,12 +734,22 @@ const $ = id => document.getElementById(id);
     const cx = W / 2, sway = narrow ? 0 : W * .3, amp = narrow ? 3 : 10;
     const laneX = narrow ? (y => W - 12 + amp * Math.sin((y - y0) / 360 * Math.PI * 2)) : (y => cx + sway * Math.sin((y - y0) / 2600 * Math.PI * 2 + .9) + amp * Math.sin((y - y0) / 460 * Math.PI * 2));
     const lane = (a, b, pts) => { for (let y = a; y < b; y += 36) pts.push([laneX(y), y]); };
-    // founder signature: trace it, then carry on
-    const fs = document.querySelector('.f-sig'), fr = rel(fs), fk = fr.w / 850, fox = fr.left - 10 * fk, foy = fr.top - 20 * fk;
-    const fPen = penPoints(fox, foy, fk);
-    // the closing signature, bottom left
-    const end = $('end-sig'), er = rel(end), ek = er.w / 850, eox = er.left - 10 * ek, eoy = er.top - 20 * ek;
-    const ePen = penPoints(eox, eoy, ek);
+    // where a signature box sits once its entrance animation has finished (ignore pending transforms)
+    const relRest = el => { const r = rel(el); let dx = 0, dy = 0;
+      for (let n = el; n && n !== page; n = n.parentElement) { const t = getComputedStyle(n).transform; if (t && t !== 'none') { const m = new DOMMatrix(t); dx += m.m41; dy += m.m42; } }
+      return { ...r, left: r.left - dx, right: r.right - dx, top: r.top - dy, bottom: r.bottom - dy }; };
+    // the signature's own strokes, exactly as drawn, in writing order: B bowls (from the lead-in), B stem, the e's, k stem, k loop and tail
+    const split = SIG[3].indexOf(' C 664 256'), s3a = SIG[3].slice(0, split), s3aEnd = s3a.match(/(-?\d+\.?\d*) (-?\d+\.?\d*)\s*$/);
+    const ORDER = [SIG[1], SIG[0], s3a, SIG[2], `M ${s3aEnd[1]} ${s3aEnd[2]}` + SIG[3].slice(split)];
+    const sigAt = (el, vx, vy) => { const r = relRest(el), k = Math.min(r.w / 850, r.h / 380), ox = r.left + (r.w - 850 * k) / 2 - vx * k, oy = r.top + (r.h - 380 * k) / 2 - vy * k;
+      const P = (x, y) => [ox + x * k, oy + y * k];
+      return { k, B: P(22, 182), K: P(842, 292), bottom: oy + 386 * k, left: ox + 22 * k, right: ox + 842 * k,
+        d: ORDER.map(d => d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => P(+x, +y).map(v => v.toFixed(2)).join(' '))).join(' ') }; };
+    const fS = sigAt(document.querySelector('.f-sig'), 10, 20);   // founder signature (svg viewBox starts at 10 20)
+    const eS = sigAt($('end-sig'), 10, 20);                       // closing signature, bottom left
+    // the line meets a signature only at the B: a soft hook rising into the B's lead-in stroke
+    const hookB = S => { const B = S.B, u = Math.max(18, 160 * S.k);
+      return [[B[0] - u * .9, B[1] - u * .3], [B[0] - u * .8, B[1] + u * .9], [B[0] - u * .35, B[1] + u * .9], [B[0] - u * .05, B[1] + u * .35], B]; };
     const ss = v => { v = clamp(v); return v * v * (3 - 2 * v); }, Dk = narrow ? 260 : 460;
     // keep clear of text: blocked spans per height, passing behind cards is fine
     const TXT = 'h2, .sec-head p, .why2-lead, .why2-note, .text-cta, .iq-head p, .f-name, .f-quote, .essay > div, .promise, .story-result, .story-facts, .spec-note, .foot';
@@ -777,10 +766,9 @@ const $ = id => document.getElementById(id);
       for (let pass = 0; pass < 4; pass++) { xs = smooth(xs, pass < 2 ? 14 : 5); xs = xs.map((x, i) => freeX(ys[i], x)); }
       xs = smooth(xs, 2).map((x, i) => freeX(ys[i], x));
       const out = []; ys.forEach((y, i) => { if (i % 3 === 0) out.push([xs[i], y]); }); return out; };
-    // enter each signature from the right along the k tail, leave from the B, so every turn is a soft arc
-    const fR = fPen.slice().reverse(), eR = ePen.slice().reverse();
-    const fIn = fR[0], fOut = fR[fR.length - 1], eIn = eR[0];
-    let pts;
+    let pts, D = '';
+    const flush = () => { if (pts && pts.length > 1) D += (D ? ' ' : '') + cr(pts); pts = []; };
+    const write = S => { D += ' ' + S.d; };
     if (!narrow) {
       // desktop: run down the side margins, cross over in the empty bands between sections,
       // slip under the founder photo into the signature, and end by writing the closing signature
@@ -788,38 +776,35 @@ const $ = id => document.getElementById(id);
       const wv = (x, y) => x + W * .07 * Math.sin(y / 520) + 10 * Math.sin(y / 170);
       const R = q => rel(document.querySelector(q));
       const why = R('#why .why2'), spH = R('#specialties .sec-head'), fo = R('#founder'), promise = R('#founder .promise'), csH = R('#cases .sec-head');
-      const fB = fPen[0], fK = fPen[fPen.length - 1], eB = ePen[0];
-      // one relaxed route: down the right margin, into the founder signature from its tail,
-      // out through the B towards the left, and calmly down to the closing signature
       // the route the owners drew (on a 528px-wide picture of the page), mapped onto the live layout:
       // x scales with the page width, y is pinned to the hero signature, the featured specialty card, the founder signature and the closing one
-      const fK2 = fR[0], fB2 = fR[fR.length - 1];
-      const tl = R('.tri-lit'), A = [[258, y0], [640, tl.top + tl.h / 2], [1305, fK2[1]], [1915, eIn[1]]];
+      const tl = R('.tri-lit'), A = [[258, y0], [640, tl.top + tl.h / 2], [1305, fS.B[1]], [1915, eS.B[1]]];
       const my = v => { for (let i = 0; i < A.length - 1; i++) if (v <= A[i + 1][0] || i === A.length - 2) return lerp(A[i][1], A[i + 1][1], (v - A[i][0]) / (A[i + 1][0] - A[i][0])); };
       const M = ([x, y]) => [x * W / 528, my(y)];
       pts = [start];
       [[330, 262], [375, 290], [415, 335], [435, 395], [425, 450], [390, 495], [335, 545], [275, 598], [215, 655], [178, 705], [168, 750], [185, 790],
-       [212, 832], [232, 870], [240, 910], [250, 950], [268, 995], [298, 1045], [338, 1080], [385, 1112], [435, 1150], [472, 1190], [486, 1235], [474, 1268]].forEach(p => pts.push(M(p)));
-      pts.push([fK2[0] + 70, fK2[1] - 8], [fK2[0] + 25, fK2[1]]);
-      fR.forEach(p => pts.push(p));
-      pts.push([fB2[0] - 40, fB2[1] + 24]);
-      [[200, 1345], [196, 1380], [210, 1412], [268, 1458], [338, 1490], [368, 1522], [350, 1555], [292, 1585], [242, 1622], [222, 1662], [232, 1702],
-       [268, 1742], [294, 1782], [294, 1830], [262, 1868], [205, 1893]].forEach(p => pts.push(M(p)));
-      pts.push([Math.max(eIn[0] + 70, lerp(eIn[0], 205 * W / 528, .5)), eIn[1] - 6], [eIn[0] + 25, eIn[1]]);
-      eR.forEach(p => pts.push(p));
+       [212, 832], [232, 870], [240, 910], [250, 950], [262, 1000], [262, 1060], [248, 1130], [232, 1200]].forEach(p => pts.push(M(p)));
+      // down the gap beside the founder photo, hook into the B, write the signature, leave from the k tail
+      hookB(fS).forEach(p => pts.push(p)); flush(); write(fS);
+      const K = fS.K; pts = [K, [K[0] + 40, K[1] + 4], [K[0] + 80, K[1] + 34]];
+      [[392, 1365], [392, 1420], [378, 1475], [362, 1522], [342, 1556], [292, 1585], [242, 1622], [222, 1662], [232, 1702],
+       [268, 1742], [294, 1782], [294, 1830], [268, 1868]].forEach(p => pts.push(M(p)));
+      // drift left above the closing signature and hook into its B
+      pts.push([eS.B[0] + 150, eS.B[1] - 125], [eS.B[0] - 25, eS.B[1] - 100]);
+      hookB(eS).forEach(p => pts.push(p)); flush(); write(eS);
     } else {
       pts = [start, [start[0] + 40, y0 + 4], [start[0] + 75, y0 + 30]];
-      const aY = fIn[1] - 60, sY = y0 + 70;
-      routed(sY, aY, y => { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); return lerp(x0, fIn[0] + 150, ss((y - (aY - Dk)) / Dk)); }).forEach(p => pts.push(p));
-      pts.push([fIn[0] + 95, fIn[1] - 16], [fIn[0] + 40, fIn[1] - 3]);
-      fR.forEach(p => pts.push(p));
-      pts.push([fOut[0] - 4, fOut[1] + 36]);
-      const bY = fOut[1] + 90, cY = eIn[1] - 60;
-      routed(bY, cY, y => { const x0 = lerp(fOut[0] - 6, laneX(y), ss((y - bY) / Dk)); return lerp(x0, eIn[0] + 150, ss((y - (cY - Dk)) / Dk)); }).forEach(p => pts.push(p));
-      pts.push([eIn[0] + 95, eIn[1] - 16], [eIn[0] + 40, eIn[1] - 3]);
-      eR.forEach(p => pts.push(p));
+      const fB = fS.B, aY = fB[1] - 220, sY = y0 + 70;
+      routed(sY, aY, y => { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); return lerp(x0, fS.right + 40, ss((y - (aY - Dk)) / Dk)); }).forEach(p => pts.push(p));
+      pts.push([lerp(fS.right + 40, fB[0], .5), fB[1] - 150]);
+      hookB(fS).forEach(p => pts.push(p)); flush(); write(fS);
+      const K = fS.K; pts = [K, [K[0] + 20, K[1] + 10], [K[0] + 30, K[1] + 60]];
+      const bY = K[1] + 120, cY = eS.bottom - 80;
+      routed(bY, cY, y => { const x0 = lerp(K[0] + 30, laneX(y), ss((y - bY) / Dk)); return lerp(x0, eS.right + 30, ss((y - (cY - Dk)) / Dk)); }).forEach(p => pts.push(p));
+      pts.push([lerp(eS.right + 30, eS.B[0], .5), eS.B[1] - 120], [eS.B[0] - 14, eS.B[1] - 90]);
+      hookB(eS).forEach(p => pts.push(p)); flush(); write(eS);
     }
-    const d = cr(pts); core.setAttribute('d', d); glow.setAttribute('d', d);
+    flush(); const d = D; core.setAttribute('d', d); glow.setAttribute('d', d);
     Lt = core.getTotalLength();
     samples = []; let maxY = -1e9; const N = Math.min(4000, Math.ceil(Lt / 5));
     for (let i = 0; i <= N; i++) { const l = Lt * i / N, p = core.getPointAtLength(l); maxY = Math.max(maxY, p.y); samples.push({ l, y: maxY }); }
