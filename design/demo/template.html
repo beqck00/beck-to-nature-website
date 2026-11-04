@@ -441,6 +441,16 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 .chips{gap:12px}
 .wiz-nav .next{min-width:220px;min-height:54px;font-size:18px}
 @media (max-width:900px){.iq{grid-template-columns:1fr}form.wiz{min-height:0}}
+
+/* inquiry: short heading above a centered form */
+.iq{grid-template-columns:minmax(0,1fr);max-width:860px;margin-inline:auto;gap:28px;justify-items:stretch}
+.iq-head{text-align:center;display:grid;gap:8px;justify-items:center}
+.iq-head h2{font-size:clamp(32px,3.4vw,50px)}
+.iq-head p{color:var(--ink-2);font-size:17px}
+/* hero map: dots light up under the cursor */
+.hero-map .d{transition:fill 900ms var(--ease)}
+.hero-map .d.hot{fill:#EBD3A6;transition:fill 120ms linear}
+.hero-map .d.warm{fill:#9C7E52;transition:fill 120ms linear}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -504,14 +514,9 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 
   <section class="sec frame" id="inquiry" aria-labelledby="iq-h">
     <div class="iq">
-      <div class="iq-intro rv">
+      <div class="iq-head rv">
         <h2 id="iq-h">Start your <em>inquiry.</em></h2>
-        <p class="muted">Six short questions, about a minute. Our founder replies personally within <span class="ph">[two business days]</span>.</p>
-        <ul>
-          <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>No commitment</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Prototypes welcome</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>An honest view on whether the US makes sense now</li>
-        </ul>
+        <p>Six questions, about a minute. No commitment.</p>
       </div>
       <form class="card wiz rv" id="wiz" novalidate>
         <div class="wiz-top"><span id="w-count">Question 1 of 6</span><ol class="dots" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li></ol></div>
@@ -626,6 +631,22 @@ const $ = id => document.getElementById(id);
   let h = '';
   M.enc.split(';').forEach(row => { const [r, xs] = row.split(':'); const y = +r * M.D; xs.split(',').forEach(xi => { const x = +xi * M.D; h += `<circle class="d${near(x, y) ? ' near' : ''}" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r=".34"/>`; }); });
   $('map-dots').innerHTML = h;
+  // dots near the cursor light up
+  (() => {
+    if (matchMedia('(hover: none), (pointer: coarse)').matches) return;
+    const svg = $('map'), hero = document.querySelector('.hero');
+    const dots = [...$('map-dots').children].map(el => ({ el, x: +el.getAttribute('cx'), y: +el.getAttribute('cy') }));
+    const G = 4, grid = new Map(); dots.forEach(d => { const k = `${Math.floor(d.x / G)},${Math.floor(d.y / G)}`; (grid.get(k) || grid.set(k, []).get(k)).push(d); });
+    let lit = new Set(), q = null, raf = 0;
+    const pt = svg.createSVGPoint();
+    const update = () => { raf = 0; const next = new Set();
+      if (q) { pt.x = q.x; pt.y = q.y; const m = svg.getScreenCTM(); if (m) { const p = pt.matrixTransform(m.inverse()), R = 5.5;
+        for (let gx = Math.floor((p.x - R) / G); gx <= Math.floor((p.x + R) / G); gx++) for (let gy = Math.floor((p.y - R) / G); gy <= Math.floor((p.y + R) / G); gy++)
+          (grid.get(`${gx},${gy}`) || []).forEach(d => { const r = Math.hypot(d.x - p.x, d.y - p.y); if (r < R) { next.add(d); d.el.classList.toggle('hot', r < R * .5); d.el.classList.toggle('warm', r >= R * .5); } }); } }
+      lit.forEach(d => { if (!next.has(d)) d.el.classList.remove('hot', 'warm'); }); lit = next; };
+    hero.addEventListener('pointermove', e => { q = { x: e.clientX, y: e.clientY }; if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    hero.addEventListener('pointerleave', () => { q = null; if (!raf) raf = requestAnimationFrame(update); });
+  })();
   $('cities').innerHTML = Object.entries(C).map(([k, [x, y]], i) => `<circle cx="${x}" cy="${y}" r="2.6" fill="url(#cityglow)" opacity=".8"/><circle class="ring" cx="${x}" cy="${y}" r="1" style="animation-delay:${i * .5}s"/><circle class="core" cx="${x}" cy="${y}" r=".55"/>`).join('');
   const routes = [['budapest', 'chicago', 30], ['london', 'newyork', 18], ['paris', 'orlando', 22], ['berlin', 'chicago', 27], ['vienna', 'lasvegas', 33]];
   const NS = 'http://www.w3.org/2000/svg', svg = $('map');
@@ -697,19 +718,56 @@ const $ = id => document.getElementById(id);
     const end = $('end-sig'), er = rel(end), ek = er.w / 850, eox = er.left - 10 * ek, eoy = er.top - 20 * ek;
     const ePen = penPoints(eox, eoy, ek);
     const ss = v => { v = clamp(v); return v * v * (3 - 2 * v); }, Dk = narrow ? 260 : 460;
+    // keep clear of text: blocked spans per height, passing behind cards is fine
+    const TXT = 'h2, .sec-head p, .why2-lead, .why2-note, .text-cta, .iq-head p, .f-name, .f-quote, .essay > div, .promise, .story-result, .story-facts, .spec-note, .foot';
+    const pad = narrow ? 8 : 36, edge = narrow ? 10 : 26;
+    const blocks = [...document.querySelectorAll(TXT)].filter(el => !el.closest('.card, .tri, #wiz, .hero')).map(rel).map(r => ({ t: r.top - pad, b: r.bottom + pad, l: r.left - pad, r: r.right + pad }));
+    const freeX = (y, want) => { const spans = blocks.filter(z => y >= z.t && y <= z.b).sort((a, b) => a.l - b.l);
+      if (!spans.some(z => want > z.l && want < z.r)) return want;
+      const cands = [edge, W - edge]; spans.forEach(z => cands.push(z.l, z.r));
+      const ok = x => x >= edge && x <= W - edge && !spans.some(z => x > z.l + .5 && x < z.r - .5);
+      return cands.filter(ok).sort((a, b) => Math.abs(a - want) - Math.abs(b - want))[0] ?? want; };
+    const smooth = (xs, r) => xs.map((_, i) => { let s = 0, n = 0; for (let j = Math.max(0, i - r); j <= Math.min(xs.length - 1, i + r); j++) { s += xs[j]; n++; } return s / n; });
+    const routed = (a, b, want, keepEnds) => { const ys = []; for (let y = a; y < b; y += 12) ys.push(y);
+      let xs = ys.map(y => freeX(y, want(y)));
+      for (let pass = 0; pass < 4; pass++) { xs = smooth(xs, pass < 2 ? 14 : 5); xs = xs.map((x, i) => freeX(ys[i], x)); }
+      xs = smooth(xs, 2).map((x, i) => freeX(ys[i], x));
+      const out = []; ys.forEach((y, i) => { if (i % 3 === 0) out.push([xs[i], y]); }); return out; };
     // enter each signature from the right along the k tail, leave from the B, so every turn is a soft arc
     const fR = fPen.slice().reverse(), eR = ePen.slice().reverse();
     const fIn = fR[0], fOut = fR[fR.length - 1], eIn = eR[0];
-    const pts = [start, [start[0] + 40, y0 + 4], [start[0] + 75, y0 + 30]];
-    const aY = fIn[1] - 60, sY = y0 + 70;
-    for (let y = sY; y < aY; y += 34) { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); pts.push([lerp(x0, fIn[0] + 150, ss((y - (aY - Dk)) / Dk)), y]); }
-    pts.push([fIn[0] + 95, fIn[1] - 16], [fIn[0] + 40, fIn[1] - 3]);
-    fR.forEach(p => pts.push(p));
-    pts.push([fOut[0] - 4, fOut[1] + 36]);
-    const bY = fOut[1] + 90, cY = eIn[1] - 60;
-    for (let y = bY; y < cY; y += 34) { const x0 = lerp(fOut[0] - 6, laneX(y), ss((y - bY) / Dk)); pts.push([lerp(x0, eIn[0] + 150, ss((y - (cY - Dk)) / Dk)), y]); }
-    pts.push([eIn[0] + 95, eIn[1] - 16], [eIn[0] + 40, eIn[1] - 3]);
-    eR.forEach(p => pts.push(p));
+    let pts;
+    if (!narrow) {
+      // desktop: run down the side margins, cross over in the empty bands between sections,
+      // slip under the founder photo into the signature, and end by writing the closing signature
+      const L0 = rel(document.querySelector('#why .why2')).left, xL = L0 * .5, xR = W - L0 * .5;
+      const wv = (x, y) => x + 16 * Math.sin(y / 260);
+      const R = q => rel(document.querySelector(q));
+      const why = R('#why .why2'), spH = R('#specialties .sec-head'), fo = R('#founder'), promise = R('#founder .promise'), csH = R('#cases .sec-head');
+      const fB = fPen[0], fK = fPen[fPen.length - 1], eB = ePen[0];
+      // one relaxed route: down the right margin, into the founder signature from its tail,
+      // out through the B towards the left, and calmly down to the closing signature
+      pts = [start, [start[0] + 70, y0 + 12], [lerp(start[0], xR, .75), y0 + 70], [xR, y0 + 170]];
+      const fK2 = fR[0], fB2 = fR[fR.length - 1];
+      for (let y = y0 + 300; y < fK2[1] - 160; y += 140) pts.push([wv(xR, y), y]);
+      pts.push([xR, fK2[1] - 30], [xR - 60, fK2[1] + 16], [fK2[0] + 130, fK2[1] + 14], [fK2[0] + 40, fK2[1] + 2]);
+      fR.forEach(p => pts.push(p));
+      pts.push([fB2[0] - 50, fB2[1] + 30], [lerp(fB2[0], xL, .55), fB2[1] + 58], [xL + 30, fB2[1] + 110], [xL, fB2[1] + 230]);
+      for (let y = fB2[1] + 370; y < eB[1] - 220; y += 140) pts.push([wv(xL, y), y]);
+      pts.push([xL, eB[1] - 100], [lerp(xL, eB[0], .5), eB[1] - 24], [eB[0] - 12, eB[1] - 4]);
+      ePen.forEach(p => pts.push(p));
+    } else {
+      pts = [start, [start[0] + 40, y0 + 4], [start[0] + 75, y0 + 30]];
+      const aY = fIn[1] - 60, sY = y0 + 70;
+      routed(sY, aY, y => { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); return lerp(x0, fIn[0] + 150, ss((y - (aY - Dk)) / Dk)); }).forEach(p => pts.push(p));
+      pts.push([fIn[0] + 95, fIn[1] - 16], [fIn[0] + 40, fIn[1] - 3]);
+      fR.forEach(p => pts.push(p));
+      pts.push([fOut[0] - 4, fOut[1] + 36]);
+      const bY = fOut[1] + 90, cY = eIn[1] - 60;
+      routed(bY, cY, y => { const x0 = lerp(fOut[0] - 6, laneX(y), ss((y - bY) / Dk)); return lerp(x0, eIn[0] + 150, ss((y - (cY - Dk)) / Dk)); }).forEach(p => pts.push(p));
+      pts.push([eIn[0] + 95, eIn[1] - 16], [eIn[0] + 40, eIn[1] - 3]);
+      eR.forEach(p => pts.push(p));
+    }
     const d = cr(pts); core.setAttribute('d', d); glow.setAttribute('d', d);
     Lt = core.getTotalLength();
     samples = []; let maxY = -1e9; const N = Math.min(4000, Math.ceil(Lt / 5));
@@ -741,7 +799,7 @@ const $ = id => document.getElementById(id);
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(function step() {
       target(); let moving = false;
-      ['s', 'h'].forEach(p => { const dl = tgt[p] - cur[p]; if (Math.abs(dl) > .3) { cur[p] += dl * .07; moving = true; } else cur[p] = tgt[p]; });
+      ['s', 'h'].forEach(p => { const dl = tgt[p] - cur[p]; if (Math.abs(dl) > .3) { cur[p] += dl * .055; moving = true; } else cur[p] = tgt[p]; });
       paint(); if (moving) raf = requestAnimationFrame(step);
     });
   }
@@ -756,19 +814,6 @@ const $ = id => document.getElementById(id);
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(go, 400));
 })();
 
-
-
-/* Cursor spotlight: a soft warm light that follows the pointer */
-(() => {
-  const el = $('spot'); if (!el || matchMedia('(hover: none), (pointer: coarse)').matches) return;
-  let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y, raf = 0;
-  const step = () => { cx += (x - cx) * (reduce ? 1 : .18); cy += (y - cy) * (reduce ? 1 : .18);
-    el.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
-    raf = Math.abs(x - cx) + Math.abs(y - cy) > .5 ? requestAnimationFrame(step) : 0; };
-  addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; el.classList.add('on'); if (!raf) raf = requestAnimationFrame(step); }, { passive: true });
-  document.addEventListener('pointerleave', () => el.classList.remove('on'));
-  addEventListener('blur', () => el.classList.remove('on'));
-})();
 
 /* Inquiry: one question at a time */
 (() => {
