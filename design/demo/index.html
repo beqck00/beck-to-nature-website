@@ -745,8 +745,8 @@ const $ = id => document.getElementById(id);
     if (!narrow) {
       // desktop: run down the side margins, cross over in the empty bands between sections,
       // slip under the founder photo into the signature, and end by writing the closing signature
-      const L0 = rel(document.querySelector('#why .why2')).left, xL = L0 * .5, xR = W - L0 * .5;
-      const wv = (x, y) => x + 16 * Math.sin(y / 260);
+      const xL = W * .3, xR = W * .72;
+      const wv = (x, y) => x + W * .07 * Math.sin(y / 520) + 10 * Math.sin(y / 170);
       const R = q => rel(document.querySelector(q));
       const why = R('#why .why2'), spH = R('#specialties .sec-head'), fo = R('#founder'), promise = R('#founder .promise'), csH = R('#cases .sec-head');
       const fB = fPen[0], fK = fPen[fPen.length - 1], eB = ePen[0];
@@ -755,7 +755,7 @@ const $ = id => document.getElementById(id);
       pts = [start, [start[0] + 70, y0 + 12], [lerp(start[0], xR, .75), y0 + 70], [xR, y0 + 170]];
       const fK2 = fR[0], fB2 = fR[fR.length - 1];
       for (let y = y0 + 300; y < fK2[1] - 160; y += 140) pts.push([wv(xR, y), y]);
-      pts.push([xR, fK2[1] - 30], [xR - 60, fK2[1] + 16], [fK2[0] + 130, fK2[1] + 14], [fK2[0] + 40, fK2[1] + 2]);
+      pts.push([Math.max(xR, fK2[0] + 160), fK2[1] - 90], [fK2[0] + 110, fK2[1] - 6], [fK2[0] + 40, fK2[1] + 1]);
       fR.forEach(p => pts.push(p));
       pts.push([fB2[0] - 50, fB2[1] + 30], [lerp(fB2[0], xL, .55), fB2[1] + 58], [xL + 30, fB2[1] + 110], [xL, fB2[1] + 230]);
       for (let y = fB2[1] + 370; y < eB[1] - 220; y += 140) pts.push([wv(xL, y), y]);
