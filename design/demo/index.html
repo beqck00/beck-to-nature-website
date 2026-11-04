@@ -67,8 +67,8 @@ p{margin:0;text-wrap:pretty}
 @media (max-width:980px){.nav-links{display:none}.nav-inner .btn{margin-left:auto}}
 
 /* hero */
-.hero{min-height:calc(100svh - 76px);display:grid;place-items:center;position:relative;padding-block:48px 160px;overflow:hidden}
-.hero-map{position:absolute;top:-76px;bottom:0;left:50%;width:100vw;margin-left:-50vw;z-index:0;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,#000 80%,transparent);mask-image:linear-gradient(180deg,#000 80%,transparent)}
+.hero{min-height:calc(100svh - 76px);display:grid;place-items:center;position:relative;padding-block:48px 160px;overflow-x:clip;overflow-y:visible}
+.hero-map{position:absolute;top:-76px;height:max(calc(100vw * 84 / 124), calc(100% + 76px));left:50%;width:100vw;margin-left:-50vw;z-index:0;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent);mask-image:linear-gradient(180deg,#000 72%,transparent)}
 .hero-map svg{width:100%;height:100%;display:block}
 .hero-map .d{fill:#2D2B28}.hero-map .d.near{fill:#463E33}
 .hero-map .route{fill:none;stroke:#F0D9AE;stroke-width:.3;stroke-linecap:round;opacity:.65}
@@ -780,21 +780,7 @@ const $ = id => document.getElementById(id);
       // out through the B towards the left, and calmly down to the closing signature
       pts = [start, [start[0] + 70, y0 + 12], [lerp(start[0], xR, .75), y0 + 70], [xR, y0 + 170]];
       const fK2 = fR[0], fB2 = fR[fR.length - 1];
-      // wrap around the inquiry form: along its top, down its right side, back along the bottom, then peel away
-      const F = R('#wiz'), o = 18, r = 30 + o, Lf = F.left - o, Rf = F.right + o, Tf = F.top - o, Bf = F.bottom + o;
-      // drift gently left above the form, then settle onto its top edge heading right
-      const sA = Math.max(y0 + 300, Tf - 900), ax = Lf + 40;
-      for (let y = y0 + 300; y < Tf - 200; y += 140) pts.push([lerp(wv(xR, y), ax, ss((y - sA) / (Tf - 200 - sA))), y]);
-      pts.push([ax + 6, Tf - 110], [ax + 40, Tf - 30], [ax + 110, Tf - 2]);
-      for (let x = ax + 180; x < Rf - r; x += 60) pts.push([x, Tf]);
-      for (let k = 1; k <= 6; k++) { const a = -Math.PI / 2 + k / 6 * Math.PI / 2; pts.push([Rf - r + r * Math.cos(a), Tf + r + r * Math.sin(a)]); }
-      for (let y = Tf + r + 60; y < Bf - r; y += 60) pts.push([Rf, y]);
-      for (let k = 1; k <= 6; k++) { const a = k / 6 * Math.PI / 2; pts.push([Rf - r + r * Math.cos(a), Bf - r + r * Math.sin(a)]); }
-      const px = Lf + (Rf - Lf) * .3;
-      for (let x = Rf - r - 60; x > px; x -= 60) pts.push([x, Bf]);
-      pts.push([px - 40, Bf + 14], [px - 70, Bf + 80]);
-      const sB = Bf + 200;
-      for (let y = sB; y < fK2[1] - 160; y += 140) pts.push([lerp(px - 80, wv(xR, y), ss((y - sB) / 700)), y]);
+      for (let y = y0 + 300; y < fK2[1] - 160; y += 140) pts.push([wv(xR, y), y]);
       pts.push([Math.max(xR, fK2[0] + 160), fK2[1] - 90], [fK2[0] + 110, fK2[1] - 6], [fK2[0] + 40, fK2[1] + 1]);
       fR.forEach(p => pts.push(p));
       pts.push([fB2[0] - 50, fB2[1] + 30], [lerp(fB2[0], xL, .55), fB2[1] + 58], [xL + 30, fB2[1] + 110], [xL, fB2[1] + 230]);
