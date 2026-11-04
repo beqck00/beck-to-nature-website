@@ -466,6 +466,24 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 /* why: inquiry link centered under the paragraph, closer to it */
 .why2-body{width:fit-content;gap:18px}
 .why2 .text-cta{justify-self:center}
+
+/* form, after the reference: choice cards with a title, a quiet subtitle and a check mark;
+   small muted labels; a footer row set off by a hairline */
+.chip span{position:relative;display:grid;gap:3px;align-content:center;min-height:84px;padding:16px 52px 16px 20px;border-radius:16px;background:#121110;box-shadow:inset 0 0 0 1px rgba(240,220,180,.1);transition:box-shadow 160ms,background-color 160ms}
+.chip span b{font-weight:400;font-size:18px;color:var(--ink)}
+.chip span small{font-size:15px;color:var(--ink-3)}
+.chip span:hover{box-shadow:inset 0 0 0 1px rgba(240,220,180,.26)}
+.chip .mark{position:absolute;top:16px;right:16px;width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(240,220,180,.25);transition:background-color 160ms,box-shadow 160ms}
+.chip input:checked+span{color:var(--ink);background:#1A1816;box-shadow:inset 0 0 0 1.5px rgba(235,211,166,.7)}
+.chip input:checked+span b{color:var(--ink)}
+.chip input:checked+span .mark{box-shadow:none;background:var(--onyx) 50% 40%/300% auto}
+.chip input:checked+span .mark::after{content:"";position:absolute;left:7px;top:5px;width:6px;height:10px;border:solid #1A1006;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.fld label{font-size:15px;color:var(--ink-3)}
+.fld input{background:#121110;border-radius:14px}
+.wiz-nav{margin:6px calc(clamp(28px,3vw,48px) * -1) 0;padding:22px clamp(28px,3vw,48px) 0;box-shadow:0 -1px 0 rgba(240,220,180,.09)}
+.wiz-nav .next{min-width:160px;min-height:48px;font-size:17px}
+#wiz>.note{margin-top:-6px}
+@media (max-width:560px){.chip span{min-height:72px}}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -536,7 +554,7 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
         <div class="wiz-top"><span id="w-count">Question 1 of 6</span><ol class="dots" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li></ol></div>
 
         <fieldset class="step" style="border:0;margin:0;padding:0"><legend class="q">What does your company make?</legend>
-          <div class="chips big" data-auto="industry"><label class="chip"><input type="radio" name="industry" value="Medical &amp; healthcare"><span>Medical &amp; healthcare</span></label><label class="chip"><input type="radio" name="industry" value="Software"><span>Software</span></label><label class="chip"><input type="radio" name="industry" value="Hardware"><span>Hardware</span></label><label class="chip"><input type="radio" name="industry" value="Something else"><span>Something else</span></label></div></fieldset>
+          <div class="chips big" data-auto="industry"><label class="chip"><input type="radio" name="industry" value="Medical &amp; healthcare"><span><b>Medical &amp; healthcare</b><small>Devices, diagnostics, care</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="industry" value="Software"><span><b>Software</b><small>Platforms, apps, SaaS</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="industry" value="Hardware"><span><b>Hardware</b><small>Devices, machinery, components</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="industry" value="Something else"><span><b>Something else</b><small>Tell us more later</small><i class="mark" aria-hidden="true"></i></span></label></div></fieldset>
 
         <div class="step"><p class="q">Where can we reach you?<small>So we can send you a first view, even if you stop halfway.</small></p>
           <div class="row2"><div class="fld"><label for="w-name">Your name</label><input id="w-name" autocomplete="name"></div>
@@ -545,10 +563,10 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
           <label class="consent"><input type="checkbox" id="w-sms" checked> Text me about this inquiry. You can opt out any time.</label></div>
 
         <fieldset class="step" style="border:0;margin:0;padding:0"><legend class="q">Where is your product today?</legend>
-          <div class="chips big" data-auto="stage"><label class="chip"><input type="radio" name="stage" value="Idea or prototype"><span>Idea or prototype</span></label><label class="chip"><input type="radio" name="stage" value="Ready, not selling yet"><span>Ready, not selling yet</span></label><label class="chip"><input type="radio" name="stage" value="Selling in Europe"><span>Selling in Europe</span></label><label class="chip"><input type="radio" name="stage" value="Selling worldwide"><span>Selling worldwide</span></label></div></fieldset>
+          <div class="chips big" data-auto="stage"><label class="chip"><input type="radio" name="stage" value="Idea or prototype"><span><b>Idea or prototype</b><small>Testing interest first</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="stage" value="Ready, not selling yet"><span><b>Ready, not selling yet</b><small>Product is finished</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="stage" value="Selling in Europe"><span><b>Selling in Europe</b><small>Customers today</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="stage" value="Selling worldwide"><span><b>Selling worldwide</b><small>Several markets</small><i class="mark" aria-hidden="true"></i></span></label></div></fieldset>
 
         <fieldset class="step" style="border:0;margin:0;padding:0"><legend class="q">Have you tried the US before?</legend>
-          <div class="chips big" data-auto="us"><label class="chip"><input type="radio" name="us" value="No, this is the first time"><span>No, this is the first time</span></label><label class="chip"><input type="radio" name="us" value="We tried once"><span>We tried once</span></label><label class="chip"><input type="radio" name="us" value="We already sell there"><span>We already sell there</span></label><label class="chip"><input type="radio" name="us" value="Not sure yet"><span>Not sure yet</span></label></div></fieldset>
+          <div class="chips big" data-auto="us"><label class="chip"><input type="radio" name="us" value="No, this is the first time"><span><b>No, this is the first time</b><small>Starting fresh</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="us" value="We tried once"><span><b>We tried once</b><small>A show, partner or online</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="us" value="We already sell there"><span><b>We already sell there</b><small>Ready to grow</small><i class="mark" aria-hidden="true"></i></span></label><label class="chip"><input type="radio" name="us" value="Not sure yet"><span><b>Not sure yet</b><small>We will talk it through</small><i class="mark" aria-hidden="true"></i></span></label></div></fieldset>
 
         <div class="step"><p class="q" id="dial-q">When do you want to stand at your first US show?</p>
           <div class="dial"><div class="readout" aria-hidden="true"><span class="digits" id="digits"></span><span class="unit">months</span></div>

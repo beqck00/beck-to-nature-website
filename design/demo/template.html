@@ -461,6 +461,24 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 /* why: inquiry link centered under the paragraph, closer to it */
 .why2-body{width:fit-content;gap:18px}
 .why2 .text-cta{justify-self:center}
+
+/* form, after the reference: choice cards with a title, a quiet subtitle and a check mark;
+   small muted labels; a footer row set off by a hairline */
+.chip span{position:relative;display:grid;gap:3px;align-content:center;min-height:84px;padding:16px 52px 16px 20px;border-radius:16px;background:#121110;box-shadow:inset 0 0 0 1px rgba(240,220,180,.1);transition:box-shadow 160ms,background-color 160ms}
+.chip span b{font-weight:400;font-size:18px;color:var(--ink)}
+.chip span small{font-size:15px;color:var(--ink-3)}
+.chip span:hover{box-shadow:inset 0 0 0 1px rgba(240,220,180,.26)}
+.chip .mark{position:absolute;top:16px;right:16px;width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(240,220,180,.25);transition:background-color 160ms,box-shadow 160ms}
+.chip input:checked+span{color:var(--ink);background:#1A1816;box-shadow:inset 0 0 0 1.5px rgba(235,211,166,.7)}
+.chip input:checked+span b{color:var(--ink)}
+.chip input:checked+span .mark{box-shadow:none;background:var(--onyx) 50% 40%/300% auto}
+.chip input:checked+span .mark::after{content:"";position:absolute;left:7px;top:5px;width:6px;height:10px;border:solid #1A1006;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.fld label{font-size:15px;color:var(--ink-3)}
+.fld input{background:#121110;border-radius:14px}
+.wiz-nav{margin:6px calc(clamp(28px,3vw,48px) * -1) 0;padding:22px clamp(28px,3vw,48px) 0;box-shadow:0 -1px 0 rgba(240,220,180,.09)}
+.wiz-nav .next{min-width:160px;min-height:48px;font-size:17px}
+#wiz>.note{margin-top:-6px}
+@media (max-width:560px){.chip span{min-height:72px}}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
