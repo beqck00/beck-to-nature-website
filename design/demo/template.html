@@ -481,7 +481,7 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 @media (max-width:560px){.chip span{min-height:72px}}
 
 /* form: no glow, just a quiet edge */
-form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow:inset 0 1px 0 rgba(255,236,200,.06),0 0 0 1px rgba(240,220,180,.12),0 30px 60px -40px rgba(0,0,0,.9)!important}
+form.wiz{background:linear-gradient(180deg,rgba(16,14,12,.74),rgba(10,9,8,.84)),var(--onyx) center 40%/cover!important;box-shadow:inset 0 1px 0 rgba(255,236,200,.06),0 0 0 1px rgba(240,220,180,.12),0 30px 60px -40px rgba(0,0,0,.9)!important}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -506,7 +506,7 @@ form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow
     <div class="nav-inner">
       <a class="brand" href="#top" aria-label="Beck To Nature, back to top">{{FIG}}{{WM}}</a>
       <nav class="nav-links" aria-label="Sections">
-        <a href="#why">Why trade shows</a><a href="#specialties">Specialties</a><a href="#inquiry">Inquiry</a><a href="#founder">Our founder</a><a href="#cases">Case stories</a>
+        <a href="#why">Why trade shows</a><a href="#specialties">Specialties</a><a href="#founder">Our founder</a><a href="#inquiry">Inquiry</a><a href="#cases">Case stories</a>
       </nav>
       <a class="btn btn-main btn-sm" href="#inquiry">Start your inquiry</a>
     </div>
@@ -539,6 +539,30 @@ form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow
         <a class="btn btn-dark" href="#inquiry">Start your inquiry</a></article>
       <article class="card tri rv"><h3>Hardware</h3><p class="tri-sub"><span class="ph">[One line on hardware and devices.]</span></p>
         <ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Show you'd pick]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Typical buyers]</span></li></ul></article>
+    </div>
+  </section>
+
+  <section class="sec frame" id="founder" aria-labelledby="fo-h">
+    <div class="founder">
+      <div class="portrait rv" role="img" aria-label="Founder photo placeholder"><span>[Founder photo]</span></div>
+      <div class="founder-text">
+        <h2 id="fo-h" class="rv">Our founder.</h2>
+        <p class="f-name rv"><span class="ph">[Founder name]</span><span class="f-role">Founder of Beck To Nature</span></p>
+        <p class="f-quote rv">“<span class="ph">[One sentence from the founder on why Beck To Nature exists.]</span>”</p>
+        <svg class="f-sig rv" viewBox="10 20 850 380" aria-hidden="true">{{SIGPATHS}}</svg>
+      </div>
+    </div>
+    <div class="essay">
+      <div class="rv"><h3>Why</h3><p><span class="ph">[Why the founder started Beck To Nature.]</span></p></div>
+      <div class="rv"><h3>How</h3><p><span class="ph">[How Beck To Nature works with a client.]</span></p></div>
+      <div class="rv"><h3>Experience</h3><p><span class="ph">[The founder's background, years, shows attended, languages.]</span></p></div>
+      <div class="rv"><h3>Mission &amp; vision</h3><p><span class="ph">[Mission.]</span> <span class="ph">[Vision.]</span></p></div>
+    </div>
+    <div class="promise rv">
+      <p class="promise-k">What you get</p>
+      <p class="promise-t"><span class="ph">[What clients get from Beck To Nature, in one or two strong sentences.]</span></p>
+      <div class="f-links"><a href="#founder"><span class="ph">[LinkedIn]</span></a><a href="#founder"><span class="ph">[Instagram]</span></a><a href="#founder"><span class="ph">[Other link]</span></a></div>
+      <a class="btn btn-main to-inquiry" href="#inquiry">Work with us <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </section>
 
@@ -580,30 +604,6 @@ form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow
         <div class="wiz-nav"><button type="button" class="btn btn-quiet btn-sm" id="w-back" hidden>Back</button><button type="button" class="btn btn-main next" id="w-next">Continue</button><button type="submit" class="btn btn-main next" id="w-send" hidden>Send inquiry</button></div>
         <p class="note">Demo: nothing is sent. On the live site this goes to <span class="ph">[email]</span>, and anyone who stops after question 2 gets a reminder SMS.</p>
       </form>
-    </div>
-  </section>
-
-  <section class="sec frame" id="founder" aria-labelledby="fo-h">
-    <div class="founder">
-      <div class="portrait rv" role="img" aria-label="Founder photo placeholder"><span>[Founder photo]</span></div>
-      <div class="founder-text">
-        <h2 id="fo-h" class="rv">Our founder.</h2>
-        <p class="f-name rv"><span class="ph">[Founder name]</span><span class="f-role">Founder of Beck To Nature</span></p>
-        <p class="f-quote rv">“<span class="ph">[One sentence from the founder on why Beck To Nature exists.]</span>”</p>
-        <svg class="f-sig rv" viewBox="10 20 850 380" aria-hidden="true">{{SIGPATHS}}</svg>
-      </div>
-    </div>
-    <div class="essay">
-      <div class="rv"><h3>Why</h3><p><span class="ph">[Why the founder started Beck To Nature.]</span></p></div>
-      <div class="rv"><h3>How</h3><p><span class="ph">[How Beck To Nature works with a client.]</span></p></div>
-      <div class="rv"><h3>Experience</h3><p><span class="ph">[The founder's background, years, shows attended, languages.]</span></p></div>
-      <div class="rv"><h3>Mission &amp; vision</h3><p><span class="ph">[Mission.]</span> <span class="ph">[Vision.]</span></p></div>
-    </div>
-    <div class="promise rv">
-      <p class="promise-k">What you get</p>
-      <p class="promise-t"><span class="ph">[What clients get from Beck To Nature, in one or two strong sentences.]</span></p>
-      <div class="f-links"><a href="#founder"><span class="ph">[LinkedIn]</span></a><a href="#founder"><span class="ph">[Instagram]</span></a><a href="#founder"><span class="ph">[Other link]</span></a></div>
-      <a class="btn btn-main to-inquiry" href="#inquiry">Work with us <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </section>
 
@@ -778,9 +778,9 @@ const $ = id => document.getElementById(id);
       // one relaxed route: down the right margin, into the founder signature from its tail,
       // out through the B towards the left, and calmly down to the closing signature
       // the route the owners drew (on a 528px-wide picture of the page), mapped onto the live layout:
-      // x scales with the page width, y is pinned between the hero signature, the form, the founder signature and the closing one
-      const fK2 = fR[0], fB2 = fR[fR.length - 1], wz = R('#wiz');
-      const A = [[258, y0], [832, wz.top], [1305, fK2[1]], [1915, eIn[1]]];
+      // x scales with the page width, y is pinned to the hero signature, the featured specialty card, the founder signature and the closing one
+      const fK2 = fR[0], fB2 = fR[fR.length - 1];
+      const tl = R('.tri-lit'), A = [[258, y0], [640, tl.top + tl.h / 2], [1305, fK2[1]], [1915, eIn[1]]];
       const my = v => { for (let i = 0; i < A.length - 1; i++) if (v <= A[i + 1][0] || i === A.length - 2) return lerp(A[i][1], A[i + 1][1], (v - A[i][0]) / (A[i + 1][0] - A[i][0])); };
       const M = ([x, y]) => [x * W / 528, my(y)];
       pts = [start];
