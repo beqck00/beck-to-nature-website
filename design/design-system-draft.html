@@ -511,6 +511,12 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
   .hero-aside{grid-row:2;justify-self:start;align-self:start;max-width:none;margin-top:var(--s5)}
 }
 
+/* Hero text centered: headline across the top middle, copy just right of center */
+@media (min-width:981px){
+  .hero .hero-title{justify-self:center;margin-left:-6vw}
+  .hero-aside{justify-self:center;margin-left:min(22vw,320px)}
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:1ms!important;animation:none!important;scroll-behavior:auto!important}
   .js .rv.pre{opacity:1;transform:none;filter:none}
