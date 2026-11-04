@@ -79,7 +79,7 @@ p{margin:0;text-wrap:pretty}
 .hero-map .core{fill:#EBD3A6}.hero-map .comet{fill:#FFF3D6}
 .hero-map .ring{fill:none;stroke:#EBD3A6;stroke-width:.16;transform-box:fill-box;transform-origin:center;animation:ring 4s var(--ease) infinite}
 @keyframes ring{0%{transform:scale(.4);opacity:.8}70%,100%{transform:scale(2.6);opacity:0}}
-.hero h1{position:relative;z-index:1;text-align:center;font-weight:400;font-size:clamp(52px,8.4vw,140px);line-height:.95;letter-spacing:-.02em}
+.hero h1{position:relative;z-index:1;text-align:center;font-weight:400;font-size:clamp(44px,6.6vw,112px);line-height:.95;letter-spacing:-.02em}
 .hero h1 .l2{font-style:italic}
 .hero h1 .l1{color:var(--cream)}
 .glyph{display:inline-block;transition:filter 120ms linear}
@@ -577,7 +577,7 @@ const $ = id => document.getElementById(id);
     svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     // the signature, at the bottom middle of the hero
     const hero = rel(document.querySelector('.hero'));
-    const sw = Math.min(330, W * .48), k = sw / SW, ox = W / 2 - sw / 2, oy = hero.bottom - SH * k - (narrow ? W * .05 : 70);
+    const sw = Math.min(250, W * .4), k = sw / SW, ox = W / 2 - sw / 2, oy = hero.bottom - SH * k - (narrow ? W * .05 : 70);
     const tr = d => d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => `${(ox + x * k).toFixed(1)} ${(oy + y * k).toFixed(1)}`);
     sigG.innerHTML = SIG.map(d => `<path class="g" d="${tr(d)}"/><path class="c" d="${tr(d)}"/>`).join('');
     const sp = [...sigG.querySelectorAll('path')];
