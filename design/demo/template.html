@@ -67,10 +67,10 @@ p{margin:0;text-wrap:pretty}
 
 /* hero */
 .hero{min-height:calc(100svh - 76px);display:grid;place-items:center;position:relative;padding-block:48px 160px;overflow:hidden}
-.hero-map{position:absolute;inset:-76px 0 0;z-index:0;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,#000 80%,transparent);mask-image:linear-gradient(180deg,#000 80%,transparent)}
+.hero-map{position:absolute;top:-76px;bottom:0;left:50%;width:100vw;margin-left:-50vw;z-index:0;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,#000 80%,transparent);mask-image:linear-gradient(180deg,#000 80%,transparent)}
 .hero-map svg{width:100%;height:100%;display:block}
 .hero-map .d{fill:#2D2B28}.hero-map .d.near{fill:#463E33}
-.hero-map .route{fill:none;stroke:#E9CF9E;stroke-width:.24;stroke-linecap:round;opacity:.42}
+.hero-map .route{fill:none;stroke:#F0D9AE;stroke-width:.3;stroke-linecap:round;opacity:.65}
 .hero-map .core{fill:#EBD3A6}.hero-map .comet{fill:#FFF3D6}
 .hero-map .ring{fill:none;stroke:#EBD3A6;stroke-width:.16;transform-box:fill-box;transform-origin:center;animation:ring 4s var(--ease) infinite}
 @keyframes ring{0%{transform:scale(.4);opacity:.8}70%,100%{transform:scale(2.6);opacity:0}}
@@ -79,15 +79,16 @@ p{margin:0;text-wrap:pretty}
 .hero h1 .l1{color:var(--cream)}
 .glyph{display:inline-block;transition:filter 120ms linear}
 .word{display:inline-block;white-space:nowrap}
-@media (max-width:700px){.hero{padding-block:48px calc(100vw * .7)}.hero-map{inset:auto 0 0;height:calc(100vw * 84 / 124 + 40px);-webkit-mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent)}}
+@media (max-width:700px){.hero{padding-block:48px calc(100vw * .7)}.hero-map{top:auto;bottom:0;left:50%;width:100vw;margin-left:-50vw;height:calc(100vw * 84 / 124 + 40px);-webkit-mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent)}}
 
 /* the thread */
 .thread{position:absolute;left:0;top:0;z-index:1;pointer-events:none;overflow:visible}
 .thread path{fill:none;stroke-linecap:round;stroke-linejoin:round}
 #t-glow{stroke:rgba(var(--glow),.22);stroke-width:12}
 #t-core{stroke:#F6E6C2;stroke-width:2.2}
-#t-head,#t-tail{opacity:0;transition:opacity 300ms}
-#t-head.on,#t-tail.on{opacity:1}
+#t-head{opacity:0;transition:opacity 300ms}
+#t-head.on{opacity:1}
+#t-sig path.c{stroke:#F6E6C2;stroke-width:2.2}#t-sig path.g{stroke:rgba(var(--glow),.22);stroke-width:12}
 
 /* sections */
 .sec{padding-block:clamp(120px,14vw,200px) 0}
@@ -96,20 +97,21 @@ p{margin:0;text-wrap:pretty}
 .card{position:relative;z-index:2;background:linear-gradient(180deg,#151413,#100F0E);border-radius:var(--r-xl);box-shadow:inset 0 1px 0 rgba(255,240,210,.05),0 30px 60px -36px rgba(0,0,0,.9)}
 
 /* onyx surfaces: dark until the thread reaches them */
-.stone{--lit:0;position:relative;border-radius:var(--r-xl);overflow:hidden;background:var(--onyx) center 40%/cover;
-  box-shadow:0 0 calc(var(--lit) * 90px) calc(var(--lit) * -6px) rgba(var(--glow),calc(var(--lit) * .55)),inset 0 0 70px rgba(50,25,0,.45)}
-.stone::after{content:"";position:absolute;inset:0;background:radial-gradient(80% 70% at 50% 40%,rgba(255,236,200,calc(var(--lit) * .28)),transparent 65%),rgba(6,5,4,calc(.9 - var(--lit) * .9));pointer-events:none}
+.stone{position:relative;border-radius:var(--r-md);overflow:hidden;background:var(--onyx) center 40%/cover;box-shadow:inset 0 0 30px rgba(50,25,0,.5);transition:box-shadow 1600ms var(--ease)}
+.stone::after{content:"";position:absolute;inset:0;background:rgba(6,5,4,.86);transition:background-color 1600ms var(--ease);pointer-events:none}
+.stone.lit{box-shadow:inset 0 0 30px rgba(50,25,0,.4),0 0 46px -4px rgba(var(--glow),.55)}
+.stone.lit::after{background:rgba(6,5,4,0)}
 
 /* why trade shows */
-.why{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(32px,5vw,72px);align-items:stretch;margin-top:clamp(48px,6vw,72px)}
+.why{display:grid;grid-template-columns:minmax(0,1fr);max-width:820px;gap:clamp(32px,5vw,72px);align-items:stretch;margin-top:clamp(48px,6vw,72px)}
 .why-list{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .why-list li{display:grid;grid-template-columns:auto 1fr;gap:18px;padding:22px 0;box-shadow:0 1px 0 rgba(240,220,180,.07)}
 .why-list .ic{color:var(--cream);margin-top:4px}
 .why-list b{display:block;font-weight:400;font-size:20px;letter-spacing:-.01em}
 .why-list span{color:var(--ink-2);font-size:16px}
-.proto{margin-top:28px;padding:22px 24px;border-radius:var(--r-lg);background:rgba(240,220,180,.05);box-shadow:inset 0 0 0 1px rgba(240,220,180,.12);font-size:17px}
+.proto{display:flex;gap:20px;align-items:center;margin-top:28px;padding:20px 24px 20px 20px;border-radius:var(--r-lg);background:rgba(240,220,180,.05);box-shadow:inset 0 0 0 1px rgba(240,220,180,.12);font-size:17px}
 .proto b{font-weight:500;color:var(--cream)}
-.pillar{min-height:520px}
+.gem{flex:none;width:64px;height:64px;border-radius:16px}
 @media (max-width:900px){.why{grid-template-columns:1fr}.pillar{min-height:260px;order:-1}}
 
 /* services */
@@ -122,18 +124,18 @@ p{margin:0;text-wrap:pretty}
 
 /* specializations */
 .specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:clamp(48px,6vw,72px)}
-.spec{overflow:hidden;display:grid;grid-template-rows:200px auto}
+.spec{overflow:hidden}
 .spec .stone{border-radius:0}
 .spec .body{padding:28px;display:grid;gap:10px}
 .spec p{color:var(--ink-2);font-size:16px}
 .spec-note{margin-top:28px;font-size:clamp(18px,1.5vw,22px);color:var(--ink-2);max-width:60ch}
 .spec-note b{font-weight:400;color:var(--ink)}
-@media (max-width:900px){.specs{grid-template-columns:1fr}.spec{grid-template-rows:140px auto}}
+@media (max-width:900px){.specs{grid-template-columns:1fr}}
 
 /* founder */
 .founder{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,5vw,80px);margin-top:clamp(48px,6vw,72px);align-items:start}
 .portrait{aspect-ratio:4/5;display:grid;place-items:end start;padding:24px}
-.portrait span{position:relative;z-index:1;font-size:15px;color:#1E140A;background:rgba(255,246,226,.7);padding:6px 12px;border-radius:var(--r-pill)}
+.portrait span{position:relative;z-index:1;font-size:15px;color:var(--ink-3);background:rgba(240,220,180,.06);padding:6px 12px;border-radius:var(--r-pill)}
 .f-name{font-size:clamp(30px,3vw,44px);letter-spacing:-.03em;line-height:1.05}
 .f-role{color:var(--ink-2);margin-top:6px}
 .f-quote{font-style:italic;font-size:clamp(26px,2.4vw,36px);line-height:1.25;letter-spacing:-.01em;margin:28px 0;color:var(--cream)}
@@ -151,7 +153,7 @@ p{margin:0;text-wrap:pretty}
 
 /* cases */
 .cases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:clamp(48px,6vw,72px)}
-.case{overflow:hidden;display:grid;grid-template-rows:180px auto}
+.case{overflow:hidden}
 .case .stone{border-radius:0}
 .case .body{padding:clamp(26px,3vw,36px);display:grid;gap:14px}
 .case dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:16px}
@@ -253,7 +255,7 @@ form.wiz{padding:clamp(24px,3vw,40px);display:grid;gap:24px;min-height:540px;ali
 
 /* footer */
 footer{padding-block:clamp(120px,14vw,200px) 60px}
-.sign{aspect-ratio:auto;padding:clamp(28px,5vw,72px);display:grid;place-items:center}
+.sign{width:min(100%,520px);margin-inline:auto;border-radius:22px;padding:clamp(22px,3vw,36px) clamp(28px,4vw,48px);display:grid;place-items:center}
 .sign svg{position:relative;z-index:1;width:min(100%,780px);height:auto}
 .sign svg path{fill:#060504}
 .foot{display:flex;justify-content:space-between;gap:18px 32px;flex-wrap:wrap;margin-top:28px;font-size:16px;color:var(--ink-3)}
@@ -275,8 +277,8 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
 <div class="page" id="top">
   <svg class="thread" id="thread" aria-hidden="true">
     <path id="t-glow"/><path id="t-core"/>
-    <g id="t-head"><circle r="16" fill="url(#cityglow)"/><circle r="3.4" fill="#FFF6E0"/></g>
-    <g id="t-tail"><circle r="9" fill="url(#cityglow)"/><circle r="2" fill="#FFF6E0"/></g>
+    <g id="t-sig"></g>
+    <g id="t-head"><circle r="12" fill="url(#cityglow)" opacity=".7"/></g>
   </svg>
 
   <header class="nav frame">
@@ -307,10 +309,10 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
           <li><svg class="ic" viewBox="0 0 24 24"><path d="M4 20h16M7 16.5v-4M12 16.5V7M17 16.5v-7"/></svg><div><b>Check the demand</b><span>Find out if, and how much, America wants your product.</span></div></li>
           <li><svg class="ic" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><div><b>Find what needs fixing</b><span>Spot faults and gaps before a full launch, not after.</span></div></li>
         </ul>
-        <p class="proto"><b>Prototypes welcome.</b> You don't need a finished product. Many companies come with a prototype to test interest before they invest in production.</p>
+        <p class="proto"><span class="stone gem" aria-hidden="true"></span><span><b>Prototypes welcome.</b> You don't need a finished product. Many companies come with a prototype to test interest before they invest in production.</span></p>
         <a class="btn btn-main to-inquiry" href="#inquiry">Start your inquiry <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
-      <div class="stone pillar rv" aria-hidden="true"></div>
+      
     </div>
   </section>
 
@@ -328,9 +330,9 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
   <section class="sec frame" id="specialties" aria-labelledby="sp-h">
     <div class="sec-head rv"><h2 id="sp-h">Where I'm a specialist.</h2></div>
     <div class="specs">
-      <article class="card spec rv"><div class="stone" aria-hidden="true"></div><div class="body"><h3>Medical &amp; healthcare</h3><p><span class="ph">[Shows, buyers and regulatory experience in medical and healthcare.]</span></p></div></article>
-      <article class="card spec rv"><div class="stone" aria-hidden="true"></div><div class="body"><h3>Software</h3><p><span class="ph">[What you bring to software companies entering the US.]</span></p></div></article>
-      <article class="card spec rv"><div class="stone" aria-hidden="true"></div><div class="body"><h3>Hardware</h3><p><span class="ph">[What you bring to hardware and device makers.]</span></p></div></article>
+      <article class="card spec rv"><div class="body"><h3>Medical &amp; healthcare</h3><p><span class="ph">[Shows, buyers and regulatory experience in medical and healthcare.]</span></p></div></article>
+      <article class="card spec rv"><div class="body"><h3>Software</h3><p><span class="ph">[What you bring to software companies entering the US.]</span></p></div></article>
+      <article class="card spec rv"><div class="body"><h3>Hardware</h3><p><span class="ph">[What you bring to hardware and device makers.]</span></p></div></article>
     </div>
     <p class="spec-note rv"><b>I work across industries.</b> These three are where I'm a specialist.</p>
   </section>
@@ -338,7 +340,7 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
   <section class="sec frame" id="founder" aria-labelledby="fo-h">
     <div class="sec-head rv"><h2 id="fo-h">The person behind it.</h2></div>
     <div class="founder">
-      <div class="stone portrait rv"><span>[Founder photo]</span></div>
+      <div class="card portrait rv"><span>[Founder photo]</span></div>
       <div class="rv">
         <p class="f-name"><span class="ph">[Founder name]</span></p>
         <p class="f-role">Founder, Beck To Nature</p>
@@ -361,10 +363,10 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
   <section class="sec frame" id="cases" aria-labelledby="cs-h">
     <div class="sec-head rv"><h2 id="cs-h">Two stories.</h2></div>
     <div class="cases">
-      <article class="card case rv"><div class="stone" aria-hidden="true"></div><div class="body"><h3><span class="ph">[Company, industry]</span></h3>
+      <article class="card case rv"><div class="body"><h3><span class="ph">[Company, industry]</span></h3>
         <dl><dt>Product</dt><dd><span class="ph">[What they make]</span></dd><dt>Show</dt><dd><span class="ph">[Which US show]</span></dd><dt>Challenge</dt><dd><span class="ph">[Where they started]</span></dd></dl>
         <p class="result"><span class="ph">[The result, in one line]</span></p></div></article>
-      <article class="card case rv"><div class="stone" aria-hidden="true"></div><div class="body"><h3><span class="ph">[Company, industry]</span></h3>
+      <article class="card case rv"><div class="body"><h3><span class="ph">[Company, industry]</span></h3>
         <dl><dt>Product</dt><dd><span class="ph">[What they make]</span></dd><dt>Show</dt><dd><span class="ph">[Which US show]</span></dd><dt>Challenge</dt><dd><span class="ph">[Where they started]</span></dd></dl>
         <p class="result"><span class="ph">[The result, in one line]</span></p></div></article>
     </div>
@@ -469,15 +471,15 @@ const $ = id => document.getElementById(id);
   const R = routes.map(([a, b, lift], i) => { const [x1, y1] = C[a], [x2, y2] = C[b];
     const p = document.createElementNS(NS, 'path'); p.setAttribute('d', `M${x1} ${y1} Q${(x1 + x2) / 2} ${Math.min(y1, y2) - lift} ${x2} ${y2}`); p.setAttribute('class', 'route'); $('routes').appendChild(p);
     const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = reduce ? 0 : L;
-    const g = document.createElementNS(NS, 'circle'); g.setAttribute('r', '2.4'); g.setAttribute('fill', 'url(#cityglow)'); g.style.opacity = 0; $('comets').appendChild(g);
-    const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', '.6'); c.setAttribute('class', 'comet'); c.style.opacity = 0; $('comets').appendChild(c);
-    return { p, L, g, c, delay: 600 + i * 1300, period: 11000 + i * 1700 }; });
+    const g = document.createElementNS(NS, 'circle'); g.setAttribute('r', '3.4'); g.setAttribute('fill', 'url(#cityglow)'); g.style.opacity = 0; $('comets').appendChild(g);
+    const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', '.8'); c.setAttribute('class', 'comet'); c.style.opacity = 0; $('comets').appendChild(c);
+    return { p, L, g, c, delay: 300 + i * 450, period: 4200 + i * 600 }; });
   if (reduce) return;
   let vis = true, raf; const t0 = performance.now(), e = t => 1 - Math.pow(1 - t, 3);
   new IntersectionObserver(es => { vis = es[0].isIntersecting; if (vis) loop(); }).observe(svg);
   function loop() { cancelAnimationFrame(raf); raf = requestAnimationFrame(function tick(now) { if (!vis || document.hidden) return; const el = now - t0;
-    R.forEach(r => { const d = clamp((el - r.delay) / 3200); r.p.style.strokeDashoffset = (r.L * (1 - e(d))).toFixed(2);
-      const t = el - r.delay - 3200; if (t < 0) return; const k = (t % r.period) / r.period, f = clamp(k / .7), pt = r.p.getPointAtLength(r.L * (f < .5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2)), o = k < .7 ? Math.sin(f * Math.PI) : 0;
+    R.forEach(r => { const d = clamp((el - r.delay) / 1500); r.p.style.strokeDashoffset = (r.L * (1 - e(d))).toFixed(2);
+      const t = el - r.delay - 1500; if (t < 0) return; const k = (t % r.period) / r.period, f = clamp(k / .85), pt = r.p.getPointAtLength(r.L * (f < .5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2)), o = k < .85 ? Math.sin(f * Math.PI) : 0;
       [r.g, r.c].forEach(n => { n.setAttribute('cx', pt.x.toFixed(2)); n.setAttribute('cy', pt.y.toFixed(2)); }); r.c.style.opacity = o.toFixed(2); r.g.style.opacity = (o * .6).toFixed(2); });
     raf = requestAnimationFrame(tick); }); }
   document.addEventListener('visibilitychange', () => { if (!document.hidden) loop(); }); loop();
@@ -492,88 +494,85 @@ const $ = id => document.getElementById(id);
     requestAnimationFrame(glow); })();
 })();
 
-/* The thread: the signature, drawn in the hero, unwinds into one line that follows you down the page */
+/* The thread: the signature writes itself in the hero, then unwinds into one line that draws itself as you scroll */
 (() => {
-  const SIG = {{SIG}}, SW = 860, SH = 410;
-  const page = document.querySelector('.page'), svg = $('thread'), core = $('t-core'), glow = $('t-glow'), head = $('t-head'), tail = $('t-tail');
+  const SIG = {{SIG}}, SW = 860, SH = 410, NS = 'http://www.w3.org/2000/svg';
+  const page = document.querySelector('.page'), svg = $('thread'), core = $('t-core'), glow = $('t-glow'), head = $('t-head'), sigG = $('t-sig');
   const stones = [...document.querySelectorAll('.stone')];
-  let L = 0, Lsig = 0, samples = [], stoneY = [];
-  const NS = 'http://www.w3.org/2000/svg';
-  const rel = el => { const a = el.getBoundingClientRect(), b = page.getBoundingClientRect(); return { top: a.top - b.top, bottom: a.bottom - b.top, left: a.left - b.left, right: a.right - b.left, w: a.width, h: a.height }; };
-  const cr = (pts, start) => { let d = start ? '' : `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  let segs = [], Lsig = 0, Lt = 0, samples = [], stoneY = [];
+  const rel = el => { const a = el.getBoundingClientRect(), b = page.getBoundingClientRect(); return { top: a.top - b.top, bottom: a.bottom - b.top, left: a.left - b.left, w: a.width, h: a.height }; };
+  const cr = pts => { let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
     for (let i = 0; i < pts.length - 1; i++) { const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
       d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`; } return d; };
   function build() {
     const W = page.clientWidth, H = page.scrollHeight, narrow = W < 700;
     svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    // place the signature at the bottom middle of the hero
+    // the signature, at the bottom middle of the hero
     const hero = rel(document.querySelector('.hero'));
-    const sw = Math.min(330, W * .48), s = sw / SW, ox = W / 2 - sw / 2, oy = hero.bottom - SH * s - (narrow ? W * .05 : 70);
-    const tr = d => d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => `${(ox + x * s).toFixed(1)} ${(oy + y * s).toFixed(1)}`);
-    const sigD = SIG.map(tr).join(' ');
-    const tmp = document.createElementNS(NS, 'path'); tmp.setAttribute('d', sigD); svg.appendChild(tmp); Lsig = tmp.getTotalLength(); tmp.remove();
-    const end = [ox + 842 * s, oy + 292 * s];
-    // the lane: calm drift across the page in small waves, with a few swirls
-    const footSign = rel($('sign')), y0 = end[1], yEnd = footSign.top + footSign.h * .5;
-    const cx = W / 2, drift = W * (narrow ? .28 : .3), per = narrow ? 2300 : 3000, amp = narrow ? 8 : 14, wl = narrow ? 220 : 300;
-    const avoid = ['#belief'].map(q => rel(document.querySelector(q)));
-    const xRaw = narrow ? (y => W - 11 + 4 * Math.sin((y - y0) / wl * Math.PI * 2)) : (y => cx + drift * Math.sin((y - y0) / per * Math.PI * 2 + .6) + amp * Math.sin((y - y0) / wl * Math.PI * 2));
-    const xAt = y => { let x = xRaw(y); avoid.forEach(z => { const k = clamp(Math.min(y - z.top + 200, z.bottom + 200 - y) / 260); if (k > 0) { const side = x > cx ? W - (narrow ? 14 : 40) : (narrow ? 14 : 40); x = lerp(x, side, k * k * (3 - 2 * k)); } }); return x; };
-    const sw2 = ['#services', '#founder', '#belief'].map(q => ({ y: rel(document.querySelector(q)).top + 40, r: narrow ? 9 : 28, done: false }));
-    const pts = narrow ? [end, [lerp(end[0], W - 11, .6), end[1] + 6], [W - 11, end[1] + 90]] : [end, [end[0] + 40, end[1] + 2], [end[0] + 90, end[1] + 30], [xAt(y0 + 160), y0 + 160]];
-    for (let y = y0 + 200; y < yEnd - 220; y += 24) {
-      const q = sw2.find(z => !z.done && y >= z.y);
-      if (q) { q.done = true; const x = xAt(y), dir = x > cx ? -1 : 1, c = [x + dir * q.r, y];
-        for (let a = 1; a <= 12; a++) { const t = a / 12 * Math.PI * 2; pts.push([c[0] - dir * q.r * Math.cos(t), c[1] + q.r * .9 * Math.sin(t) * dir + a * 2]); } y += 26; continue; }
+    const sw = Math.min(330, W * .48), k = sw / SW, ox = W / 2 - sw / 2, oy = hero.bottom - SH * k - (narrow ? W * .05 : 70);
+    const tr = d => d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => `${(ox + x * k).toFixed(1)} ${(oy + y * k).toFixed(1)}`);
+    sigG.innerHTML = SIG.map(d => `<path class="g" d="${tr(d)}"/><path class="c" d="${tr(d)}"/>`).join('');
+    const sp = [...sigG.querySelectorAll('path')];
+    segs = []; Lsig = 0;
+    for (let i = 0; i < sp.length; i += 2) { const len = sp[i + 1].getTotalLength(); segs.push({ els: [sp[i], sp[i + 1]], off: Lsig, len }); Lsig += len; }
+    // the lane: from the signature's tail, a calm line with small waves along the right side
+    const end = [ox + 842 * k, oy + 292 * k], y0 = end[1];
+    const sign = rel($('sign')), yEnd = sign.top + sign.h / 2;
+    const lane = narrow ? W - 12 : W * .9, amp = narrow ? 4 : 18, drift = narrow ? 0 : W * .025;
+    const xAt = y => lane + amp * Math.sin((y - y0) / 380 * Math.PI * 2) + drift * Math.sin((y - y0) / 2600 * Math.PI * 2);
+    const loops = narrow ? [] : ['#founder', '#belief'].map(q => ({ y: rel(document.querySelector(q)).top + 30, r: 16, done: false }));
+    const pts = [end, [end[0] + (lane - end[0]) * .35, y0 + 20], [end[0] + (lane - end[0]) * .8, y0 + 120], [xAt(y0 + 260), y0 + 260]];
+    for (let y = y0 + 300; y < sign.top - 260; y += 28) {
+      const q = loops.find(z => !z.done && y >= z.y);
+      if (q) { q.done = true; const x = xAt(y);
+        for (let a = 1; a <= 12; a++) { const t = a / 12 * Math.PI * 2; pts.push([x - q.r + q.r * Math.cos(t), y + q.r * Math.sin(t) * .9 + a * 1.6]); } y += 20; continue; }
       pts.push([xAt(y), y]); }
-    const last = pts[pts.length - 1];
-    pts.push([lerp(last[0], W / 2, .5), lerp(last[1], footSign.top - 40, .7)], [W / 2, footSign.top + 10], [W / 2, yEnd]);
-    const d = sigD + ' ' + `M ${end[0].toFixed(1)} ${end[1].toFixed(1)}` + cr(pts, true);
-    core.setAttribute('d', d); glow.setAttribute('d', d);
-    L = core.getTotalLength();
-    samples = []; let maxY = -1e9; const N = Math.min(3600, Math.ceil((L - Lsig) / 5));
-    for (let i = 0; i <= N; i++) { const l = Lsig + (L - Lsig) * i / N, p = core.getPointAtLength(l); maxY = Math.max(maxY, p.y); samples.push({ l, y: maxY }); }
-    stoneY = stones.map(el => rel(el));
-    target(); cur.h = Math.max(cur.h, reduce ? L : cur.h); paint();
+    const last = pts[pts.length - 1], sx = sign.left + sign.w / 2;
+    pts.push([lerp(last[0], sx, .35), sign.top - 140], [lerp(last[0], sx, .85), sign.top - 30], [sx, sign.top + 10], [sx, sign.top + sign.h * .5]);
+    const d = cr(pts); core.setAttribute('d', d); glow.setAttribute('d', d);
+    Lt = core.getTotalLength();
+    samples = []; let maxY = -1e9; const N = Math.min(3600, Math.ceil(Lt / 5));
+    for (let i = 0; i <= N; i++) { const l = Lt * i / N, p = core.getPointAtLength(l); maxY = Math.max(maxY, p.y); samples.push({ l, y: maxY }); }
+    stoneY = stones.map(el => { const r = rel(el); return r.top + r.h / 2; });
+    paint();
   }
-  const lenAt = y => { let lo = 0, hi = samples.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (samples[m].y < y) lo = m + 1; else hi = m; } return samples[lo] ? samples[lo].l : L; };
-  // write the signature on load, then follow the scroll smoothly
+  const lenAt = y => { let lo = 0, hi = samples.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (samples[m].y < y) lo = m + 1; else hi = m; } return samples[lo] ? samples[lo].l : Lt; };
   const cur = { s: 0, h: 0 }, tgt = { s: 0, h: 0 }; let written = reduce, raf = 0;
+  const win = (els, len, a, b) => { const v = b - a; els.forEach(el => { if (v < .5) { el.style.visibility = 'hidden'; return; } el.style.visibility = ''; el.style.strokeDasharray = `${v.toFixed(1)} ${(len * 3).toFixed(0)}`; el.style.strokeDashoffset = (-a).toFixed(1); }); };
+  function paint() {
+    segs.forEach(g => win(g.els, g.len, clamp(cur.s - g.off, 0, g.len), clamp(cur.h - g.off, 0, g.len)));
+    const th = clamp(cur.h - Lsig, 0, Lt), ts = clamp(cur.s - Lsig, 0, Lt);
+    win([core, glow], Lt, ts, th);
+    const live = th > 2 && th < Lt - 2; head.classList.toggle('on', live);
+    if (th > 0) { const p = core.getPointAtLength(th); head.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
+      stones.forEach((el, i) => { if (p.y >= stoneY[i] - 40 || (el.id === 'sign' && th >= Lt - 4)) el.classList.add('lit'); }); }
+  }
   function target() {
     const top = -page.getBoundingClientRect().top, vh = innerHeight;
-    const unwind = clamp(top / (vh * .9)), e = unwind * unwind * (3 - 2 * unwind);
-    tgt.s = reduce ? Lsig : Lsig * e;
-    tgt.h = reduce ? L : Math.max(written ? Lsig : cur.h, lenAt(top + vh * .6));
-    if (!written) tgt.s = 0;
-  }
-  function paint() {
-    const vis = Math.max(.01, cur.h - cur.s);
-    const da = `0 ${cur.s.toFixed(1)} ${vis.toFixed(1)} ${(L * 2).toFixed(0)}`; core.style.strokeDasharray = da; glow.style.strokeDasharray = da;
-    const ph = core.getPointAtLength(cur.h); head.setAttribute('transform', `translate(${ph.x.toFixed(1)} ${ph.y.toFixed(1)})`); head.classList.toggle('on', cur.h > Lsig + 4 && cur.h < L - 4);
-    const pt = core.getPointAtLength(cur.s); tail.setAttribute('transform', `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`); tail.classList.toggle('on', cur.s > 2 && cur.s < Lsig - 2);
-    // light the stone the thread has reached, and keep it lit
-    const hy = ph.y;
-    stones.forEach((el, i) => { const r = stoneY[i]; if (!r) return; const lit = clamp((hy - r.top + 60) / Math.max(220, r.h * .6)); if (lit > (el._lit || 0)) { el._lit = lit; el.style.setProperty('--lit', lit.toFixed(3)); } });
+    const u = clamp(top / (vh * .85)), e = u * u * (3 - 2 * u);
+    tgt.s = written ? Lsig * e : 0;
+    const bottom = top + vh >= page.scrollHeight - 6;
+    tgt.h = !written ? cur.h : Lsig + (top < 2 ? 0 : bottom ? Lt : lenAt(top + vh * .55));
   }
   function loop() {
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(function step() {
-      target();
-      const k = .085; let moving = false;
-      ['s', 'h'].forEach(p => { const dlt = tgt[p] - cur[p]; if (Math.abs(dlt) > .4) { cur[p] += dlt * k; moving = true; } else cur[p] = tgt[p]; });
+      target(); let moving = false;
+      ['s', 'h'].forEach(p => { const d = tgt[p] - cur[p]; if (Math.abs(d) > .3) { cur[p] += d * .07; moving = true; } else cur[p] = tgt[p]; });
       paint(); if (moving) raf = requestAnimationFrame(step);
     });
   }
-  addEventListener('scroll', loop, { passive: true });
-  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { stones.forEach(s => s._lit = 0); build(); loop(); }, 150); });
+  addEventListener('scroll', () => { if (written) loop(); }, { passive: true });
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { build(); if (written) loop(); }, 150); });
   const start = () => { build();
-    if (reduce) { cur.s = Lsig; cur.h = L; paint(); return; }
-    // the pen writes the signature
-    const t0 = performance.now(), dur = 2600;
-    (function w(now) { const t = clamp((now - t0) / dur); cur.h = Lsig * (1 - Math.pow(1 - t, 2)); cur.s = 0; paint(); if (t < 1) requestAnimationFrame(w); else { written = true; loop(); } })(t0);
+    if (reduce) { cur.s = Lsig; cur.h = Lsig + Lt; paint(); stones.forEach(s => s.classList.add('lit')); return; }
+    const t0 = performance.now(), dur = 2800;
+    (function w(now) { const t = clamp((now - t0) / dur); cur.h = Lsig * (t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2); cur.s = 0; paint();
+      if (t < 1) requestAnimationFrame(w); else { written = true; loop(); } })(t0);
   };
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(start, 400));
 })();
+
 
 /* Inquiry: one question at a time */
 (() => {
