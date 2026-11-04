@@ -777,15 +777,22 @@ const $ = id => document.getElementById(id);
       const fB = fPen[0], fK = fPen[fPen.length - 1], eB = ePen[0];
       // one relaxed route: down the right margin, into the founder signature from its tail,
       // out through the B towards the left, and calmly down to the closing signature
-      pts = [start, [start[0] + 70, y0 + 12], [lerp(start[0], xR, .75), y0 + 70], [xR, y0 + 170]];
-      const fK2 = fR[0], fB2 = fR[fR.length - 1];
-      for (let y = y0 + 300; y < fK2[1] - 160; y += 140) pts.push([wv(xR, y), y]);
-      pts.push([Math.max(xR, fK2[0] + 160), fK2[1] - 90], [fK2[0] + 110, fK2[1] - 6], [fK2[0] + 40, fK2[1] + 1]);
+      // the route the owners drew (on a 528px-wide picture of the page), mapped onto the live layout:
+      // x scales with the page width, y is pinned between the hero signature, the form, the founder signature and the closing one
+      const fK2 = fR[0], fB2 = fR[fR.length - 1], wz = R('#wiz');
+      const A = [[258, y0], [832, wz.top], [1305, fK2[1]], [1915, eIn[1]]];
+      const my = v => { for (let i = 0; i < A.length - 1; i++) if (v <= A[i + 1][0] || i === A.length - 2) return lerp(A[i][1], A[i + 1][1], (v - A[i][0]) / (A[i + 1][0] - A[i][0])); };
+      const M = ([x, y]) => [x * W / 528, my(y)];
+      pts = [start];
+      [[330, 262], [375, 290], [415, 335], [435, 395], [425, 450], [390, 495], [335, 545], [275, 598], [215, 655], [178, 705], [168, 750], [185, 790],
+       [212, 832], [232, 870], [240, 910], [250, 950], [268, 995], [298, 1045], [338, 1080], [385, 1112], [435, 1150], [472, 1190], [486, 1235], [474, 1268]].forEach(p => pts.push(M(p)));
+      pts.push([fK2[0] + 70, fK2[1] - 8], [fK2[0] + 25, fK2[1]]);
       fR.forEach(p => pts.push(p));
-      pts.push([fB2[0] - 50, fB2[1] + 30], [lerp(fB2[0], xL, .55), fB2[1] + 58], [xL + 30, fB2[1] + 110], [xL, fB2[1] + 230]);
-      for (let y = fB2[1] + 370; y < eB[1] - 220; y += 140) pts.push([wv(xL, y), y]);
-      pts.push([xL, eB[1] - 100], [lerp(xL, eB[0], .5), eB[1] - 24], [eB[0] - 12, eB[1] - 4]);
-      ePen.forEach(p => pts.push(p));
+      pts.push([fB2[0] - 40, fB2[1] + 24]);
+      [[200, 1345], [196, 1380], [210, 1412], [268, 1458], [338, 1490], [368, 1522], [350, 1555], [292, 1585], [242, 1622], [222, 1662], [232, 1702],
+       [268, 1742], [294, 1782], [294, 1830], [262, 1868], [205, 1893]].forEach(p => pts.push(M(p)));
+      pts.push([Math.max(eIn[0] + 70, lerp(eIn[0], 205 * W / 528, .5)), eIn[1] - 6], [eIn[0] + 25, eIn[1]]);
+      eR.forEach(p => pts.push(p));
     } else {
       pts = [start, [start[0] + 40, y0 + 4], [start[0] + 75, y0 + 30]];
       const aY = fIn[1] - 60, sY = y0 + 70;
