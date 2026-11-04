@@ -425,6 +425,12 @@ form.wiz{padding:clamp(22px,2.4vw,32px);min-height:460px;gap:20px}
 .tri-lit{transform:translateY(-18px);padding-block:40px;min-height:380px}
 .tri-tag{font-size:14px;padding:4px 14px}
 @media (max-width:900px){.trio{gap:16px}.tri,.tri-lit{min-height:0}}
+
+/* cursor spotlight */
+.spot{position:fixed;left:0;top:0;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;pointer-events:none;z-index:45;opacity:0;
+  background:radial-gradient(closest-side,rgba(255,226,170,.17),rgba(240,190,110,.07) 45%,rgba(240,190,110,0) 100%);mix-blend-mode:screen;transition:opacity 500ms var(--ease);will-change:transform}
+.spot.on{opacity:1}
+@media (hover:none),(pointer:coarse){.spot{display:none}}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -575,6 +581,7 @@ form.wiz{padding:clamp(22px,2.4vw,32px);min-height:460px;gap:20px}
   </footer>
 </div>
 
+<div class="spot" id="spot" aria-hidden="true"></div>
 <div class="reward" id="reward" hidden><canvas id="burst" aria-hidden="true"></canvas>
   <div class="card reward-card" role="status"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"/><path d="M20 33l8 8 17-18"/></svg>
     <h3 id="r-title">Inquiry received</h3><div class="summary" id="r-sum"></div>
@@ -739,6 +746,19 @@ const $ = id => document.getElementById(id);
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(go, 400));
 })();
 
+
+
+/* Cursor spotlight: a soft warm light that follows the pointer */
+(() => {
+  const el = $('spot'); if (!el || matchMedia('(hover: none), (pointer: coarse)').matches) return;
+  let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y, raf = 0;
+  const step = () => { cx += (x - cx) * (reduce ? 1 : .18); cy += (y - cy) * (reduce ? 1 : .18);
+    el.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
+    raf = Math.abs(x - cx) + Math.abs(y - cy) > .5 ? requestAnimationFrame(step) : 0; };
+  addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; el.classList.add('on'); if (!raf) raf = requestAnimationFrame(step); }, { passive: true });
+  document.addEventListener('pointerleave', () => el.classList.remove('on'));
+  addEventListener('blur', () => el.classList.remove('on'));
+})();
 
 /* Inquiry: one question at a time */
 (() => {
