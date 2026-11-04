@@ -341,8 +341,8 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
 .map text{font-family:var(--font);font-size:2.5px;fill:var(--ink-2);letter-spacing:-.01em}
 .map text.strong{fill:var(--ink)}
 .map .land-ring{fill:none;stroke:#F3E2B8;stroke-width:.25;opacity:0}
-.map .route{fill:none;stroke:#C5A373;stroke-width:.2;stroke-linecap:round;opacity:.32}
-.map .comet{fill:#F3E2B8}
+.map .route{fill:none;stroke:#C5A373;stroke-width:.26;stroke-linecap:round;opacity:.5}
+.map .comet{fill:#FFF3D6}
 .map .comet-glow{fill:url(#cityglow)}
 @media (max-width:700px){.map text{font-size:3.4px}}
 .dial-sec{padding-top:var(--s9)}
@@ -490,6 +490,27 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
   .hero-ctas .btn{flex:1 1 auto}
 }
 
+/* Hero: the map leads; small, light text in the corners */
+.hero{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto;justify-content:stretch;padding-block:var(--s7) var(--s8)}
+.hero .hero-title{grid-row:1;align-self:start;display:grid;font-size:clamp(40px,4.6vw,74px);font-weight:300;line-height:1.02;letter-spacing:-.035em;max-width:none}
+.hero .hero-title .l2{padding-left:2.4em;color:var(--ink)}
+.hero-aside{grid-row:3;justify-self:end;align-self:end;position:relative;z-index:1;max-width:380px;display:grid;gap:var(--s4)}
+.hero-aside .hero-sub{font-size:16px;line-height:1.55;color:var(--ink-2);margin:0;max-width:none}
+.hero-aside .hero-ctas{margin:0;flex-wrap:nowrap;gap:var(--s2)}
+.round-link{display:inline-grid;place-items:center;width:52px;height:52px;flex:none;border-radius:50%;color:var(--ink);text-decoration:none;transition:transform var(--duration-press) var(--ease)}
+.round-link .ic{transition:transform var(--duration-fast) var(--ease)}
+.round-link:hover .ic{transform:translateX(3px)}
+.round-link:active{transform:scale(.95)}
+.partners-head{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s4) var(--s6);flex-wrap:wrap;margin-bottom:var(--s4)}
+.partners-head p{font-size:15px;color:var(--ink-2);margin:0}
+.partners-head .proof{margin:0;font-size:14px}
+@media (max-width:980px){
+  .hero{padding-block:var(--s6) calc(100vw * 84 / 124 + 32px)}
+  .hero .hero-title{font-size:clamp(38px,10vw,56px)}
+  .hero .hero-title .l2{padding-left:1.2em}
+  .hero-aside{grid-row:2;justify-self:start;align-self:start;max-width:none;margin-top:var(--s5)}
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:1ms!important;animation:none!important;scroll-behavior:auto!important}
   .js .rv.pre{opacity:1;transform:none;filter:none}
@@ -526,34 +547,31 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
   <main class="view" id="view-draft">
     <section class="hero frame" aria-labelledby="h1">
       <figure class="map map-bg" data-speed="0.06" aria-label="Map: routes from Central European cities across the Atlantic to US trade show cities">
-        <svg id="map" viewBox="-3 -1 124 84" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true">
+        <svg id="map" viewBox="-3 -1 124 84" preserveAspectRatio="xMidYMid meet" role="img" aria-hidden="true">
           <defs>
             <radialGradient id="cityglow"><stop offset="0" stop-color="#F3E2B8" stop-opacity=".9"/><stop offset=".35" stop-color="#C5A373" stop-opacity=".45"/><stop offset="1" stop-color="#C5A373" stop-opacity="0"/></radialGradient>
             <linearGradient id="trailgrad" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#917248"/><stop offset=".5" stop-color="#F3E2B8"/><stop offset="1" stop-color="#C5A373"/></linearGradient>
           </defs>
           <mask id="dotsfade" maskUnits="userSpaceOnUse" x="-60" y="-40" width="240" height="120"><rect x="-60" y="-40" width="240" height="120" fill="url(#dotsfadegrad)"/></mask>
           <linearGradient id="dotsfadegrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="70" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>
-          <g id="map-dots" mask="url(#dotsfade)"></g>
+          <g id="map-dots"></g>
           <g id="routes"></g>
           <g id="cities"></g>
           <g id="comets"></g>
         </svg>
       </figure>
-      <h1 id="h1" class="rv" data-speed="-0.12"><span class="metal-text">Take your products</span><br class="br-d"> to America.</h1>
-      <div class="hero-row">
-      <div>
-        <p class="hero-sub rv">We did it ourselves first. Now we take Central European manufacturers to the right US trade show and their first American orders.</p>
-        <div class="hero-ctas rv">
+      <h1 id="h1" class="hero-title rv" data-speed="-0.05"><span class="l1 metal-text">Take your products</span><span class="l2">to America.</span></h1>
+      <div class="hero-aside rv">
+        <p class="hero-sub">We did it ourselves first. Now we take Central European manufacturers to the right US trade show and their first American orders.</p>
+        <div class="hero-ctas">
           <a class="btn btn-brass" href="#draft" data-jump="inquiry">Start your inquiry</a>
-          <a class="btn btn-glass" href="#draft" data-jump="how">How it works</a>
+          <a class="round-link btn-glass" href="#draft" data-jump="how" aria-label="How it works"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <div class="proof rv"><span>Family-owned, Hungarian–American</span><span>Budapest and <span class="ph">[Wisconsin]</span></span><span>Member of <span class="ph">[AmCham Hungary]</span></span></div>
-      </div>
       </div>
     </section>
 
     <section class="partners" aria-labelledby="pt-h">
-      <p id="pt-h" class="frame rv">Trusted by manufacturers from Hungary and beyond</p>
+      <div class="partners-head frame rv"><p id="pt-h">Trusted by manufacturers from Hungary and beyond</p><div class="proof"><span>Family-owned, Hungarian–American</span><span>Budapest and <span class="ph">[Wisconsin]</span></span><span>Member of <span class="ph">[AmCham Hungary]</span></span></div></div>
       <div class="marquee rv" aria-label="Client and partner logos">
         <ul class="marquee-track"><li class="logo-slot glass">[Client logo]</li><li class="logo-slot glass">[Partner logo]</li><li class="logo-slot glass">[Association logo]</li><li class="logo-slot glass">[Client logo]</li><li class="logo-slot glass">[Trade show logo]</li><li class="logo-slot glass">[Partner logo]</li></ul>
         <ul class="marquee-track" aria-hidden="true"><li class="logo-slot glass">[Client logo]</li><li class="logo-slot glass">[Partner logo]</li><li class="logo-slot glass">[Association logo]</li><li class="logo-slot glass">[Client logo]</li><li class="logo-slot glass">[Trade show logo]</li><li class="logo-slot glass">[Partner logo]</li></ul>
@@ -1072,7 +1090,7 @@ document.querySelectorAll('.btn').forEach(b => b.addEventListener('pointerdown',
   const cities = [['budapest', 1.15, true], ['vienna', .8], ['prague', .8], ['warsaw', .8], ['chicago', 1], ['newyork', .9], ['lasvegas', .8], ['orlando', .8]];
   citiesG.innerHTML = cities.map(([k, r, home], i) => { const [x, y] = C[k];
     return `<circle cx="${x}" cy="${y}" r="${r * 3}" fill="url(#cityglow)" opacity=".8"/><circle class="ring" cx="${x}" cy="${y}" r="${r * 1.1}" style="animation-delay:${(i * .4).toFixed(2)}s"/><circle class="city-core${home ? ' home' : ''}" cx="${x}" cy="${y}" r="${r * .58}"/>`; }).join('');
-  const routes = [['budapest', 'chicago', 30], ['vienna', 'newyork', 24], ['prague', 'lasvegas', 34], ['warsaw', 'orlando', 27], ['budapest', 'newyork', 22], ['vienna', 'chicago', 28]];
+  const routes = [['budapest', 'chicago', 30], ['vienna', 'newyork', 24], ['prague', 'lasvegas', 34], ['warsaw', 'orlando', 27], ['budapest', 'newyork', 22], ['vienna', 'chicago', 28], ['prague', 'chicago', 33], ['warsaw', 'newyork', 26]];
   const NS = 'http://www.w3.org/2000/svg';
   const paths = routes.map(([a, b, lift], i) => {
     const [x1, y1] = C[a], [x2, y2] = C[b], cx = (x1 + x2) / 2, cy = Math.min(y1, y2) - lift;
@@ -1080,8 +1098,8 @@ document.querySelectorAll('.btn').forEach(b => b.addEventListener('pointerdown',
     p.setAttribute('d', `M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}`); p.setAttribute('class', 'route');
     routesG.appendChild(p);
     const L = p.getTotalLength(); p.style.strokeDasharray = `${L}`; p.style.strokeDashoffset = reduce ? 0 : L;
-    const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('r', '.45'); dot.setAttribute('class', 'comet'); cometsG.appendChild(dot);
-    const tail = document.createElementNS(NS, 'circle'); tail.setAttribute('r', '1.6'); tail.setAttribute('class', 'comet-glow'); cometsG.insertBefore(tail, dot);
+    const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('r', '.6'); dot.setAttribute('class', 'comet'); cometsG.appendChild(dot);
+    const tail = document.createElementNS(NS, 'circle'); tail.setAttribute('r', '2.4'); tail.setAttribute('class', 'comet-glow'); cometsG.insertBefore(tail, dot);
     return { p, L, dot, tail, delay: i * 900, period: 5200 + i * 380 };
   });
   if (reduce) { paths.forEach(r => { r.dot.remove(); r.tail.remove(); }); return; }
