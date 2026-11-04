@@ -84,11 +84,11 @@ p{margin:0;text-wrap:pretty}
 /* the thread */
 .thread{position:absolute;left:0;top:0;z-index:1;pointer-events:none;overflow:visible}
 .thread path{fill:none;stroke-linecap:round;stroke-linejoin:round}
-#t-glow{stroke:rgba(var(--glow),.22);stroke-width:12}
-#t-core{stroke:#F6E6C2;stroke-width:2.2}
+#t-glow{stroke:rgba(var(--glow),.12);stroke-width:6;filter:blur(3px)}
+#t-core{stroke:#F6E6C2;stroke-width:1.8}
 #t-head{opacity:0;transition:opacity 300ms}
 #t-head.on{opacity:1}
-#t-sig path.c{stroke:#F6E6C2;stroke-width:2.2}#t-sig path.g{stroke:rgba(var(--glow),.22);stroke-width:12}
+#t-sig path.c{stroke:#F6E6C2;stroke-width:1.8}#t-sig path.g{stroke:rgba(var(--glow),.12);stroke-width:6;filter:blur(3px)}
 
 /* sections */
 .sec{padding-block:clamp(120px,14vw,200px) 0}
