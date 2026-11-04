@@ -1,8 +1,4 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Beck To Nature Demo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -484,6 +480,9 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 .wiz-nav .next{min-width:160px;min-height:48px;font-size:17px}
 #wiz>.note{margin-top:-6px}
 @media (max-width:560px){.chip span{min-height:72px}}
+
+/* form: no glow, just a quiet edge */
+form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow:inset 0 1px 0 rgba(255,236,200,.06),0 0 0 1px rgba(240,220,180,.12),0 30px 60px -40px rgba(0,0,0,.9)!important}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -781,7 +780,21 @@ const $ = id => document.getElementById(id);
       // out through the B towards the left, and calmly down to the closing signature
       pts = [start, [start[0] + 70, y0 + 12], [lerp(start[0], xR, .75), y0 + 70], [xR, y0 + 170]];
       const fK2 = fR[0], fB2 = fR[fR.length - 1];
-      for (let y = y0 + 300; y < fK2[1] - 160; y += 140) pts.push([wv(xR, y), y]);
+      // wrap around the inquiry form: along its top, down its right side, back along the bottom, then peel away
+      const F = R('#wiz'), o = 18, r = 30 + o, Lf = F.left - o, Rf = F.right + o, Tf = F.top - o, Bf = F.bottom + o;
+      // drift gently left above the form, then settle onto its top edge heading right
+      const sA = Math.max(y0 + 300, Tf - 900), ax = Lf + 40;
+      for (let y = y0 + 300; y < Tf - 200; y += 140) pts.push([lerp(wv(xR, y), ax, ss((y - sA) / (Tf - 200 - sA))), y]);
+      pts.push([ax + 6, Tf - 110], [ax + 40, Tf - 30], [ax + 110, Tf - 2]);
+      for (let x = ax + 180; x < Rf - r; x += 60) pts.push([x, Tf]);
+      for (let k = 1; k <= 6; k++) { const a = -Math.PI / 2 + k / 6 * Math.PI / 2; pts.push([Rf - r + r * Math.cos(a), Tf + r + r * Math.sin(a)]); }
+      for (let y = Tf + r + 60; y < Bf - r; y += 60) pts.push([Rf, y]);
+      for (let k = 1; k <= 6; k++) { const a = k / 6 * Math.PI / 2; pts.push([Rf - r + r * Math.cos(a), Bf - r + r * Math.sin(a)]); }
+      const px = Lf + (Rf - Lf) * .3;
+      for (let x = Rf - r - 60; x > px; x -= 60) pts.push([x, Bf]);
+      pts.push([px - 40, Bf + 14], [px - 70, Bf + 80]);
+      const sB = Bf + 200;
+      for (let y = sB; y < fK2[1] - 160; y += 140) pts.push([lerp(px - 80, wv(xR, y), ss((y - sB) / 700)), y]);
       pts.push([Math.max(xR, fK2[0] + 160), fK2[1] - 90], [fK2[0] + 110, fK2[1] - 6], [fK2[0] + 40, fK2[1] + 1]);
       fR.forEach(p => pts.push(p));
       pts.push([fB2[0] - 50, fB2[1] + 30], [lerp(fB2[0], xL, .55), fB2[1] + 58], [xL + 30, fB2[1] + 110], [xL, fB2[1] + 230]);
@@ -913,5 +926,3 @@ const $ = id => document.getElementById(id);
   show(0, 0);
 })();
 </script>
-
-</html>
