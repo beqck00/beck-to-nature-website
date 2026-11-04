@@ -415,6 +415,16 @@ form.wiz{padding:clamp(22px,2.4vw,32px);min-height:460px;gap:20px}
 .btn{min-height:46px;font-size:16px;padding:0 22px}
 .btn-sm{min-height:44px;font-size:15px}
 .nav-links{font-size:16px}
+
+/* specialties: a bit bigger and more spread out */
+.trio{max-width:1180px;gap:28px;margin-top:clamp(56px,7vw,88px)}
+.tri{padding:34px 32px 36px;gap:16px;min-height:300px}
+.tri h3{font-size:clamp(26px,2.3vw,32px)}
+.tri-sub,.tri ul{font-size:17px}
+.tri ul{gap:12px;margin:4px 0 10px}
+.tri-lit{transform:translateY(-18px);padding-block:40px;min-height:380px}
+.tri-tag{font-size:14px;padding:4px 14px}
+@media (max-width:900px){.trio{gap:16px}.tri,.tri-lit{min-height:0}}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
