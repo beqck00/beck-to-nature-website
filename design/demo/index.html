@@ -358,6 +358,20 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
 .why2-note .gem{width:48px;height:48px;border-radius:12px;flex:none}
 .why2 .text-cta{margin-top:0}
 @media (max-width:900px){.why2{grid-template-columns:1fr}}
+
+/* closing signature (drawn by the thread) */
+.end-sig{width:clamp(180px,18vw,240px);aspect-ratio:850/380;margin-top:clamp(16px,2vw,28px)}
+.f-sig{opacity:.16}
+/* things light up as the thread reaches them, and switch off when it leaves */
+.lum{filter:brightness(.38) saturate(.7);transition:filter 1200ms var(--ease),opacity 700ms var(--ease),transform 700ms var(--ease),box-shadow 1200ms var(--ease)}
+.lum.lit{filter:none}
+h2.lum.lit,.f-quote.lum.lit,.why2-lead.lum.lit{text-shadow:0 0 28px rgba(var(--glow),.18)}
+.tri.lum.lit:not(.tri-lit){box-shadow:inset 0 1px 0 rgba(255,240,210,.08),0 0 0 1px rgba(var(--glow),.12),0 30px 60px -36px rgba(0,0,0,.9)}
+.stone.lum{filter:none}
+.stone:not(.lit)::after{background:rgba(6,5,4,.86)!important}
+.stone:not(.lit){box-shadow:inset 0 0 30px rgba(50,25,0,.5)!important}
+.tri-lit.lum:not(.lit){filter:brightness(.55)}
+@media (prefers-reduced-motion:reduce){.lum{filter:none}}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -505,7 +519,7 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
   </section>
 
   <footer class="frame" id="foot">
-    <div class="sign" id="sign" aria-label="Beck To Nature"><svg viewBox="201.2 548 401.2 192" aria-hidden="true"><path d="M297.84791341376865 625.6980695528744Q297.84791341376865 630.7212576295245 296.1735173882186 635.4653797019163Q294.4991213626686 640.209501774308 290.8014968062456 644.8140908445706Q287.1038722498226 649.4186799148332 279.7086231369766 652.2093399574167Q272.3133740241306 655.0 262.1274648687012 655.0H216.36064017033357V553.2804414478353H261.7088658623137Q271.19711000709725 553.2804414478353 278.10399361249114 556.0711014904186Q285.010877217885 558.8617615330021 288.4294357700497 563.257051100071Q291.84799432221433 567.6523406671398 293.3828573456352 571.8383307310148Q294.9177203690561 576.02432079489 294.9177203690561 580.0707778566359Q294.9177203690561 586.6288289567069 291.70846132008523 591.4427175301632Q288.4992022711143 596.2566061036196 280.9644201561391 601.0007281760113Q297.84791341376865 610.9075713271824 297.84791341376865 625.6980695528744ZM237.29059048970902 570.7220667139816V593.7450120652945H260.03446983676366Q274.82496806245564 593.7450120652945 274.82496806245564 582.3033058907026Q274.82496806245564 570.7220667139816 260.03446983676366 570.7220667139816ZM237.29059048970902 611.1866373314407V637.5583747338538H262.2669978708304Q277.7551611071682 637.5583747338538 277.7551611071682 624.4422725337118Q277.7551611071682 611.1866373314407 262.2669978708304 611.1866373314407Z M335.5218239886445 611.1866373314407V637.5583747338538H390.6373598296665V655.0H314.59187366926903V553.2804414478353H388.12576579134145V570.7220667139816H335.5218239886445V593.7450120652945H384.21884173172464V611.1866373314407Z M470.86883605393905 587.7450929737403Q466.9619119943223 569.4662696948191 449.10168772178855 569.4662696948191Q436.68325053229245 569.4662696948191 429.706600425834 578.9545138396026Q422.7299503193755 588.442757984386 422.7299503193755 605.3262512420156Q422.7299503193755 621.9306784953868 429.49730092264025 631.2793896380412Q436.264651525905 640.6281007806955 448.4040227111427 640.6281007806955Q458.1713328601846 640.6281007806955 464.03171894960974 635.325846699787Q469.89210503903485 630.0235926188786 470.86883605393905 620.2562824698367H491.2406543647978Q490.2639233498936 637.697907735983 478.54315117104335 647.953583392477Q466.8223789921931 658.2092590489709 447.84589070262604 658.2092590489709Q426.6368743789923 658.2092590489709 414.21843718949617 643.907126330731Q401.80000000000007 629.6049936124912 401.80000000000007 605.0471852377573Q401.80000000000007 580.3498438608942 414.3579701916253 565.9779446415898Q426.9159403832506 551.6060454222853 448.4040227111427 551.6060454222853Q466.4037799858056 551.6060454222853 477.9152526614621 561.2338225691981Q489.42672533711857 570.8615997161107 490.8220553584103 587.7450929737403Z M528.9145649396736 620.9539474804826V655.0H507.9846146202982V553.2804414478353H528.9145649396736V597.9310021291697L568.6814705464869 553.2804414478353H593.37881192335L552.7747083037616 597.0938041163946L597.7043349893543 655.0H572.7279276082329L539.3795400993613 610.0703733144073Z" fill="#8B6A42"/><path d="M231.06 690.552V728.0H221.76000000000002V690.552H208.05800000000002V682.802H244.26600000000002V690.552Z M273.30325 682.058Q283.09925 682.058 289.11325 688.6610000000001Q295.12725 695.264 295.12725 706.052Q295.12725 716.096 289.20625 722.761Q283.28525 729.426 273.36525 729.426Q263.50725 729.426 257.55525 722.792Q251.60325 716.158 251.60325 705.742Q251.60325 695.326 257.58625 688.692Q263.56925 682.058 273.30325 682.058ZM273.36525 689.994Q267.72325 689.994 264.31325000000004 694.303Q260.90325 698.612 260.90325 705.742Q260.90325 712.872 264.31325000000004 717.181Q267.72325 721.49 273.36525 721.49Q278.94525 721.49 282.38625 717.212Q285.82725 712.934 285.82725 705.99Q285.82725 698.674 282.44825000000003 694.3340000000001Q279.06925 689.994 273.36525 689.994Z  M353.26375 728.0 335.09775 696.752V728.0H325.79775V682.802H335.34575L353.26375 713.554V682.802H362.56375V728.0Z M400.591 718.886H383.665L380.627 728.0H371.141L387.199 682.802H397.491L413.115 728.0H403.567ZM398.04900000000004 711.136 392.159 693.466 386.269 711.136Z M441.59425000000005 690.552V728.0H432.29425000000003V690.552H418.59225000000004V682.802H454.80025V690.552Z M464.6175 713.43V682.802H473.9175V713.43Q473.9175 721.49 482.5355 721.49Q491.1535 721.49 491.1535 713.43V682.802H500.4535V713.43Q500.4535 717.088 499.3065 719.971Q498.15950000000004 722.854 496.36150000000004 724.59Q494.56350000000003 726.326 492.1145 727.442Q489.6655 728.558 487.3405 728.992Q485.01550000000003 729.426 482.53550000000007 729.426Q480.05550000000005 729.426 477.7305 728.992Q475.4055 728.558 472.9565 727.442Q470.50750000000005 726.326 468.70950000000005 724.59Q466.91150000000005 722.854 465.7645 719.971Q464.6175 717.088 464.6175 713.43Z M538.97675 720.25Q538.97675 718.39 539.03875 717.336Q539.1007500000001 716.282 539.1007500000001 715.476Q539.1007500000001 712.624 537.73675 711.3530000000001Q536.37275 710.082 533.33475 710.082H522.67075V728.0H513.37075V682.802H537.61275Q541.08475 682.802 543.59575 683.98Q546.10675 685.158 547.3777500000001 687.0799999999999Q548.6487500000001 689.002 549.20675 690.9549999999999Q549.76475 692.908 549.76475 695.016Q549.76475 703.2 542.13875 706.176Q543.81275 706.858 544.6187500000001 707.261Q545.42475 707.664 546.26175 708.594Q547.09875 709.524 547.37775 710.268Q547.65675 711.012 547.93575 712.996Q548.21475 714.98 548.27675 716.902Q548.33875 718.824 548.40075 722.606Q548.40075 725.21 550.38475 726.326V728.0H540.40275Q539.53475 726.388 539.25575 724.9000000000001Q538.97675 723.412 538.97675 720.25ZM540.46475 696.318Q540.46475 692.846 538.85275 691.6990000000001Q537.24075 690.552 533.89275 690.552H522.67075V702.332H533.89275Q537.17875 702.332 538.8217500000001 701.154Q540.46475 699.976 540.46475 696.318Z M570.432 708.532V720.25H594.922V728.0H561.1320000000001V682.802H593.806V690.552H570.432V700.782H592.07V708.532Z" fill="#8B6A42"/></svg></div>
+    <div class="end-sig" id="end-sig" role="img" aria-label="Beck signature"></div>
     <div class="foot"><span>© 2026 Beck To Nature · Budapest · <span class="ph">[US city]</span> · <span class="ph">[email]</span></span><nav aria-label="Legal"><a href="#foot">Privacy policy</a><a href="#foot">Cookie notice</a><a href="#foot">Terms</a></nav></div>
   </footer>
 </div>
@@ -573,47 +587,66 @@ const $ = id => document.getElementById(id);
     requestAnimationFrame(glow); })();
 })();
 
-/* The thread: the signature writes itself in the hero, then unwinds into one line that draws itself as you scroll */
+/* The thread: the signature writes itself in the hero, unwinds into one smooth line that follows the scroll,
+   traces the founder's signature on its way, and ends by writing the signature once more. Everything it has
+   passed is lit; scrolling back up switches things off again. */
 (() => {
-  const SIG = ["M 153 112 C 151 170 149 230 147 292", "M 22 182 C 30 120 120 30 200 38 C 236 42 232 98 205 140 C 186 170 160 196 124 236 C 134 226 142 220 152 214 C 190 192 225 176 262 176 C 312 178 330 218 316 252 C 300 296 230 340 170 362 C 140 374 110 384 88 386", "M 650 76 C 650 150 648 220 646 292", "M 300 288 C 340 270 395 245 420 214 C 438 192 412 196 392 214 C 362 240 352 278 370 304 C 384 324 412 328 440 320 C 458 316 474 292 490 264 C 502 244 516 226 508 224 C 488 226 462 266 466 298 C 472 326 522 332 562 322 C 594 314 624 300 646 290 C 664 256 694 206 724 178 C 746 158 760 176 742 204 C 722 236 684 266 650 288 C 670 282 705 288 745 295 C 782 300 815 296 842 292"], SW = 860, SH = 410, NS = 'http://www.w3.org/2000/svg';
+  const SIG = ["M 153 112 C 151 170 149 230 147 292", "M 22 182 C 30 120 120 30 200 38 C 236 42 232 98 205 140 C 186 170 160 196 124 236 C 134 226 142 220 152 214 C 190 192 225 176 262 176 C 312 178 330 218 316 252 C 300 296 230 340 170 362 C 140 374 110 384 88 386", "M 650 76 C 650 150 648 220 646 292", "M 300 288 C 340 270 395 245 420 214 C 438 192 412 196 392 214 C 362 240 352 278 370 304 C 384 324 412 328 440 320 C 458 316 474 292 490 264 C 502 244 516 226 508 224 C 488 226 462 266 466 298 C 472 326 522 332 562 322 C 594 314 624 300 646 290 C 664 256 694 206 724 178 C 746 158 760 176 742 204 C 722 236 684 266 650 288 C 670 282 705 288 745 295 C 782 300 815 296 842 292"], SW = 860, SH = 410;
   const page = document.querySelector('.page'), svg = $('thread'), core = $('t-core'), glow = $('t-glow'), head = $('t-head'), sigG = $('t-sig');
-  const stones = [...document.querySelectorAll('.stone, #sign')];
-  let segs = [], Lsig = 0, Lt = 0, samples = [], stoneY = [];
-  const rel = el => { const a = el.getBoundingClientRect(), b = page.getBoundingClientRect(); return { top: a.top - b.top, bottom: a.bottom - b.top, left: a.left - b.left, w: a.width, h: a.height }; };
+  const NS = 'http://www.w3.org/2000/svg';
+  const LUM = '#why h2, .why2-lead, .why2-note, #why .text-cta, #specialties .sec-head, .tri, .iq-intro, #wiz, .portrait, .founder-text h2, .f-name, .f-quote, .essay > div, .promise, #cases .sec-head, .story, #cases .text-cta, .foot';
+  let lums = [], segs = [], Lsig = 0, Lt = 0, samples = [];
+  const rel = el => { const a = el.getBoundingClientRect(), b = page.getBoundingClientRect(); return { top: a.top - b.top, bottom: a.bottom - b.top, left: a.left - b.left, right: a.right - b.left, w: a.width, h: a.height }; };
   const cr = pts => { let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
     for (let i = 0; i < pts.length - 1; i++) { const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
       d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`; } return d; };
+  // the signature as one continuous pen path (B bowls, B stem, e-c, up and down the k stem, k loop and tail)
+  const split = SIG[3].indexOf(' C 664 256');
+  const PEN = [SIG[1], SIG[0], SIG[3].slice(0, split), 'M 646 290 C 647 220 649 150 650 76', 'M 650 76 C 649 150 647 220 646 290', 'M 646 290' + SIG[3].slice(split)];
+  const penPoints = (ox, oy, k) => { const out = [];
+    PEN.forEach(d => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => `${(ox + x * k).toFixed(2)} ${(oy + y * k).toFixed(2)}`)); svg.appendChild(p);
+      const L = p.getTotalLength(), n = Math.max(3, Math.ceil(L / 4)); for (let i = 0; i <= n; i++) { const q = p.getPointAtLength(L * i / n); out.push([q.x, q.y]); } p.remove(); });
+    return out; };
   function build() {
     const W = page.clientWidth, H = page.scrollHeight, narrow = W < 700;
     svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    // the signature, at the bottom middle of the hero
+    // hero signature
     const hero = rel(document.querySelector('.hero'));
     const sw = Math.min(250, W * .4), k = sw / SW, ox = W / 2 - sw / 2, oy = hero.bottom - SH * k - (narrow ? W * .05 : 70);
     const tr = d => d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => `${(ox + x * k).toFixed(1)} ${(oy + y * k).toFixed(1)}`);
     sigG.innerHTML = SIG.map(d => `<path class="g" d="${tr(d)}"/><path class="c" d="${tr(d)}"/>`).join('');
-    const sp = [...sigG.querySelectorAll('path')];
-    segs = []; Lsig = 0;
+    const sp = [...sigG.querySelectorAll('path')]; segs = []; Lsig = 0;
     for (let i = 0; i < sp.length; i += 2) { const len = sp[i + 1].getTotalLength(); segs.push({ els: [sp[i], sp[i + 1]], off: Lsig, len }); Lsig += len; }
-    // the lane: from the signature's tail, a calm line with small waves along the right side
-    const end = [ox + 842 * k, oy + 292 * k], y0 = end[1];
-    const sign = rel($('sign')), yEnd = sign.top + sign.h / 2;
-    const lane = narrow ? W - 12 : W * .5, amp = narrow ? 4 : 14, drift = narrow ? 0 : W * .34;
-    const ph = narrow ? 0 : Math.asin(clamp((end[0] + 120 - lane) / drift, -1, 1));
-    const xAt = y => lane + drift * Math.sin((y - y0) / 2400 * Math.PI * 2 + ph) + amp * Math.sin((y - y0) / 420 * Math.PI * 2) * clamp((y - y0) / 400);
-    const loops = narrow ? [] : ['#founder', '#cases'].map(q => ({ y: rel(document.querySelector(q)).top + 30, r: 16, done: false }));
-    const pts = narrow ? [end, [end[0] + (lane - end[0]) * .35, y0 + 20], [end[0] + (lane - end[0]) * .8, y0 + 120], [xAt(y0 + 260), y0 + 260]] : [end, [end[0] + 60, y0 + 8], [end[0] + 110, y0 + 60], [xAt(y0 + 200), y0 + 200]];
-    for (let y = y0 + 300; y < sign.top - 260; y += 28) {
-      const q = loops.find(z => !z.done && y >= z.y);
-      if (q) { q.done = true; const x = xAt(y);
-        for (let a = 1; a <= 12; a++) { const t = a / 12 * Math.PI * 2; pts.push([x - q.r + q.r * Math.cos(t), y + q.r * Math.sin(t) * .9 + a * 1.6]); } y += 20; continue; }
-      pts.push([xAt(y), y]); }
-    const last = pts[pts.length - 1], sx = sign.left + sign.w / 2;
-    pts.push([lerp(last[0], sx, .35), sign.top - 140], [lerp(last[0], sx, .85), sign.top - 30], [sx, sign.top + 10], [sx, sign.top + sign.h * .5]);
+    const start = [ox + 842 * k, oy + 292 * k], y0 = start[1];
+    // a calm lane: one slow sway across the page with small waves, never doubling back
+    const cx = W / 2, sway = narrow ? 0 : W * .3, amp = narrow ? 3 : 10;
+    const laneX = narrow ? (y => W - 12 + amp * Math.sin((y - y0) / 360 * Math.PI * 2)) : (y => cx + sway * Math.sin((y - y0) / 2600 * Math.PI * 2 + .9) + amp * Math.sin((y - y0) / 460 * Math.PI * 2));
+    const lane = (a, b, pts) => { for (let y = a; y < b; y += 36) pts.push([laneX(y), y]); };
+    // founder signature: trace it, then carry on
+    const fs = document.querySelector('.f-sig'), fr = rel(fs), fk = fr.w / 850, fox = fr.left - 10 * fk, foy = fr.top - 20 * fk;
+    const fPen = penPoints(fox, foy, fk);
+    // the closing signature, bottom left
+    const end = $('end-sig'), er = rel(end), ek = er.w / 850, eox = er.left - 10 * ek, eoy = er.top - 20 * ek;
+    const ePen = penPoints(eox, eoy, ek);
+    const ss = v => { v = clamp(v); return v * v * (3 - 2 * v); }, Dk = narrow ? 260 : 460;
+    // enter each signature from the right along the k tail, leave from the B, so every turn is a soft arc
+    const fR = fPen.slice().reverse(), eR = ePen.slice().reverse();
+    const fIn = fR[0], fOut = fR[fR.length - 1], eIn = eR[0];
+    const pts = [start, [start[0] + 40, y0 + 4], [start[0] + 75, y0 + 30]];
+    const aY = fIn[1] - 60, sY = y0 + 70;
+    for (let y = sY; y < aY; y += 34) { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); pts.push([lerp(x0, fIn[0] + 150, ss((y - (aY - Dk)) / Dk)), y]); }
+    pts.push([fIn[0] + 95, fIn[1] - 16], [fIn[0] + 40, fIn[1] - 3]);
+    fR.forEach(p => pts.push(p));
+    pts.push([fOut[0] - 4, fOut[1] + 36]);
+    const bY = fOut[1] + 90, cY = eIn[1] - 60;
+    for (let y = bY; y < cY; y += 34) { const x0 = lerp(fOut[0] - 6, laneX(y), ss((y - bY) / Dk)); pts.push([lerp(x0, eIn[0] + 150, ss((y - (cY - Dk)) / Dk)), y]); }
+    pts.push([eIn[0] + 95, eIn[1] - 16], [eIn[0] + 40, eIn[1] - 3]);
+    eR.forEach(p => pts.push(p));
     const d = cr(pts); core.setAttribute('d', d); glow.setAttribute('d', d);
     Lt = core.getTotalLength();
-    samples = []; let maxY = -1e9; const N = Math.min(3600, Math.ceil(Lt / 5));
+    samples = []; let maxY = -1e9; const N = Math.min(4000, Math.ceil(Lt / 5));
     for (let i = 0; i <= N; i++) { const l = Lt * i / N, p = core.getPointAtLength(l); maxY = Math.max(maxY, p.y); samples.push({ l, y: maxY }); }
-    stoneY = stones.map(el => { const r = rel(el); return r.top + r.h / 2; });
+    lums = [...document.querySelectorAll(LUM), ...document.querySelectorAll('.stone')].map(el => { el.classList.add('lum'); const r = rel(el); return { el, y: r.top + Math.min(r.h, 160) / 2 }; });
     paint();
   }
   const lenAt = y => { let lo = 0, hi = samples.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (samples[m].y < y) lo = m + 1; else hi = m; } return samples[lo] ? samples[lo].l : Lt; };
@@ -623,34 +656,36 @@ const $ = id => document.getElementById(id);
     segs.forEach(g => win(g.els, g.len, clamp(cur.s - g.off, 0, g.len), clamp(cur.h - g.off, 0, g.len)));
     const th = clamp(cur.h - Lsig, 0, Lt), ts = clamp(cur.s - Lsig, 0, Lt);
     win([core, glow], Lt, ts, th);
-    const live = th > 2 && th < Lt - 2; head.classList.toggle('on', live);
-    if (th > 0) { const p = core.getPointAtLength(th); head.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
-      stones.forEach((el, i) => { if (p.y >= stoneY[i] - 40 || (el.id === 'sign' && th >= Lt - 4)) el.classList.add('lit'); }); }
+    head.classList.toggle('on', th > 2 && th < Lt - 2);
+    const hy = th > 0 ? core.getPointAtLength(th).y : -1e9;
+    if (th > 0) { const p = core.getPointAtLength(th); head.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`); }
+    const all = th >= Lt - 2;
+    lums.forEach(o => o.el.classList.toggle('lit', reduce || all || hy >= o.y - 40));
   }
   function target() {
     const top = -page.getBoundingClientRect().top, vh = innerHeight;
     const u = clamp(top / (vh * .85)), e = u * u * (3 - 2 * u);
     tgt.s = written ? Lsig * e : 0;
     const bottom = top + vh >= page.scrollHeight - 6;
-    tgt.h = !written ? cur.h : Lsig + (top < 2 ? 0 : bottom ? Lt : lenAt(top + vh * .55));
+    tgt.h = !written ? cur.h : Lsig + (top < 2 ? 0 : bottom ? Lt : lenAt(top + vh * .6));
   }
   function loop() {
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(function step() {
       target(); let moving = false;
-      ['s', 'h'].forEach(p => { const d = tgt[p] - cur[p]; if (Math.abs(d) > .3) { cur[p] += d * .07; moving = true; } else cur[p] = tgt[p]; });
+      ['s', 'h'].forEach(p => { const dl = tgt[p] - cur[p]; if (Math.abs(dl) > .3) { cur[p] += dl * .07; moving = true; } else cur[p] = tgt[p]; });
       paint(); if (moving) raf = requestAnimationFrame(step);
     });
   }
   addEventListener('scroll', () => { if (written) loop(); }, { passive: true });
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { build(); if (written) loop(); }, 150); });
-  const start = () => { build();
-    if (reduce) { cur.s = Lsig; cur.h = Lsig + Lt; paint(); stones.forEach(s => s.classList.add('lit')); return; }
+  const go = () => { build();
+    if (reduce) { cur.s = Lsig; cur.h = Lsig + Lt; paint(); return; }
     const t0 = performance.now(), dur = 2800;
     (function w(now) { const t = clamp((now - t0) / dur); cur.h = Lsig * (t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2); cur.s = 0; paint();
       if (t < 1) requestAnimationFrame(w); else { written = true; loop(); } })(t0);
   };
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(start, 400));
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(go, 400));
 })();
 
 

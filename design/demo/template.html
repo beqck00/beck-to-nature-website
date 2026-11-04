@@ -353,6 +353,20 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
 .why2-note .gem{width:48px;height:48px;border-radius:12px;flex:none}
 .why2 .text-cta{margin-top:0}
 @media (max-width:900px){.why2{grid-template-columns:1fr}}
+
+/* closing signature (drawn by the thread) */
+.end-sig{width:clamp(180px,18vw,240px);aspect-ratio:850/380;margin-top:clamp(16px,2vw,28px)}
+.f-sig{opacity:.16}
+/* things light up as the thread reaches them, and switch off when it leaves */
+.lum{filter:brightness(.38) saturate(.7);transition:filter 1200ms var(--ease),opacity 700ms var(--ease),transform 700ms var(--ease),box-shadow 1200ms var(--ease)}
+.lum.lit{filter:none}
+h2.lum.lit,.f-quote.lum.lit,.why2-lead.lum.lit{text-shadow:0 0 28px rgba(var(--glow),.18)}
+.tri.lum.lit:not(.tri-lit){box-shadow:inset 0 1px 0 rgba(255,240,210,.08),0 0 0 1px rgba(var(--glow),.12),0 30px 60px -36px rgba(0,0,0,.9)}
+.stone.lum{filter:none}
+.stone:not(.lit)::after{background:rgba(6,5,4,.86)!important}
+.stone:not(.lit){box-shadow:inset 0 0 30px rgba(50,25,0,.5)!important}
+.tri-lit.lum:not(.lit){filter:brightness(.55)}
+@media (prefers-reduced-motion:reduce){.lum{filter:none}}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -500,7 +514,7 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
   </section>
 
   <footer class="frame" id="foot">
-    <div class="sign" id="sign" aria-label="Beck To Nature">{{SIGN}}</div>
+    <div class="end-sig" id="end-sig" role="img" aria-label="Beck signature"></div>
     <div class="foot"><span>© 2026 Beck To Nature · Budapest · <span class="ph">[US city]</span> · <span class="ph">[email]</span></span><nav aria-label="Legal"><a href="#foot">Privacy policy</a><a href="#foot">Cookie notice</a><a href="#foot">Terms</a></nav></div>
   </footer>
 </div>
@@ -568,47 +582,66 @@ const $ = id => document.getElementById(id);
     requestAnimationFrame(glow); })();
 })();
 
-/* The thread: the signature writes itself in the hero, then unwinds into one line that draws itself as you scroll */
+/* The thread: the signature writes itself in the hero, unwinds into one smooth line that follows the scroll,
+   traces the founder's signature on its way, and ends by writing the signature once more. Everything it has
+   passed is lit; scrolling back up switches things off again. */
 (() => {
-  const SIG = {{SIG}}, SW = 860, SH = 410, NS = 'http://www.w3.org/2000/svg';
+  const SIG = {{SIG}}, SW = 860, SH = 410;
   const page = document.querySelector('.page'), svg = $('thread'), core = $('t-core'), glow = $('t-glow'), head = $('t-head'), sigG = $('t-sig');
-  const stones = [...document.querySelectorAll('.stone, #sign')];
-  let segs = [], Lsig = 0, Lt = 0, samples = [], stoneY = [];
-  const rel = el => { const a = el.getBoundingClientRect(), b = page.getBoundingClientRect(); return { top: a.top - b.top, bottom: a.bottom - b.top, left: a.left - b.left, w: a.width, h: a.height }; };
+  const NS = 'http://www.w3.org/2000/svg';
+  const LUM = '#why h2, .why2-lead, .why2-note, #why .text-cta, #specialties .sec-head, .tri, .iq-intro, #wiz, .portrait, .founder-text h2, .f-name, .f-quote, .essay > div, .promise, #cases .sec-head, .story, #cases .text-cta, .foot';
+  let lums = [], segs = [], Lsig = 0, Lt = 0, samples = [];
+  const rel = el => { const a = el.getBoundingClientRect(), b = page.getBoundingClientRect(); return { top: a.top - b.top, bottom: a.bottom - b.top, left: a.left - b.left, right: a.right - b.left, w: a.width, h: a.height }; };
   const cr = pts => { let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
     for (let i = 0; i < pts.length - 1; i++) { const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
       d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`; } return d; };
+  // the signature as one continuous pen path (B bowls, B stem, e-c, up and down the k stem, k loop and tail)
+  const split = SIG[3].indexOf(' C 664 256');
+  const PEN = [SIG[1], SIG[0], SIG[3].slice(0, split), 'M 646 290 C 647 220 649 150 650 76', 'M 650 76 C 649 150 647 220 646 290', 'M 646 290' + SIG[3].slice(split)];
+  const penPoints = (ox, oy, k) => { const out = [];
+    PEN.forEach(d => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => `${(ox + x * k).toFixed(2)} ${(oy + y * k).toFixed(2)}`)); svg.appendChild(p);
+      const L = p.getTotalLength(), n = Math.max(3, Math.ceil(L / 4)); for (let i = 0; i <= n; i++) { const q = p.getPointAtLength(L * i / n); out.push([q.x, q.y]); } p.remove(); });
+    return out; };
   function build() {
     const W = page.clientWidth, H = page.scrollHeight, narrow = W < 700;
     svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    // the signature, at the bottom middle of the hero
+    // hero signature
     const hero = rel(document.querySelector('.hero'));
     const sw = Math.min(250, W * .4), k = sw / SW, ox = W / 2 - sw / 2, oy = hero.bottom - SH * k - (narrow ? W * .05 : 70);
     const tr = d => d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => `${(ox + x * k).toFixed(1)} ${(oy + y * k).toFixed(1)}`);
     sigG.innerHTML = SIG.map(d => `<path class="g" d="${tr(d)}"/><path class="c" d="${tr(d)}"/>`).join('');
-    const sp = [...sigG.querySelectorAll('path')];
-    segs = []; Lsig = 0;
+    const sp = [...sigG.querySelectorAll('path')]; segs = []; Lsig = 0;
     for (let i = 0; i < sp.length; i += 2) { const len = sp[i + 1].getTotalLength(); segs.push({ els: [sp[i], sp[i + 1]], off: Lsig, len }); Lsig += len; }
-    // the lane: from the signature's tail, a calm line with small waves along the right side
-    const end = [ox + 842 * k, oy + 292 * k], y0 = end[1];
-    const sign = rel($('sign')), yEnd = sign.top + sign.h / 2;
-    const lane = narrow ? W - 12 : W * .5, amp = narrow ? 4 : 14, drift = narrow ? 0 : W * .34;
-    const ph = narrow ? 0 : Math.asin(clamp((end[0] + 120 - lane) / drift, -1, 1));
-    const xAt = y => lane + drift * Math.sin((y - y0) / 2400 * Math.PI * 2 + ph) + amp * Math.sin((y - y0) / 420 * Math.PI * 2) * clamp((y - y0) / 400);
-    const loops = narrow ? [] : ['#founder', '#cases'].map(q => ({ y: rel(document.querySelector(q)).top + 30, r: 16, done: false }));
-    const pts = narrow ? [end, [end[0] + (lane - end[0]) * .35, y0 + 20], [end[0] + (lane - end[0]) * .8, y0 + 120], [xAt(y0 + 260), y0 + 260]] : [end, [end[0] + 60, y0 + 8], [end[0] + 110, y0 + 60], [xAt(y0 + 200), y0 + 200]];
-    for (let y = y0 + 300; y < sign.top - 260; y += 28) {
-      const q = loops.find(z => !z.done && y >= z.y);
-      if (q) { q.done = true; const x = xAt(y);
-        for (let a = 1; a <= 12; a++) { const t = a / 12 * Math.PI * 2; pts.push([x - q.r + q.r * Math.cos(t), y + q.r * Math.sin(t) * .9 + a * 1.6]); } y += 20; continue; }
-      pts.push([xAt(y), y]); }
-    const last = pts[pts.length - 1], sx = sign.left + sign.w / 2;
-    pts.push([lerp(last[0], sx, .35), sign.top - 140], [lerp(last[0], sx, .85), sign.top - 30], [sx, sign.top + 10], [sx, sign.top + sign.h * .5]);
+    const start = [ox + 842 * k, oy + 292 * k], y0 = start[1];
+    // a calm lane: one slow sway across the page with small waves, never doubling back
+    const cx = W / 2, sway = narrow ? 0 : W * .3, amp = narrow ? 3 : 10;
+    const laneX = narrow ? (y => W - 12 + amp * Math.sin((y - y0) / 360 * Math.PI * 2)) : (y => cx + sway * Math.sin((y - y0) / 2600 * Math.PI * 2 + .9) + amp * Math.sin((y - y0) / 460 * Math.PI * 2));
+    const lane = (a, b, pts) => { for (let y = a; y < b; y += 36) pts.push([laneX(y), y]); };
+    // founder signature: trace it, then carry on
+    const fs = document.querySelector('.f-sig'), fr = rel(fs), fk = fr.w / 850, fox = fr.left - 10 * fk, foy = fr.top - 20 * fk;
+    const fPen = penPoints(fox, foy, fk);
+    // the closing signature, bottom left
+    const end = $('end-sig'), er = rel(end), ek = er.w / 850, eox = er.left - 10 * ek, eoy = er.top - 20 * ek;
+    const ePen = penPoints(eox, eoy, ek);
+    const ss = v => { v = clamp(v); return v * v * (3 - 2 * v); }, Dk = narrow ? 260 : 460;
+    // enter each signature from the right along the k tail, leave from the B, so every turn is a soft arc
+    const fR = fPen.slice().reverse(), eR = ePen.slice().reverse();
+    const fIn = fR[0], fOut = fR[fR.length - 1], eIn = eR[0];
+    const pts = [start, [start[0] + 40, y0 + 4], [start[0] + 75, y0 + 30]];
+    const aY = fIn[1] - 60, sY = y0 + 70;
+    for (let y = sY; y < aY; y += 34) { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); pts.push([lerp(x0, fIn[0] + 150, ss((y - (aY - Dk)) / Dk)), y]); }
+    pts.push([fIn[0] + 95, fIn[1] - 16], [fIn[0] + 40, fIn[1] - 3]);
+    fR.forEach(p => pts.push(p));
+    pts.push([fOut[0] - 4, fOut[1] + 36]);
+    const bY = fOut[1] + 90, cY = eIn[1] - 60;
+    for (let y = bY; y < cY; y += 34) { const x0 = lerp(fOut[0] - 6, laneX(y), ss((y - bY) / Dk)); pts.push([lerp(x0, eIn[0] + 150, ss((y - (cY - Dk)) / Dk)), y]); }
+    pts.push([eIn[0] + 95, eIn[1] - 16], [eIn[0] + 40, eIn[1] - 3]);
+    eR.forEach(p => pts.push(p));
     const d = cr(pts); core.setAttribute('d', d); glow.setAttribute('d', d);
     Lt = core.getTotalLength();
-    samples = []; let maxY = -1e9; const N = Math.min(3600, Math.ceil(Lt / 5));
+    samples = []; let maxY = -1e9; const N = Math.min(4000, Math.ceil(Lt / 5));
     for (let i = 0; i <= N; i++) { const l = Lt * i / N, p = core.getPointAtLength(l); maxY = Math.max(maxY, p.y); samples.push({ l, y: maxY }); }
-    stoneY = stones.map(el => { const r = rel(el); return r.top + r.h / 2; });
+    lums = [...document.querySelectorAll(LUM), ...document.querySelectorAll('.stone')].map(el => { el.classList.add('lum'); const r = rel(el); return { el, y: r.top + Math.min(r.h, 160) / 2 }; });
     paint();
   }
   const lenAt = y => { let lo = 0, hi = samples.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (samples[m].y < y) lo = m + 1; else hi = m; } return samples[lo] ? samples[lo].l : Lt; };
@@ -618,34 +651,36 @@ const $ = id => document.getElementById(id);
     segs.forEach(g => win(g.els, g.len, clamp(cur.s - g.off, 0, g.len), clamp(cur.h - g.off, 0, g.len)));
     const th = clamp(cur.h - Lsig, 0, Lt), ts = clamp(cur.s - Lsig, 0, Lt);
     win([core, glow], Lt, ts, th);
-    const live = th > 2 && th < Lt - 2; head.classList.toggle('on', live);
-    if (th > 0) { const p = core.getPointAtLength(th); head.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
-      stones.forEach((el, i) => { if (p.y >= stoneY[i] - 40 || (el.id === 'sign' && th >= Lt - 4)) el.classList.add('lit'); }); }
+    head.classList.toggle('on', th > 2 && th < Lt - 2);
+    const hy = th > 0 ? core.getPointAtLength(th).y : -1e9;
+    if (th > 0) { const p = core.getPointAtLength(th); head.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`); }
+    const all = th >= Lt - 2;
+    lums.forEach(o => o.el.classList.toggle('lit', reduce || all || hy >= o.y - 40));
   }
   function target() {
     const top = -page.getBoundingClientRect().top, vh = innerHeight;
     const u = clamp(top / (vh * .85)), e = u * u * (3 - 2 * u);
     tgt.s = written ? Lsig * e : 0;
     const bottom = top + vh >= page.scrollHeight - 6;
-    tgt.h = !written ? cur.h : Lsig + (top < 2 ? 0 : bottom ? Lt : lenAt(top + vh * .55));
+    tgt.h = !written ? cur.h : Lsig + (top < 2 ? 0 : bottom ? Lt : lenAt(top + vh * .6));
   }
   function loop() {
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(function step() {
       target(); let moving = false;
-      ['s', 'h'].forEach(p => { const d = tgt[p] - cur[p]; if (Math.abs(d) > .3) { cur[p] += d * .07; moving = true; } else cur[p] = tgt[p]; });
+      ['s', 'h'].forEach(p => { const dl = tgt[p] - cur[p]; if (Math.abs(dl) > .3) { cur[p] += dl * .07; moving = true; } else cur[p] = tgt[p]; });
       paint(); if (moving) raf = requestAnimationFrame(step);
     });
   }
   addEventListener('scroll', () => { if (written) loop(); }, { passive: true });
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { build(); if (written) loop(); }, 150); });
-  const start = () => { build();
-    if (reduce) { cur.s = Lsig; cur.h = Lsig + Lt; paint(); stones.forEach(s => s.classList.add('lit')); return; }
+  const go = () => { build();
+    if (reduce) { cur.s = Lsig; cur.h = Lsig + Lt; paint(); return; }
     const t0 = performance.now(), dur = 2800;
     (function w(now) { const t = clamp((now - t0) / dur); cur.h = Lsig * (t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2); cur.s = 0; paint();
       if (t < 1) requestAnimationFrame(w); else { written = true; loop(); } })(t0);
   };
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(start, 400));
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(go, 400));
 })();
 
 
