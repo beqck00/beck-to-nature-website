@@ -525,6 +525,28 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
 .foot .brand svg:first-child{width:28px}
 .foot-name .wm-big{display:block;width:min(100%,760px);height:auto}
 
+/* Hero, centered: headline and inquiry in the middle; routes pass over the text and light it */
+.hero{grid-template-rows:1fr auto auto 1.15fr;justify-items:center;text-align:center}
+.hero .hero-title{grid-row:2;justify-self:center;margin:0;text-align:center;justify-items:center}
+.hero .hero-title .l2{padding-left:0}
+.hero-aside{grid-row:3;justify-self:center;align-self:start;margin:var(--s5) 0 0;max-width:520px;justify-items:center}
+.hero-aside .hero-ctas{justify-content:center}
+.map-top{z-index:2}
+.glyph{display:inline-block;transition:filter 120ms linear}
+.word{display:inline-block;white-space:nowrap}
+.scroll-cue{position:absolute;left:50%;bottom:var(--s5);z-index:3;width:44px;height:56px;margin-left:-22px;display:grid;place-items:center;color:var(--ink-2);opacity:.85;transition:opacity var(--duration-fast) var(--ease)}
+.scroll-cue:hover{opacity:1}
+.scroll-cue .mouse{position:relative;width:24px;height:38px;border-radius:12px;box-shadow:inset 0 0 0 1.5px rgba(217,188,134,.6)}
+.scroll-cue .mouse i{position:absolute;left:50%;top:8px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:var(--brush),var(--metal);animation:cue 1.8s var(--ease) infinite}
+@keyframes cue{0%{transform:translateY(0);opacity:0}20%{opacity:1}70%{transform:translateY(12px);opacity:0}100%{transform:translateY(12px);opacity:0}}
+.switch{left:calc(20px + env(safe-area-inset-left,0px));transform:none}
+@media (max-width:980px){
+  .hero{grid-template-rows:auto auto auto;padding-block:var(--s6) calc(100vw * 84 / 124 + 72px)}
+  .hero .hero-title{grid-row:1}
+  .hero-aside{grid-row:2;justify-self:center;margin-top:var(--s5)}
+  .scroll-cue{bottom:var(--s3)}
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:1ms!important;animation:none!important;scroll-behavior:auto!important}
   .js .rv.pre{opacity:1;transform:none;filter:none}
@@ -569,19 +591,21 @@ footer{padding-block:var(--s10) calc(var(--s9) + 40px)}
           <mask id="dotsfade" maskUnits="userSpaceOnUse" x="-60" y="-40" width="240" height="120"><rect x="-60" y="-40" width="240" height="120" fill="url(#dotsfadegrad)"/></mask>
           <linearGradient id="dotsfadegrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="70" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>
           <g id="map-dots"></g>
+        </svg>
+      </figure>
+      <div class="map map-bg map-top" data-speed="0.06" aria-hidden="true">
+        <svg id="map-top" viewBox="-3 -1 124 84" preserveAspectRatio="xMidYMid meet">
           <g id="routes"></g>
           <g id="cities"></g>
           <g id="comets"></g>
         </svg>
-      </figure>
+      </div>
       <h1 id="h1" class="hero-title rv" data-speed="-0.05"><span class="l1 metal-text">Take your products</span><span class="l2">to America.</span></h1>
       <div class="hero-aside rv">
         <p class="hero-sub">We did it ourselves first. Now we take Central European manufacturers to the right US trade show and their first American orders.</p>
-        <div class="hero-ctas">
-          <a class="btn btn-brass" href="#draft" data-jump="inquiry">Start your inquiry</a>
-          <a class="round-link btn-glass" href="#draft" data-jump="how" aria-label="How it works"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        </div>
+        <div class="hero-ctas"><a class="btn btn-brass" href="#draft" data-jump="inquiry">Start your inquiry</a></div>
       </div>
+      <a class="scroll-cue" href="#draft" data-jump="services" aria-label="Scroll to the next section"><span class="mouse"><i></i></span></a>
     </section>
 
     <section class="partners" aria-labelledby="pt-h">
@@ -1135,6 +1159,45 @@ document.querySelectorAll('.btn').forEach(b => b.addEventListener('pointerdown',
         const o = k < .62 ? Math.sin(f * Math.PI) : 0;
         r.dot.setAttribute('cx', pt.x.toFixed(2)); r.dot.setAttribute('cy', pt.y.toFixed(2)); r.dot.style.opacity = o.toFixed(2);
         r.tail.setAttribute('cx', pt.x.toFixed(2)); r.tail.setAttribute('cy', pt.y.toFixed(2)); r.tail.style.opacity = (o * .5).toFixed(2);
+      });
+      raf = requestAnimationFrame(tick);
+    });
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) loop(); });
+  loop();
+})();
+
+/* Beams light the hero text: letters near a travelling light glow and fade back */
+(() => {
+  if (reduce) return;
+  const title = document.getElementById('h1'), sub = document.querySelector('.hero-aside .hero-sub');
+  const split = (el, mode, cls) => {
+    const text = el.textContent; el.textContent = ''; el.setAttribute('aria-label', text);
+    text.split(' ').forEach((w, wi, arr) => {
+      const word = document.createElement('span'); word.className = 'word'; word.setAttribute('aria-hidden', 'true');
+      if (mode === 'letters') [...w].forEach(c => { const g = document.createElement('span'); g.className = 'glyph' + (cls ? ' ' + cls : ''); g.textContent = c; word.appendChild(g); });
+      else { word.classList.add('glyph'); word.textContent = w; }
+      el.appendChild(word); if (wi < arr.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+  };
+  const l1 = title.querySelector('.l1'), l2 = title.querySelector('.l2');
+  l1.classList.remove('metal-text'); split(l1, 'letters', 'metal-text'); split(l2, 'letters'); split(sub, 'words');
+  title.setAttribute('aria-label', 'Take your products to America.');
+  const glyphs = [...document.querySelectorAll('.hero .glyph')];
+  const comets = () => [...document.querySelectorAll('#comets .comet')];
+  let raf, on = true;
+  new IntersectionObserver(es => { on = es[0].isIntersecting; if (on) loop(); }).observe(title);
+  function loop() {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function tick() {
+      if (!on || document.hidden) return;
+      const lights = comets().map(c => { const r = c.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, o: parseFloat(c.style.opacity || 0) }; }).filter(l => l.o > .05);
+      glyphs.forEach(g => {
+        const r = g.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        let k = 0;
+        lights.forEach(l => { const dx = (l.x - cx) / 70, dy = (l.y - cy) / 55; k = Math.max(k, l.o * Math.exp(-(dx * dx + dy * dy))); });
+        const v = k < .03 ? '' : `brightness(${(1 + k * .9).toFixed(2)}) drop-shadow(0 0 ${(3 + k * 16).toFixed(1)}px rgba(243,226,184,${(k * .9).toFixed(2)}))`;
+        if (g._v !== v) { g.style.filter = v; g._v = v; }
       });
       raf = requestAnimationFrame(tick);
     });
