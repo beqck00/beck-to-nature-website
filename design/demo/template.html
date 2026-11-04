@@ -321,6 +321,38 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
   transition:transform 200ms var(--ease),box-shadow 300ms var(--ease),background-position 900ms var(--ease)}
 .btn-main:hover{background-position:0 0,60% 40%;box-shadow:inset 0 1px 0 rgba(255,250,236,.9),inset 0 -2px 4px rgba(70,45,15,.3),0 10px 36px -6px rgba(var(--glow),.75)}
 .chip input:checked+span{color:#1E140A;background:linear-gradient(180deg,rgba(255,248,232,.22),rgba(255,240,210,.04)),var(--onyx) 50% 40%/120% auto}
+
+/* three specialties, the middle one lit onyx */
+.sec-head.center{margin-inline:auto;text-align:center;justify-items:center}
+.sec-head.center h2{max-width:none}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:center;margin-top:clamp(48px,6vw,72px)}
+.tri{padding:clamp(28px,2.6vw,36px);display:grid;gap:16px;align-content:start;border-radius:24px}
+.tri h3{font-size:clamp(28px,2.4vw,36px)}
+.tri-sub{color:var(--ink-2);font-size:17px}
+.tri ul{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:10px;font-size:17px;color:var(--ink-2)}
+.tri li{display:flex;gap:10px;align-items:baseline}
+.tri li .ic{width:18px;height:18px;color:var(--cream);flex:none;transform:translateY(3px)}
+.tri .btn{width:100%}
+.tri-lit{transform:translateY(-14px);padding-block:clamp(36px,3vw,44px);color:#1E140A;border-radius:24px}
+.tri-lit::after{border-radius:inherit}
+.tri-lit>*{position:relative;z-index:1}
+.tri-lit .tri-sub,.tri-lit ul,.tri-lit h3{color:#1E140A}
+.tri-lit .ic{color:#3A2A14!important}
+.tri-lit .ph{color:#4A3720;background:rgba(255,255,255,.35);box-shadow:none}
+.tri-tag{justify-self:start;font-size:15px;color:#F1EADD;background:#0A0A0A;border-radius:999px;padding:4px 14px}
+.btn-dark{color:#F1EADD;background:#0A0A0A;box-shadow:0 8px 24px -8px rgba(0,0,0,.6)}
+.btn-dark:hover{background:#000}
+@media (max-width:900px){.trio{grid-template-columns:1fr}.tri-lit{transform:none;order:-1}}
+
+/* why: prose instead of an icon list */
+.why2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,112px);align-items:start}
+.why2 h2{font-size:clamp(40px,4.6vw,72px);line-height:1.04}
+.why2-body{display:grid;gap:clamp(28px,3vw,40px);padding-top:.4em}
+.why2-lead{font-size:clamp(24px,2.2vw,34px);line-height:1.3;letter-spacing:-.01em;max-width:30ch}
+.why2-note{display:flex;gap:18px;align-items:center;color:var(--ink-2);font-size:19px;max-width:46ch}
+.why2-note .gem{width:48px;height:48px;border-radius:12px;flex:none}
+.why2 .text-cta{margin-top:0}
+@media (max-width:900px){.why2{grid-template-columns:1fr}}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -345,7 +377,7 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
     <div class="nav-inner">
       <a class="brand" href="#top" aria-label="Beck To Nature, back to top">{{FIG}}{{WM}}</a>
       <nav class="nav-links" aria-label="Sections">
-        <a href="#why">Why trade shows</a><a href="#services">Services</a><a href="#specialties">Specialties</a><a href="#founder">Founder</a><a href="#cases">Case stories</a>
+        <a href="#why">Why trade shows</a><a href="#specialties">Specialties</a><a href="#inquiry">Inquiry</a><a href="#founder">Founder</a><a href="#cases">Case stories</a>
       </nav>
       <a class="btn btn-main btn-sm" href="#inquiry">Start your inquiry</a>
     </div>
@@ -359,87 +391,29 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
   </section>
 
   <section class="sec frame" id="why" aria-labelledby="why-h">
-    <div class="sec-head rv"><h2 id="why-h">Test America <em>in one room.</em></h2><p>A trade show is a controlled place to meet the US market before you commit to it. In a few days you learn more than in a year of emails.</p></div>
-    <div class="why">
-      <div class="rv">
-        <ul class="why-list">
-          <li><svg class="ic" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/></svg><div><b>Test your product</b><span>Put it in front of real US buyers and watch how they react.</span></div></li>
-          <li><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c.5-3 2.7-4.8 5.5-4.8s5 1.8 5.5 4.8M16 11l2 2 4-4"/></svg><div><b>Get leads</b><span>Distributors, buyers and partners, met face to face.</span></div></li>
-          <li><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><div><b>Research your competitors</b><span>See who sells what, at what price, and how they pitch it.</span></div></li>
-          <li><svg class="ic" viewBox="0 0 24 24"><path d="M4 20h16M7 16.5v-4M12 16.5V7M17 16.5v-7"/></svg><div><b>Check the demand</b><span>Find out if, and how much, America wants your product.</span></div></li>
-          <li><svg class="ic" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><div><b>Find what needs fixing</b><span>Spot faults and gaps before a full launch, not after.</span></div></li>
-        </ul>
-        <p class="proto"><span class="stone gem" aria-hidden="true"></span><span><b>Prototypes welcome.</b> You don't need a finished product. Many companies come with a prototype to test interest before they invest in production.</span></p>
-        <a class="btn btn-main to-inquiry" href="#inquiry">Start your inquiry <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <div class="why2">
+      <h2 id="why-h" class="rv">One booth.<br>One week.<br>A clear answer.</h2>
+      <div class="why2-body">
+        <p class="why2-lead rv">Before you commit to America, put your product in front of the people who would buy it. In a few days you learn whether there is demand, who you are up against, what still needs fixing, and who could sell it for you.</p>
+        <p class="why2-note rv"><span class="stone gem" aria-hidden="true"></span><span>You don't need a finished product. Many of my clients come with a prototype, to test interest before they invest in production.</span></p>
+        <a class="text-cta rv" href="#inquiry">Start your inquiry <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
-      
     </div>
-  </section>
-
-  <section class="sec frame" id="services" aria-labelledby="sv-h">
-    <div class="sec-head rv"><h2 id="sv-h">What I do <em>for you.</em></h2><p>From choosing the show to your first American order, with one person as your point of contact.</p></div>
-    <ol class="flow">
-      <li class="rv"><span class="flow-k">Before</span><div><h3>The right show, not the biggest one</h3><p>I choose the US trade show where your buyers actually are, and handle booth, design, shipping and on-site logistics.</p></div></li>
-      <li class="rv"><span class="flow-k">Before</span><div><h3>Buyers booked before you fly</h3><p>I research and invite distributors and buyers in advance, and I'm in every meeting with you.</p></div></li>
-      <li class="rv"><span class="flow-k">During</span><div><h3>I stand at your booth</h3><p>Briefings, the American way of buying explained, and notes on every conversation.</p></div></li>
-      <li class="rv"><span class="flow-k">After</span><div><h3>Leads that turn into orders</h3><p>Most deals close in the weeks after a show. I follow up every lead and represent you in US business hours.</p></div></li>
-    </ol>
-    <a class="text-cta rv" href="#inquiry">Start your inquiry <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </section>
 
   <section class="sec frame" id="specialties" aria-labelledby="sp-h">
-    <div class="spec-row">
-      <h2 id="sp-h" class="rv">Where I'm a <em>specialist.</em></h2>
-      <ul class="spec-list rv">
-        <li><b>Medical &amp; healthcare</b><span><span class="ph">[Shows, buyers and regulatory experience.]</span></span></li>
-        <li><b>Software</b><span><span class="ph">[What you bring to software companies.]</span></span></li>
-        <li><b>Hardware</b><span><span class="ph">[What you bring to device makers.]</span></span></li>
-      </ul>
+    <div class="sec-head center rv"><h2 id="sp-h">Where I'm a <em>specialist.</em></h2><p>I work across industries. These three are where I go deepest: the show, the buyers booked before you fly, me at your booth, and every lead followed up.</p></div>
+    <div class="trio">
+      <article class="card tri rv"><h3>Software</h3><p class="tri-sub"><span class="ph">[One line on software companies.]</span></p>
+        <ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Show you'd pick]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Typical buyers]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[What you handle]</span></li></ul>
+        <a class="btn btn-quiet" href="#inquiry">Start your inquiry</a></article>
+      <article class="tri tri-lit stone rv"><span class="tri-tag">Most experience</span><h3>Medical &amp; healthcare</h3><p class="tri-sub"><span class="ph">[One line on medical and healthcare.]</span></p>
+        <ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[e.g. RSNA, Chicago]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Distributors, hospital buyers]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Regulatory partners]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>I'm at your booth</li></ul>
+        <a class="btn btn-dark" href="#inquiry">Start your inquiry</a></article>
+      <article class="card tri rv"><h3>Hardware</h3><p class="tri-sub"><span class="ph">[One line on hardware and devices.]</span></p>
+        <ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Show you'd pick]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Typical buyers]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[What you handle]</span></li></ul>
+        <a class="btn btn-quiet" href="#inquiry">Start your inquiry</a></article>
     </div>
-    <p class="spec-note rv">I work across industries. These three are where I go deepest.</p>
-  </section>
-
-  <section class="sec frame" id="founder" aria-labelledby="fo-h">
-    <div class="founder">
-      <div class="portrait rv" role="img" aria-label="Founder photo placeholder"><span>[Founder photo]</span></div>
-      <div class="founder-text">
-        <h2 id="fo-h" class="rv">The person <em>behind it.</em></h2>
-        <p class="f-name rv"><span class="ph">[Founder name]</span><span class="f-role">Founder, Beck To Nature</span></p>
-        <p class="f-quote rv">“<span class="ph">[One sentence in your own words: why you do this.]</span>”</p>
-        <svg class="f-sig rv" viewBox="10 20 850 380" aria-hidden="true">{{SIGPATHS}}</svg>
-      </div>
-    </div>
-    <div class="essay">
-      <div class="rv"><h3>Why</h3><p><span class="ph">[Why you started Beck To Nature.]</span></p></div>
-      <div class="rv"><h3>How</h3><p><span class="ph">[How you work with a client.]</span></p></div>
-      <div class="rv"><h3>Experience</h3><p><span class="ph">[Your background, years, shows attended, languages.]</span></p></div>
-      <div class="rv"><h3>Mission &amp; vision</h3><p><span class="ph">[Mission.]</span> <span class="ph">[Vision.]</span></p></div>
-    </div>
-    <div class="promise rv">
-      <p class="promise-k">What you get</p>
-      <p class="promise-t"><span class="ph">[Your value proposition, in one or two strong sentences.]</span></p>
-      <div class="f-links"><a href="#founder"><span class="ph">[LinkedIn]</span></a><a href="#founder"><span class="ph">[Instagram]</span></a><a href="#founder"><span class="ph">[Other link]</span></a></div>
-      <a class="btn btn-main to-inquiry" href="#inquiry">Work with me <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    </div>
-  </section>
-
-  <section class="sec frame" id="cases" aria-labelledby="cs-h">
-    <div class="sec-head rv"><h2 id="cs-h">Two <em>stories.</em></h2></div>
-    <div class="story rv">
-      <p class="story-result"><span class="ph">[The result, in one line.]</span></p>
-      <div class="story-facts"><p><span class="ph">[Company]</span> · <span class="ph">[Industry]</span></p><p><span class="ph">[Which US show]</span></p><p class="muted"><span class="ph">[Where they started, what changed.]</span></p></div>
-    </div>
-    <div class="story rv">
-      <p class="story-result"><span class="ph">[The result, in one line.]</span></p>
-      <div class="story-facts"><p><span class="ph">[Company]</span> · <span class="ph">[Industry]</span></p><p><span class="ph">[Which US show]</span></p><p class="muted"><span class="ph">[Where they started, what changed.]</span></p></div>
-    </div>
-    <a class="text-cta rv" href="#inquiry">Write your own story <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-  </section>
-
-  <section class="sec frame belief" id="belief" aria-labelledby="be-h">
-    <h2 id="be-h" class="rv" style="font-size:clamp(18px,1.5vw,22px);letter-spacing:0;color:var(--ink-3)">Why I believe in this</h2>
-    <blockquote class="rv"><span class="ph">[Your belief, in one strong sentence.]</span></blockquote>
-    <p class="rv"><span class="ph">[Two or three sentences on why you believe in this.]</span></p>
   </section>
 
   <section class="sec frame" id="inquiry" aria-labelledby="iq-h">
@@ -486,6 +460,43 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
         <p class="note">Demo: nothing is sent. On the live site this goes to <span class="ph">[email]</span>, and anyone who stops after question 2 gets a reminder SMS.</p>
       </form>
     </div>
+  </section>
+
+  <section class="sec frame" id="founder" aria-labelledby="fo-h">
+    <div class="founder">
+      <div class="portrait rv" role="img" aria-label="Founder photo placeholder"><span>[Founder photo]</span></div>
+      <div class="founder-text">
+        <h2 id="fo-h" class="rv">The person <em>behind it.</em></h2>
+        <p class="f-name rv"><span class="ph">[Founder name]</span><span class="f-role">Founder, Beck To Nature</span></p>
+        <p class="f-quote rv">“<span class="ph">[One sentence in your own words: why you do this.]</span>”</p>
+        <svg class="f-sig rv" viewBox="10 20 850 380" aria-hidden="true">{{SIGPATHS}}</svg>
+      </div>
+    </div>
+    <div class="essay">
+      <div class="rv"><h3>Why</h3><p><span class="ph">[Why you started Beck To Nature.]</span></p></div>
+      <div class="rv"><h3>How</h3><p><span class="ph">[How you work with a client.]</span></p></div>
+      <div class="rv"><h3>Experience</h3><p><span class="ph">[Your background, years, shows attended, languages.]</span></p></div>
+      <div class="rv"><h3>Mission &amp; vision</h3><p><span class="ph">[Mission.]</span> <span class="ph">[Vision.]</span></p></div>
+    </div>
+    <div class="promise rv">
+      <p class="promise-k">What you get</p>
+      <p class="promise-t"><span class="ph">[Your value proposition, in one or two strong sentences.]</span></p>
+      <div class="f-links"><a href="#founder"><span class="ph">[LinkedIn]</span></a><a href="#founder"><span class="ph">[Instagram]</span></a><a href="#founder"><span class="ph">[Other link]</span></a></div>
+      <a class="btn btn-main to-inquiry" href="#inquiry">Work with me <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </section>
+
+  <section class="sec frame" id="cases" aria-labelledby="cs-h">
+    <div class="sec-head rv"><h2 id="cs-h">Two <em>stories.</em></h2></div>
+    <div class="story rv">
+      <p class="story-result"><span class="ph">[The result, in one line.]</span></p>
+      <div class="story-facts"><p><span class="ph">[Company]</span> · <span class="ph">[Industry]</span></p><p><span class="ph">[Which US show]</span></p><p class="muted"><span class="ph">[Where they started, what changed.]</span></p></div>
+    </div>
+    <div class="story rv">
+      <p class="story-result"><span class="ph">[The result, in one line.]</span></p>
+      <div class="story-facts"><p><span class="ph">[Company]</span> · <span class="ph">[Industry]</span></p><p><span class="ph">[Which US show]</span></p><p class="muted"><span class="ph">[Where they started, what changed.]</span></p></div>
+    </div>
+    <a class="text-cta rv" href="#inquiry">Write your own story <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </section>
 
   <footer class="frame" id="foot">
@@ -581,10 +592,11 @@ const $ = id => document.getElementById(id);
     // the lane: from the signature's tail, a calm line with small waves along the right side
     const end = [ox + 842 * k, oy + 292 * k], y0 = end[1];
     const sign = rel($('sign')), yEnd = sign.top + sign.h / 2;
-    const lane = narrow ? W - 12 : W * .9, amp = narrow ? 4 : 18, drift = narrow ? 0 : W * .025;
-    const xAt = y => lane + amp * Math.sin((y - y0) / 380 * Math.PI * 2) + drift * Math.sin((y - y0) / 2600 * Math.PI * 2);
-    const loops = narrow ? [] : ['#founder', '#belief'].map(q => ({ y: rel(document.querySelector(q)).top + 30, r: 16, done: false }));
-    const pts = [end, [end[0] + (lane - end[0]) * .35, y0 + 20], [end[0] + (lane - end[0]) * .8, y0 + 120], [xAt(y0 + 260), y0 + 260]];
+    const lane = narrow ? W - 12 : W * .5, amp = narrow ? 4 : 14, drift = narrow ? 0 : W * .34;
+    const ph = narrow ? 0 : Math.asin(clamp((end[0] + 120 - lane) / drift, -1, 1));
+    const xAt = y => lane + drift * Math.sin((y - y0) / 2400 * Math.PI * 2 + ph) + amp * Math.sin((y - y0) / 420 * Math.PI * 2) * clamp((y - y0) / 400);
+    const loops = narrow ? [] : ['#founder', '#cases'].map(q => ({ y: rel(document.querySelector(q)).top + 30, r: 16, done: false }));
+    const pts = narrow ? [end, [end[0] + (lane - end[0]) * .35, y0 + 20], [end[0] + (lane - end[0]) * .8, y0 + 120], [xAt(y0 + 260), y0 + 260]] : [end, [end[0] + 60, y0 + 8], [end[0] + 110, y0 + 60], [xAt(y0 + 200), y0 + 200]];
     for (let y = y0 + 300; y < sign.top - 260; y += 28) {
       const q = loops.find(z => !z.done && y >= z.y);
       if (q) { q.done = true; const x = xAt(y);
