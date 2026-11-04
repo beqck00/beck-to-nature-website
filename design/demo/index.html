@@ -477,12 +477,26 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 .fld label{font-size:18px;color:var(--ink-3)}
 .fld input{background:#121110;border-radius:14px}
 .wiz-nav{margin:6px calc(clamp(28px,3vw,48px) * -1) 0;padding:22px clamp(28px,3vw,48px) 0;box-shadow:0 -1px 0 rgba(240,220,180,.09)}
-.wiz-nav .next{min-width:160px;min-height:48px;font-size:19px}
+.wiz-nav .next{min-width:150px;min-height:46px;font-size:19px}
 #wiz>.note{margin-top:-6px}
 @media (max-width:560px){.chip span{min-height:72px}}
 
 /* form: no glow, just a quiet edge */
-form.wiz{background:linear-gradient(180deg,rgba(16,14,12,.74),rgba(10,9,8,.84)),var(--onyx) center 40%/cover!important;box-shadow:inset 0 1px 0 rgba(255,236,200,.06),0 0 0 1px rgba(240,220,180,.12),0 30px 60px -40px rgba(0,0,0,.9)!important}
+form.wiz{background:var(--onyx) center 40%/cover!important;box-shadow:inset 0 0 30px rgba(50,25,0,.5)!important;max-width:720px;width:100%;justify-self:center;min-height:0!important;padding:clamp(24px,2.6vw,36px)!important;gap:22px!important;color:#1E140A}
+form.wiz>*{position:relative;z-index:1}
+form.wiz.lum:not(.lit){filter:none}
+form.wiz.stone:not(.lit)::after{background:rgba(6,5,4,.38)!important}
+form.wiz.stone.lit{box-shadow:inset 0 0 30px rgba(50,25,0,.4),0 0 46px -4px rgba(var(--glow),.55)!important}
+form.wiz .q small,form.wiz .sub,form.wiz .hint{color:#3A2A14!important}
+form.wiz .wiz-top,form.wiz .q,form.wiz .fld label,form.wiz .consent,form.wiz .eu-picked{color:#1E140A}
+form.wiz .note{color:#3A2A14}
+form.wiz .ph{color:#4A3720;background:rgba(255,255,255,.35);box-shadow:none}
+form.wiz .dots li{background:rgba(30,20,10,.22)}form.wiz .dots li.cur{background:rgba(30,20,10,.55)}form.wiz .dots li.done{background:#0A0A0A}
+form.wiz .wiz-nav{box-shadow:0 -1px 0 rgba(30,20,10,.18)}
+form.wiz .err{color:#7A1E0E}
+form.wiz .eu-picked b{color:#0A0A0A}
+form.wiz .consent input{accent-color:#0A0A0A}
+form.wiz .dial{background:#0E0E0D;border-radius:var(--r-md);padding:20px 12px 10px;box-shadow:inset 0 0 0 1px rgba(240,220,180,.08)}
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -573,7 +587,7 @@ form.wiz{background:linear-gradient(180deg,rgba(16,14,12,.74),rgba(10,9,8,.84)),
         <h2 id="iq-h">Start your <em>inquiry.</em></h2>
         <p>Six questions, about a minute. No commitment.</p>
       </div>
-      <form class="card wiz rv" id="wiz" novalidate>
+      <form class="card wiz stone rv" id="wiz" novalidate>
         <div class="wiz-top"><span id="w-count">Question 1 of 6</span><ol class="dots" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li></ol></div>
 
         <fieldset class="step" style="border:0;margin:0;padding:0"><legend class="q">What does your company make?</legend>
@@ -602,7 +616,7 @@ form.wiz{background:linear-gradient(180deg,rgba(16,14,12,.74),rgba(10,9,8,.84)),
           <div class="fld"><label for="w-country">Or choose from the list</label><select id="w-country" style="min-height:48px;border-radius:14px;background:#0E0E0D;color:var(--ink);border:0;padding:0 14px;font:inherit;box-shadow:inset 0 0 0 1px rgba(240,220,180,.1)"><option value="">Choose a country</option><option>Albania</option><option>Austria</option><option>Belarus</option><option>Belgium</option><option>Bosnia and Herzegovina</option><option>Bulgaria</option><option>Croatia</option><option>Czechia</option><option>Denmark</option><option>Estonia</option><option>Finland</option><option>France</option><option>Germany</option><option>Greece</option><option>Hungary</option><option>Ireland</option><option>Italy</option><option>Kosovo</option><option>Latvia</option><option>Lithuania</option><option>Luxembourg</option><option>Moldova</option><option>Montenegro</option><option>Netherlands</option><option>North Macedonia</option><option>Norway</option><option>Poland</option><option>Portugal</option><option>Romania</option><option>Serbia</option><option>Slovakia</option><option>Slovenia</option><option>Spain</option><option>Sweden</option><option>Switzerland</option><option>Ukraine</option><option>United Kingdom</option><option>Another country</option></select></div></div>
 
         <p class="err" id="w-err" role="alert"></p>
-        <div class="wiz-nav"><button type="button" class="btn btn-quiet btn-sm" id="w-back" hidden>Back</button><button type="button" class="btn btn-main next" id="w-next">Continue</button><button type="submit" class="btn btn-main next" id="w-send" hidden>Send inquiry</button></div>
+        <div class="wiz-nav"><button type="button" class="btn btn-quiet btn-sm" id="w-back" hidden>Back</button><button type="button" class="btn btn-dark next" id="w-next">Continue</button><button type="submit" class="btn btn-dark next" id="w-send" hidden>Send inquiry</button></div>
         <p class="note">Demo: nothing is sent. On the live site this goes to <span class="ph">[email]</span>, and anyone who stops after question 2 gets a reminder SMS.</p>
       </form>
     </div>
