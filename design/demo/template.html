@@ -307,12 +307,12 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
 .story-facts{display:grid;gap:6px;font-size:18px}
 @media (max-width:900px){.story{grid-template-columns:1fr}}
 /* footer: the wordmark lights up when the thread arrives */
-.sign{display:grid;place-items:center;padding-block:clamp(24px,4vw,48px)}
-.sign svg{width:min(100%,640px);height:auto;overflow:visible}
+.sign{width:max-content;max-width:100%;margin:0!important;padding:clamp(16px,2vw,28px) 0 0!important;display:block!important}
+.sign svg{display:block;width:clamp(180px,20vw,280px);height:auto;overflow:visible}
 .sign svg path{fill:#1E1C19;transition:fill 1600ms var(--ease)}
 .sign svg{transition:filter 1600ms var(--ease)}
-.sign.lit svg path{fill:#EBD3A6}
-.sign.lit svg{filter:drop-shadow(0 0 22px rgba(240,198,130,.5)) drop-shadow(0 0 2px rgba(255,240,210,.8))}
+.sign.lit svg path{fill:url(#onyxfill)}
+.sign.lit svg{filter:drop-shadow(0 0 16px rgba(240,198,130,.45)) drop-shadow(0 0 1px rgba(255,240,210,.7))}
 
 
 /* Buttons in lit onyx */
@@ -330,6 +330,7 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <radialGradient id="cityglow"><stop offset="0" stop-color="#FFF0D0" stop-opacity=".9"/><stop offset=".35" stop-color="#E2C186" stop-opacity=".4"/><stop offset="1" stop-color="#E2C186" stop-opacity="0"/></radialGradient>
+  <pattern id="onyxfill" patternContentUnits="objectBoundingBox" width="1" height="1"><image href="{{ONYXRAW}}" width="1" height="1" preserveAspectRatio="xMidYMid slice"/></pattern>
   <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4DC"/><stop offset="1" stop-color="#E2C795"/></linearGradient>
 </defs></svg>
 
