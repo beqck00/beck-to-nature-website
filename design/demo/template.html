@@ -262,6 +262,58 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
 .foot a{color:var(--ink-2);text-decoration:none}
 .foot nav{display:flex;gap:18px;flex-wrap:wrap}
 
+
+/* Editorial layout: type and space instead of cards */
+h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
+.sec-head h2{max-width:14ch}
+.text-cta{display:inline-flex;align-items:center;gap:12px;margin-top:clamp(40px,5vw,64px);font-size:clamp(22px,2vw,28px);color:var(--cream);text-decoration:none;font-style:italic}
+.text-cta .ic{width:26px;height:26px;transition:transform 300ms var(--ease)}
+.text-cta:hover .ic{transform:translateX(6px)}
+.text-cta::after{content:"";display:block}
+.flow{list-style:none;margin:clamp(56px,7vw,96px) 0 0;padding:0;display:grid;gap:clamp(40px,5vw,64px);max-width:1100px}
+.flow li{display:grid;grid-template-columns:140px minmax(0,1fr);gap:clamp(20px,4vw,64px);align-items:baseline}
+.flow-k{font-style:italic;color:var(--ink-3);font-size:20px}
+.flow h3{font-size:clamp(30px,3.4vw,52px);line-height:1.05;letter-spacing:-.02em}
+.flow p{margin-top:12px;color:var(--ink-2);max-width:52ch}
+@media (max-width:700px){.flow li{grid-template-columns:1fr;gap:6px}}
+.spec-row{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:start}
+.spec-list{list-style:none;margin:0;padding:0;display:grid;gap:clamp(28px,3vw,40px)}
+.spec-list li{display:grid;gap:6px}
+.spec-list b{font-weight:400;font-size:clamp(34px,4vw,60px);line-height:1;letter-spacing:-.02em}
+.spec-list span{color:var(--ink-2);font-size:18px}
+.spec-note{margin-top:clamp(40px,5vw,64px);font-style:italic;font-size:clamp(20px,1.8vw,26px);color:var(--ink-2)}
+@media (max-width:900px){.spec-row{grid-template-columns:1fr}}
+.founder{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:end}
+.portrait{aspect-ratio:4/5;border-radius:6px;background:linear-gradient(180deg,#151413,#0E0D0C);display:grid;place-items:end start;padding:22px}
+.portrait span{font-size:15px;color:var(--ink-3)}
+.founder-text{display:grid;gap:22px;padding-bottom:12px}
+.f-name{font-size:clamp(26px,2.4vw,34px);display:grid;gap:4px}
+.f-role{font-size:17px;color:var(--ink-3);font-style:italic}
+.f-quote{margin:0;font-size:clamp(28px,2.8vw,42px);line-height:1.2}
+.f-sig{width:220px;margin-top:-4px}
+.essay{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(40px,5vw,72px) clamp(32px,6vw,96px);margin-top:clamp(72px,9vw,128px);max-width:1100px}
+.essay h3{font-style:italic;color:var(--cream);font-size:clamp(26px,2.2vw,32px);margin-bottom:12px}
+.essay p{color:var(--ink-2);max-width:48ch}
+.promise{margin-top:clamp(72px,9vw,128px);max-width:900px}
+.promise-k{font-style:italic;color:var(--ink-3);font-size:20px}
+.promise-t{font-size:clamp(32px,3.6vw,54px);line-height:1.12;letter-spacing:-.015em;margin-top:12px}
+.f-links{display:flex;gap:24px;margin-top:28px;flex-wrap:wrap}
+.f-links a{min-height:44px;display:inline-flex;align-items:center;text-decoration:none;color:var(--ink-2);font-size:18px}
+.f-links a:hover{color:var(--ink)}
+@media (max-width:900px){.founder{grid-template-columns:1fr}.portrait{max-width:380px}.essay{grid-template-columns:1fr}}
+.story{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,5vw,80px);align-items:end;padding-block:clamp(48px,6vw,80px)}
+.story+.story{box-shadow:0 -1px 0 rgba(240,220,180,.08)}
+.story-result{font-size:clamp(34px,4.4vw,68px);line-height:1.04;letter-spacing:-.02em}
+.story-facts{display:grid;gap:6px;font-size:18px}
+@media (max-width:900px){.story{grid-template-columns:1fr}}
+/* footer: the wordmark lights up when the thread arrives */
+.sign{display:grid;place-items:center;padding-block:clamp(24px,4vw,48px)}
+.sign svg{width:min(100%,640px);height:auto;overflow:visible}
+.sign svg path{fill:#1E1C19;transition:fill 1600ms var(--ease)}
+.sign svg{transition:filter 1600ms var(--ease)}
+.sign.lit svg path{fill:#EBD3A6}
+.sign.lit svg{filter:drop-shadow(0 0 22px rgba(240,198,130,.5)) drop-shadow(0 0 2px rgba(255,240,210,.8))}
+
 /* entrances */
 .rv{transition:opacity 700ms var(--ease),transform 700ms var(--ease),filter 700ms var(--ease)}
 .js .rv.pre{opacity:0;transform:translateY(18px);filter:blur(3px)}
@@ -299,7 +351,7 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
   </section>
 
   <section class="sec frame" id="why" aria-labelledby="why-h">
-    <div class="sec-head rv"><h2 id="why-h">Test America in one room.</h2><p>A trade show is a controlled place to meet the US market before you commit to it. In a few days you learn more than in a year of emails.</p></div>
+    <div class="sec-head rv"><h2 id="why-h">Test America <em>in one room.</em></h2><p>A trade show is a controlled place to meet the US market before you commit to it. In a few days you learn more than in a year of emails.</p></div>
     <div class="why">
       <div class="rv">
         <ul class="why-list">
@@ -317,60 +369,63 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
   </section>
 
   <section class="sec frame" id="services" aria-labelledby="sv-h">
-    <div class="sec-head rv"><h2 id="sv-h">What I do for you.</h2><p>From choosing the show to your first American order, with one person as your point of contact.</p></div>
-    <div class="services">
-      <article class="card svc rv"><span class="n">Show selection</span><h3>The right show, not the biggest one</h3><p>I choose the US trade show where your buyers actually are, and handle booth, design, shipping and on-site logistics.</p><p class="incl"><span class="ph">[What's included]</span></p></article>
-      <article class="card svc rv"><span class="n">Meetings</span><h3>Buyers booked before you fly</h3><p>I research and invite distributors and buyers in advance, and I'm in every meeting with you.</p><p class="incl"><span class="ph">[What's included]</span></p></article>
-      <article class="card svc rv"><span class="n">At the show</span><h3>I stand at your booth</h3><p>Briefings, translation of the American way of buying, and notes on every conversation.</p><p class="incl"><span class="ph">[What's included]</span></p></article>
-      <article class="card svc rv"><span class="n">Follow-up</span><h3>Leads that turn into orders</h3><p>Most deals close in the weeks after a show. I follow up every lead and represent you in US business hours.</p><p class="incl"><span class="ph">[What's included]</span></p></article>
-    </div>
-    <a class="btn btn-main to-inquiry rv" href="#inquiry">Start your inquiry <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <div class="sec-head rv"><h2 id="sv-h">What I do <em>for you.</em></h2><p>From choosing the show to your first American order, with one person as your point of contact.</p></div>
+    <ol class="flow">
+      <li class="rv"><span class="flow-k">Before</span><div><h3>The right show, not the biggest one</h3><p>I choose the US trade show where your buyers actually are, and handle booth, design, shipping and on-site logistics.</p></div></li>
+      <li class="rv"><span class="flow-k">Before</span><div><h3>Buyers booked before you fly</h3><p>I research and invite distributors and buyers in advance, and I'm in every meeting with you.</p></div></li>
+      <li class="rv"><span class="flow-k">During</span><div><h3>I stand at your booth</h3><p>Briefings, the American way of buying explained, and notes on every conversation.</p></div></li>
+      <li class="rv"><span class="flow-k">After</span><div><h3>Leads that turn into orders</h3><p>Most deals close in the weeks after a show. I follow up every lead and represent you in US business hours.</p></div></li>
+    </ol>
+    <a class="text-cta rv" href="#inquiry">Start your inquiry <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </section>
 
   <section class="sec frame" id="specialties" aria-labelledby="sp-h">
-    <div class="sec-head rv"><h2 id="sp-h">Where I'm a specialist.</h2></div>
-    <div class="specs">
-      <article class="card spec rv"><div class="body"><h3>Medical &amp; healthcare</h3><p><span class="ph">[Shows, buyers and regulatory experience in medical and healthcare.]</span></p></div></article>
-      <article class="card spec rv"><div class="body"><h3>Software</h3><p><span class="ph">[What you bring to software companies entering the US.]</span></p></div></article>
-      <article class="card spec rv"><div class="body"><h3>Hardware</h3><p><span class="ph">[What you bring to hardware and device makers.]</span></p></div></article>
+    <div class="spec-row">
+      <h2 id="sp-h" class="rv">Where I'm a <em>specialist.</em></h2>
+      <ul class="spec-list rv">
+        <li><b>Medical &amp; healthcare</b><span><span class="ph">[Shows, buyers and regulatory experience.]</span></span></li>
+        <li><b>Software</b><span><span class="ph">[What you bring to software companies.]</span></span></li>
+        <li><b>Hardware</b><span><span class="ph">[What you bring to device makers.]</span></span></li>
+      </ul>
     </div>
-    <p class="spec-note rv"><b>I work across industries.</b> These three are where I'm a specialist.</p>
+    <p class="spec-note rv">I work across industries. These three are where I go deepest.</p>
   </section>
 
   <section class="sec frame" id="founder" aria-labelledby="fo-h">
-    <div class="sec-head rv"><h2 id="fo-h">The person behind it.</h2></div>
     <div class="founder">
-      <div class="card portrait rv"><span>[Founder photo]</span></div>
-      <div class="rv">
-        <p class="f-name"><span class="ph">[Founder name]</span></p>
-        <p class="f-role">Founder, Beck To Nature</p>
-        <p class="f-quote">“<span class="ph">[One sentence in your own words: why you do this.]</span>”</p>
-        <svg class="f-sig" viewBox="10 20 850 380" aria-hidden="true">{{SIGPATHS}}</svg>
-        <div class="f-blocks">
-          <div class="card f-block"><h3>Why</h3><p><span class="ph">[Why you started Beck To Nature.]</span></p></div>
-          <div class="card f-block"><h3>How</h3><p><span class="ph">[How you work with a client.]</span></p></div>
-          <div class="card f-block wide"><h3>Experience</h3><p><span class="ph">[Your background, years, shows attended, languages.]</span></p></div>
-          <div class="card f-block"><h3>Mission</h3><p><span class="ph">[Mission.]</span></p></div>
-          <div class="card f-block"><h3>Vision</h3><p><span class="ph">[Vision.]</span></p></div>
-          <div class="card f-block wide"><h3>What you get</h3><p><span class="ph">[Value proposition: what a client gets from working with you.]</span></p></div>
-        </div>
-        <div class="f-links"><a href="#founder"><span class="ph">[LinkedIn]</span></a><a href="#founder"><span class="ph">[Instagram]</span></a><a href="#founder"><span class="ph">[Other link]</span></a></div>
-        <a class="btn btn-main to-inquiry" href="#inquiry">Work with me <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="portrait rv" role="img" aria-label="Founder photo placeholder"><span>[Founder photo]</span></div>
+      <div class="founder-text">
+        <h2 id="fo-h" class="rv">The person <em>behind it.</em></h2>
+        <p class="f-name rv"><span class="ph">[Founder name]</span><span class="f-role">Founder, Beck To Nature</span></p>
+        <p class="f-quote rv">“<span class="ph">[One sentence in your own words: why you do this.]</span>”</p>
+        <svg class="f-sig rv" viewBox="10 20 850 380" aria-hidden="true">{{SIGPATHS}}</svg>
       </div>
+    </div>
+    <div class="essay">
+      <div class="rv"><h3>Why</h3><p><span class="ph">[Why you started Beck To Nature.]</span></p></div>
+      <div class="rv"><h3>How</h3><p><span class="ph">[How you work with a client.]</span></p></div>
+      <div class="rv"><h3>Experience</h3><p><span class="ph">[Your background, years, shows attended, languages.]</span></p></div>
+      <div class="rv"><h3>Mission &amp; vision</h3><p><span class="ph">[Mission.]</span> <span class="ph">[Vision.]</span></p></div>
+    </div>
+    <div class="promise rv">
+      <p class="promise-k">What you get</p>
+      <p class="promise-t"><span class="ph">[Your value proposition, in one or two strong sentences.]</span></p>
+      <div class="f-links"><a href="#founder"><span class="ph">[LinkedIn]</span></a><a href="#founder"><span class="ph">[Instagram]</span></a><a href="#founder"><span class="ph">[Other link]</span></a></div>
+      <a class="btn btn-main to-inquiry" href="#inquiry">Work with me <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </section>
 
   <section class="sec frame" id="cases" aria-labelledby="cs-h">
-    <div class="sec-head rv"><h2 id="cs-h">Two stories.</h2></div>
-    <div class="cases">
-      <article class="card case rv"><div class="body"><h3><span class="ph">[Company, industry]</span></h3>
-        <dl><dt>Product</dt><dd><span class="ph">[What they make]</span></dd><dt>Show</dt><dd><span class="ph">[Which US show]</span></dd><dt>Challenge</dt><dd><span class="ph">[Where they started]</span></dd></dl>
-        <p class="result"><span class="ph">[The result, in one line]</span></p></div></article>
-      <article class="card case rv"><div class="body"><h3><span class="ph">[Company, industry]</span></h3>
-        <dl><dt>Product</dt><dd><span class="ph">[What they make]</span></dd><dt>Show</dt><dd><span class="ph">[Which US show]</span></dd><dt>Challenge</dt><dd><span class="ph">[Where they started]</span></dd></dl>
-        <p class="result"><span class="ph">[The result, in one line]</span></p></div></article>
+    <div class="sec-head rv"><h2 id="cs-h">Two <em>stories.</em></h2></div>
+    <div class="story rv">
+      <p class="story-result"><span class="ph">[The result, in one line.]</span></p>
+      <div class="story-facts"><p><span class="ph">[Company]</span> · <span class="ph">[Industry]</span></p><p><span class="ph">[Which US show]</span></p><p class="muted"><span class="ph">[Where they started, what changed.]</span></p></div>
     </div>
-    <a class="btn btn-main to-inquiry rv" href="#inquiry">Write your own story <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <div class="story rv">
+      <p class="story-result"><span class="ph">[The result, in one line.]</span></p>
+      <div class="story-facts"><p><span class="ph">[Company]</span> · <span class="ph">[Industry]</span></p><p><span class="ph">[Which US show]</span></p><p class="muted"><span class="ph">[Where they started, what changed.]</span></p></div>
+    </div>
+    <a class="text-cta rv" href="#inquiry">Write your own story <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </section>
 
   <section class="sec frame belief" id="belief" aria-labelledby="be-h">
@@ -382,7 +437,7 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
   <section class="sec frame" id="inquiry" aria-labelledby="iq-h">
     <div class="iq">
       <div class="iq-intro rv">
-        <h2 id="iq-h">Start your inquiry.</h2>
+        <h2 id="iq-h">Start your <em>inquiry.</em></h2>
         <p class="muted">Six short questions, about a minute. I reply personally within <span class="ph">[two business days]</span>.</p>
         <ul>
           <li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>No commitment</li>
@@ -426,7 +481,7 @@ footer{padding-block:clamp(120px,14vw,200px) 60px}
   </section>
 
   <footer class="frame" id="foot">
-    <div class="stone sign" id="sign" aria-label="Beck To Nature">{{SIGN}}</div>
+    <div class="sign" id="sign" aria-label="Beck To Nature">{{SIGN}}</div>
     <div class="foot"><span>© 2026 Beck To Nature · Budapest · <span class="ph">[US city]</span> · <span class="ph">[email]</span></span><nav aria-label="Legal"><a href="#foot">Privacy policy</a><a href="#foot">Cookie notice</a><a href="#foot">Terms</a></nav></div>
   </footer>
 </div>
@@ -498,7 +553,7 @@ const $ = id => document.getElementById(id);
 (() => {
   const SIG = {{SIG}}, SW = 860, SH = 410, NS = 'http://www.w3.org/2000/svg';
   const page = document.querySelector('.page'), svg = $('thread'), core = $('t-core'), glow = $('t-glow'), head = $('t-head'), sigG = $('t-sig');
-  const stones = [...document.querySelectorAll('.stone')];
+  const stones = [...document.querySelectorAll('.stone, #sign')];
   let segs = [], Lsig = 0, Lt = 0, samples = [], stoneY = [];
   const rel = el => { const a = el.getBoundingClientRect(), b = page.getBoundingClientRect(); return { top: a.top - b.top, bottom: a.bottom - b.top, left: a.left - b.left, w: a.width, h: a.height }; };
   const cr = pts => { let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
