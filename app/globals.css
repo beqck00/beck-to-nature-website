@@ -250,3 +250,31 @@ footer{background:var(--bg-2);color:var(--ink-2);padding-block:40px 48px;font-si
 .ph-dark{background:rgba(255,255,255,.12);border-radius:3px;padding:0 3px;color:#fff}
 
 @media (prefers-reduced-transparency: reduce){.nav{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* Legal pages (privacy policy, cookie notice, terms of use) */
+.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px}
+.foot-meta .foot-links{justify-content:flex-end}
+@media (max-width:640px){.foot-meta .foot-links{justify-content:flex-start}}
+.foot-links a{color:var(--ink-2);text-decoration:none}
+.foot-links a:hover{color:var(--ink);text-decoration:underline}
+.legal-top{border-bottom:1px solid var(--line);background:var(--bg)}
+.legal-top-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px}
+.legal-back{font-size:.9rem;color:var(--green);text-decoration:none}
+.legal-back:hover{text-decoration:underline}
+.legal{padding-block:clamp(40px,7vw,80px) clamp(56px,8vw,96px)}
+.legal-body{max-width:760px}
+.legal-body h1{font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:10px}
+.legal-body h2{font-size:clamp(1.35rem,2.4vw,1.6rem);letter-spacing:0;margin:44px 0 12px;scroll-margin-top:24px}
+.legal-body h3{font-size:1.08rem;margin:24px 0 8px}
+.legal-body p,.legal-body li{color:var(--ink);line-height:1.6}
+.legal-body p+p,.legal-body ul+p,.legal-body .legal-table+p{margin-top:12px}
+.legal-body ul{margin:10px 0 0;padding-left:1.2em;display:grid;gap:8px}
+.legal-body a{color:var(--green);text-underline-offset:2px}
+.legal-updated{color:var(--ink-2);font-size:.95rem;margin-bottom:28px!important}
+.legal-callout{background:var(--green-tint);border-radius:14px;padding:16px 20px;margin-top:16px!important}
+.legal-table{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px}
+.legal-table table{width:100%;border-collapse:collapse;font-size:.95rem}
+.legal-table th,.legal-table td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1px solid var(--line)}
+.legal-table tr:last-child td{border-bottom:0}
+.legal-table th{background:var(--bg-2);font-weight:600}
+.legal-credit{margin-top:56px!important;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-3)!important;font-size:.82rem}

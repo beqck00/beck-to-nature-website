@@ -4,6 +4,7 @@ import PhotoSlot from "@/components/PhotoSlot";
 import Faq from "@/components/Faq";
 import CopyButton from "@/components/CopyButton";
 import ReadinessCheck from "@/components/ReadinessCheck";
+import { LEGAL_LINKS } from "@/components/LegalPage";
 
 const SERVICES = [
   { h: "Trade show entry", p: "We choose the US show where your buyers actually are, and handle booth space, design, shipping and on-site logistics.", incl: "Show selection · booth partners · freight and customs" },
@@ -181,6 +182,9 @@ export default function Home() {
           <div className="foot-meta">
             <span>© 2026 Beck To Nature · Budapest · <Ph>[Hartland, Wisconsin]</Ph></span>
             <span>Draft. Photo buttons only preview on your screen; nothing is uploaded.</span>
+            <nav className="foot-links" aria-label="Legal">
+              {LEGAL_LINKS.map((l) => <a key={l.href} href={l.href}>{l.label}</a>)}
+            </nav>
           </div>
         </div>
       </footer>
