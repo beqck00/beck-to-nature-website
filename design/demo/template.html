@@ -80,7 +80,7 @@ p{margin:0;text-wrap:pretty}
 .hero h1 .l1{color:var(--cream)}
 .glyph{display:inline-block;transition:filter 120ms linear}
 .word{display:inline-block;white-space:nowrap}
-@media (max-width:700px){.hero{padding-block:48px calc(100vw * .7)}.hero-map{top:auto;bottom:0;left:50%;width:100vw;margin-left:-50vw;height:calc(100vw * 84 / 124 + 40px);-webkit-mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent)}}
+@media (max-width:700px){.hero{min-height:0;--hg:64px;padding-block:var(--hg) calc((100vw * 84 / 124 + 40px) * .86 + var(--hg))}.hero-map{top:auto;bottom:0;left:50%;width:100vw;margin-left:-50vw;height:calc(100vw * 84 / 124 + 40px);-webkit-mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(180deg,transparent,#000 15%,#000 85%,transparent)}}
 
 /* the thread */
 .thread{position:absolute;left:0;top:0;z-index:1;pointer-events:none;overflow:visible}
