@@ -89,7 +89,7 @@ p{margin:0;text-wrap:pretty}
 #t-core{stroke:#F6E6C2;stroke-width:1.8}
 #t-head{opacity:0;transition:opacity 300ms}
 #t-head.on{opacity:1}
-#t-sig path.c{stroke:#F6E6C2;stroke-width:1.8}#t-sig path.g{stroke:rgba(var(--glow),.12);stroke-width:6;filter:blur(3px)}
+#t-sig path.c,#t-end path.c{stroke:#F6E6C2;stroke-width:1.8}#t-sig path.g,#t-end path.g{stroke:rgba(var(--glow),.12);stroke-width:6;filter:blur(3px)}
 
 /* sections */
 .sec{padding-block:clamp(72px,8vw,116px) 0}
@@ -499,7 +499,7 @@ form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow
 <div class="page" id="top">
   <svg class="thread" id="thread" aria-hidden="true">
     <path id="t-glow"/><path id="t-core"/>
-    <g id="t-sig"></g>
+    <g id="t-sig"></g><g id="t-end"></g>
     <g id="t-head"><circle r="12" fill="url(#cityglow)" opacity=".7"/></g>
   </svg>
 
@@ -550,7 +550,6 @@ form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow
         <h2 id="fo-h" class="rv">Our founder.</h2>
         <p class="f-name rv"><span class="ph">[Founder name]</span><span class="f-role">Founder of Beck To Nature</span></p>
         <p class="f-quote rv">“<span class="ph">[One sentence from the founder on why Beck To Nature exists.]</span>”</p>
-        <svg class="f-sig rv" viewBox="10 20 850 380" aria-hidden="true"><path d="M 153 112 C 151 170 149 230 147 292"/><path d="M 22 182 C 30 120 120 30 200 38 C 236 42 232 98 205 140 C 186 170 160 196 124 236 C 134 226 142 220 152 214 C 190 192 225 176 262 176 C 312 178 330 218 316 252 C 300 296 230 340 170 362 C 140 374 110 384 88 386"/><path d="M 650 76 C 650 150 648 220 646 292"/><path d="M 300 288 C 340 270 395 245 420 214 C 438 192 412 196 392 214 C 362 240 352 278 370 304 C 384 324 412 328 440 320 C 458 316 474 292 490 264 C 502 244 516 226 508 224 C 488 226 462 266 466 298 C 472 326 522 332 562 322 C 594 314 624 300 646 290 C 664 256 694 206 724 178 C 746 158 760 176 742 204 C 722 236 684 266 650 288 C 670 282 705 288 745 295 C 782 300 815 296 842 292"/></svg>
       </div>
     </div>
     <div class="essay">
@@ -708,14 +707,14 @@ const $ = id => document.getElementById(id);
 })();
 
 /* The thread: the signature writes itself in the hero, unwinds into one smooth line that follows the scroll,
-   writes the founder's signature on its way (joining it only at the B), and ends by writing the signature once more. Everything it has
+   passes the founder on its way, and ends by writing the signature once more, joining it at the B. Everything it has
    passed is lit; scrolling back up switches things off again. */
 (() => {
   const SIG = ["M 153 112 C 151 170 149 230 147 292", "M 22 182 C 30 120 120 30 200 38 C 236 42 232 98 205 140 C 186 170 160 196 124 236 C 134 226 142 220 152 214 C 190 192 225 176 262 176 C 312 178 330 218 316 252 C 300 296 230 340 170 362 C 140 374 110 384 88 386", "M 650 76 C 650 150 648 220 646 292", "M 300 288 C 340 270 395 245 420 214 C 438 192 412 196 392 214 C 362 240 352 278 370 304 C 384 324 412 328 440 320 C 458 316 474 292 490 264 C 502 244 516 226 508 224 C 488 226 462 266 466 298 C 472 326 522 332 562 322 C 594 314 624 300 646 290 C 664 256 694 206 724 178 C 746 158 760 176 742 204 C 722 236 684 266 650 288 C 670 282 705 288 745 295 C 782 300 815 296 842 292"], SW = 860, SH = 410;
-  const page = document.querySelector('.page'), svg = $('thread'), core = $('t-core'), glow = $('t-glow'), head = $('t-head'), sigG = $('t-sig');
+  const page = document.querySelector('.page'), svg = $('thread'), core = $('t-core'), glow = $('t-glow'), head = $('t-head'), sigG = $('t-sig'), endG = $('t-end');
   const NS = 'http://www.w3.org/2000/svg';
   const LUM = '#why h2, .why2-lead, .why2-note, #why .text-cta, #specialties .sec-head, .tri, .iq-intro, #wiz, .portrait, .founder-text h2, .f-name, .f-quote, .essay > div, .promise, #cases .sec-head, .story, #cases .text-cta, .foot';
-  let lums = [], segs = [], Lsig = 0, Lt = 0, samples = [];
+  let lums = [], segs = [], eSegs = [], Lsig = 0, Lc = 0, Lt = 0, samples = [];
   const rel = el => { const a = el.getBoundingClientRect(), b = page.getBoundingClientRect(); return { top: a.top - b.top, bottom: a.bottom - b.top, left: a.left - b.left, right: a.right - b.left, w: a.width, h: a.height }; };
   const cr = pts => { let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
     for (let i = 0; i < pts.length - 1; i++) { const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
@@ -745,10 +744,9 @@ const $ = id => document.getElementById(id);
     const sigAt = (el, vx, vy) => { const r = relRest(el), k = Math.min(r.w / 850, r.h / 380), ox = r.left + (r.w - 850 * k) / 2 - vx * k, oy = r.top + (r.h - 380 * k) / 2 - vy * k;
       const P = (x, y) => [ox + x * k, oy + y * k];
       return { k, B: P(22, 182), K: P(842, 292), bottom: oy + 386 * k, left: ox + 22 * k, right: ox + 842 * k,
-        d: ORDER.map(d => d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => P(+x, +y).map(v => v.toFixed(2)).join(' '))).join(' ') }; };
-    const fS = sigAt(document.querySelector('.f-sig'), 10, 20);   // founder signature (svg viewBox starts at 10 20)
+        strokes: ORDER.map(d => d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => P(+x, +y).map(v => v.toFixed(2)).join(' '))) }; };
     const eS = sigAt($('end-sig'), 10, 20);                       // closing signature, bottom left
-    // the line meets a signature only at the B: a soft hook rising into the B's lead-in stroke
+    // the line meets the closing signature only at the B: a soft hook rising into the B's lead-in stroke
     const hookB = S => { const B = S.B, u = Math.max(18, 160 * S.k);
       return [[B[0] - u * .9, B[1] - u * .3], [B[0] - u * .8, B[1] + u * .9], [B[0] - u * .35, B[1] + u * .9], [B[0] - u * .05, B[1] + u * .35], B]; };
     const ss = v => { v = clamp(v); return v * v * (3 - 2 * v); }, Dk = narrow ? 260 : 460;
@@ -767,9 +765,9 @@ const $ = id => document.getElementById(id);
       for (let pass = 0; pass < 4; pass++) { xs = smooth(xs, pass < 2 ? 14 : 5); xs = xs.map((x, i) => freeX(ys[i], x)); }
       xs = smooth(xs, 2).map((x, i) => freeX(ys[i], x));
       const out = []; ys.forEach((y, i) => { if (i % 3 === 0) out.push([xs[i], y]); }); return out; };
-    let pts, D = '';
-    const flush = () => { if (pts && pts.length > 1) D += (D ? ' ' : '') + cr(pts); pts = []; };
-    const write = S => { D += ' ' + S.d; };
+    // one continuous line (a dash window only behaves on a single subpath); the closing signature's strokes are separate paths written after it
+    let pts;
+    const fq = rel(document.querySelector('.f-quote')), fY = fq.bottom + 60;   // where the founder signature used to sit, under the quote
     if (!narrow) {
       // desktop: run down the side margins, cross over in the empty bands between sections,
       // slip under the founder photo into the signature, and end by writing the closing signature
@@ -779,36 +777,32 @@ const $ = id => document.getElementById(id);
       const why = R('#why .why2'), spH = R('#specialties .sec-head'), fo = R('#founder'), promise = R('#founder .promise'), csH = R('#cases .sec-head');
       // the route the owners drew (on a 528px-wide picture of the page), mapped onto the live layout:
       // x scales with the page width, y is pinned to the hero signature, the featured specialty card, the founder signature and the closing one
-      const tl = R('.tri-lit'), A = [[258, y0], [640, tl.top + tl.h / 2], [1305, fS.B[1]], [1915, eS.B[1]]];
+      const tl = R('.tri-lit'), A = [[258, y0], [640, tl.top + tl.h / 2], [1305, fY], [1915, eS.B[1]]];
       const my = v => { for (let i = 0; i < A.length - 1; i++) if (v <= A[i + 1][0] || i === A.length - 2) return lerp(A[i][1], A[i + 1][1], (v - A[i][0]) / (A[i + 1][0] - A[i][0])); };
       const M = ([x, y]) => [x * W / 528, my(y)];
       pts = [start];
       [[330, 262], [375, 290], [415, 335], [435, 395], [425, 450], [390, 495], [335, 545], [275, 598], [215, 655], [178, 705], [168, 750], [185, 790],
-       [212, 832], [232, 870], [240, 910], [250, 950], [262, 1000], [262, 1060], [248, 1130], [232, 1200]].forEach(p => pts.push(M(p)));
-      // down the gap beside the founder photo, hook into the B, write the signature, leave from the k tail
-      hookB(fS).forEach(p => pts.push(p)); flush(); write(fS);
-      const K = fS.K; pts = [K, [K[0] + 40, K[1] + 4], [K[0] + 80, K[1] + 34]];
-      [[392, 1365], [392, 1420], [378, 1475], [362, 1522], [342, 1556], [292, 1585], [242, 1622], [222, 1662], [232, 1702],
+       [212, 832], [232, 870], [240, 910], [250, 950], [262, 1000], [262, 1060], [248, 1130], [232, 1200], [228, 1262], [250, 1300], [300, 1318],
+       [352, 1325], [385, 1345], [394, 1395], [384, 1450], [366, 1510], [342, 1556], [292, 1585], [242, 1622], [222, 1662], [232, 1702],
        [268, 1742], [294, 1782], [294, 1830], [268, 1868]].forEach(p => pts.push(M(p)));
       // drift left above the closing signature and hook into its B
       pts.push([eS.B[0] + 150, eS.B[1] - 125], [eS.B[0] - 25, eS.B[1] - 100]);
-      hookB(eS).forEach(p => pts.push(p)); flush(); write(eS);
+      hookB(eS).forEach(p => pts.push(p));
     } else {
       pts = [start, [start[0] + 40, y0 + 4], [start[0] + 75, y0 + 30]];
-      const fB = fS.B, aY = fB[1] - 220, sY = y0 + 70;
-      routed(sY, aY, y => { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); return lerp(x0, fS.right + 40, ss((y - (aY - Dk)) / Dk)); }).forEach(p => pts.push(p));
-      pts.push([lerp(fS.right + 40, fB[0], .5), fB[1] - 150]);
-      hookB(fS).forEach(p => pts.push(p)); flush(); write(fS);
-      const K = fS.K; pts = [K, [K[0] + 20, K[1] + 10], [K[0] + 30, K[1] + 60]];
-      const bY = K[1] + 120, cY = eS.bottom - 80;
-      routed(bY, cY, y => { const x0 = lerp(K[0] + 30, laneX(y), ss((y - bY) / Dk)); return lerp(x0, eS.right + 30, ss((y - (cY - Dk)) / Dk)); }).forEach(p => pts.push(p));
+      const sY = y0 + 70, cY = eS.bottom - 80;
+      routed(sY, cY, y => { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); return lerp(x0, eS.right + 30, ss((y - (cY - Dk)) / Dk)); }).forEach(p => pts.push(p));
       pts.push([lerp(eS.right + 30, eS.B[0], .5), eS.B[1] - 120], [eS.B[0] - 14, eS.B[1] - 90]);
-      hookB(eS).forEach(p => pts.push(p)); flush(); write(eS);
+      hookB(eS).forEach(p => pts.push(p));
     }
-    flush(); const d = D; core.setAttribute('d', d); glow.setAttribute('d', d);
-    Lt = core.getTotalLength();
-    samples = []; let maxY = -1e9; const N = Math.min(4000, Math.ceil(Lt / 5));
-    for (let i = 0; i <= N; i++) { const l = Lt * i / N, p = core.getPointAtLength(l); maxY = Math.max(maxY, p.y); samples.push({ l, y: maxY }); }
+    const d = cr(pts); core.setAttribute('d', d); glow.setAttribute('d', d);
+    Lc = core.getTotalLength();
+    endG.innerHTML = eS.strokes.map(d => `<path class="g" d="${d}"/><path class="c" d="${d}"/>`).join('');
+    const ep = [...endG.querySelectorAll('path')]; eSegs = []; let Le = 0;
+    for (let i = 0; i < ep.length; i += 2) { const len = ep[i + 1].getTotalLength(); eSegs.push({ els: [ep[i], ep[i + 1]], off: Lc + Le, len }); Le += len; }
+    Lt = Lc + Le;
+    samples = []; let maxY = -1e9; const N = Math.min(4000, Math.ceil(Lc / 5));
+    for (let i = 0; i <= N; i++) { const l = Lc * i / N, p = core.getPointAtLength(l); maxY = Math.max(maxY, p.y); samples.push({ l, y: maxY }); }
     lums = [...document.querySelectorAll(LUM), ...document.querySelectorAll('.stone')].map(el => { el.classList.add('lum'); const r = rel(el); return { el, y: r.top + Math.min(r.h, 160) / 2 }; });
     paint();
   }
@@ -818,10 +812,12 @@ const $ = id => document.getElementById(id);
   function paint() {
     segs.forEach(g => win(g.els, g.len, clamp(cur.s - g.off, 0, g.len), clamp(cur.h - g.off, 0, g.len)));
     const th = clamp(cur.h - Lsig, 0, Lt), ts = clamp(cur.s - Lsig, 0, Lt);
-    win([core, glow], Lt, ts, th);
+    win([core, glow], Lc, Math.min(ts, Lc), Math.min(th, Lc));
+    eSegs.forEach(g => win(g.els, g.len, clamp(ts - g.off, 0, g.len), clamp(th - g.off, 0, g.len)));
     head.classList.toggle('on', th > 2 && th < Lt - 2);
-    const hy = th > 0 ? core.getPointAtLength(th).y : -1e9;
-    if (th > 0) { const p = core.getPointAtLength(th); head.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`); }
+    const at = l => { if (l <= Lc) return core.getPointAtLength(l); const g = eSegs.find(g => l <= g.off + g.len) || eSegs[eSegs.length - 1]; return g.els[1].getPointAtLength(clamp(l - g.off, 0, g.len)); };
+    const hp = th > 0 ? at(th) : null, hy = hp ? hp.y : -1e9;
+    if (hp) head.setAttribute('transform', `translate(${hp.x.toFixed(1)} ${hp.y.toFixed(1)})`);
     const all = th >= Lt - 2;
     lums.forEach(o => o.el.classList.toggle('lit', reduce || all || hy >= o.y - 40));
   }
