@@ -791,7 +791,10 @@ const $ = id => document.getElementById(id);
     } else {
       pts = [start, [start[0] + 40, y0 + 4], [start[0] + 75, y0 + 30]];
       const sY = y0 + 70, cY = eS.bottom - 80;
-      routed(sY, cY, y => { const x0 = lerp(start[0] + 95, laneX(y), ss((y - sY) / (Dk * 1.4))); return lerp(x0, eS.right + 30, ss((y - (cY - Dk)) / Dk)); }).forEach(p => pts.push(p));
+      // phone: wide, slow S-curves across the screen (behind the text, like on desktop), easing in from the hero signature
+      // and out towards the closing one
+      const wind = y => Math.min(W - 16, Math.max(16, W * .54 + W * .34 * Math.sin((y - y0) / 1050 * Math.PI * 2 + 1.1) + 5 * Math.sin((y - y0) / 290 * Math.PI * 2)));
+      for (let y = sY; y < cY; y += 40) { const x0 = lerp(start[0] + 95, wind(y), ss((y - sY) / (Dk * 1.4))); pts.push([lerp(x0, eS.right + 30, ss((y - (cY - Dk)) / Dk)), y]); }
       pts.push([lerp(eS.right + 30, eS.B[0], .5), eS.B[1] - 120], [eS.B[0] - 14, eS.B[1] - 90]);
       hookB(eS).forEach(p => pts.push(p));
     }
