@@ -220,7 +220,7 @@ form.wiz{padding:clamp(24px,3vw,40px);display:grid;gap:24px;min-height:540px;ali
 .digit .strip span{height:1em;display:block}
 .digit.moving .strip{filter:blur(2px)}.digit.hidden{width:0}
 .unit{color:var(--ink-2)}
-.track{position:relative;height:104px;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent)}
+.track{position:relative;height:104px;overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent)}
 .track:active{cursor:grabbing}
 .ruler{position:absolute;left:0;top:0;height:100%;will-change:transform}
 .tick{position:absolute;bottom:36px;width:1px;background:#3A3630;height:14px;transform:translateX(-.5px)}
@@ -882,11 +882,28 @@ const $ = id => document.getElementById(id);
     const cl = p => Math.min(MAX * STEP + STEP * .4, Math.max(MIN * STEP - STEP * .4, p));
     const to = (t, dur = 250) => { cancelAnimationFrame(raf); if (reduce) { pos = t; api.render(); return; } const f = pos, t0 = performance.now(); const st = now => { const k = Math.min(1, (now - t0) / dur); pos = f + (t - f) * (1 - Math.pow(1 - k, 3)); api.render(); if (k < 1) raf = requestAnimationFrame(st); }; raf = requestAnimationFrame(st); };
     const snap = () => to(Math.min(MAX, Math.max(MIN, Math.round(pos / STEP))) * STEP);
-    let drag = false, lx = 0, lt = 0, vel = 0;
-    track.addEventListener('pointerdown', e => { drag = true; cancelAnimationFrame(raf); track.setPointerCapture(e.pointerId); lx = e.clientX; lt = performance.now(); vel = 0; });
-    track.addEventListener('pointermove', e => { if (!drag) return; const now = performance.now(), dx = e.clientX - lx; pos = cl(pos - dx); vel = -dx / Math.max(1, now - lt); lx = e.clientX; lt = now; api.render(); });
-    const rel = () => { if (!drag) return; drag = false; if (reduce || Math.abs(vel) < .05) return snap(); let v = vel * 16; const gl = () => { v *= .94; pos = cl(pos + v); api.render(); if (Math.abs(v) > .6 && pos > MIN * STEP - 18 && pos < MAX * STEP + 18) raf = requestAnimationFrame(gl); else snap(); }; raf = requestAnimationFrame(gl); };
-    track.addEventListener('pointerup', rel); track.addEventListener('pointercancel', rel);
+    // dragging: mouse/pen through pointer events; touch through touch events with a direction lock, so a vertical swipe
+    // still scrolls the page and a sideways one is never cancelled half-way (iOS Safari cancels pointer drags that drift)
+    let drag = false, lx = 0, sx = 0, sy = 0, t0 = 0, moved = 0, hist = [];
+    const begin = (x, y) => { drag = true; cancelAnimationFrame(raf); lx = sx = x; sy = y; t0 = performance.now(); moved = 0; hist = [[t0, pos]]; };
+    const move = x => { const dx = x - lx; lx = x; moved += Math.abs(dx); pos = cl(pos - dx); const now = performance.now(); hist.push([now, pos]); while (hist.length > 2 && now - hist[0][0] > 90) hist.shift(); api.render(); };
+    const end = (x, cancelled) => { if (!drag) return; drag = false; const now = performance.now();
+      if (cancelled) return snap();
+      if (moved < 6 && now - t0 < 350) { const r = track.getBoundingClientRect(); return to(Math.min(MAX, Math.max(MIN, Math.round((pos + x - (r.left + r.width / 2)) / STEP))) * STEP, 260); }
+      const [ta, pa] = hist[0], [tb, pb] = hist[hist.length - 1]; const vel = now - tb > 70 || tb - ta < 8 ? 0 : (pb - pa) / (tb - ta);
+      if (reduce || Math.abs(vel) < .08) return snap();
+      let v = Math.max(-2.4, Math.min(2.4, vel)) * 14; const gl = () => { v *= .9; pos = cl(pos + v); api.render(); if (Math.abs(v) > .5 && pos > MIN * STEP - 18 && pos < MAX * STEP + 18) raf = requestAnimationFrame(gl); else snap(); }; raf = requestAnimationFrame(gl); };
+    track.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') return; track.setPointerCapture(e.pointerId); begin(e.clientX, e.clientY); });
+    track.addEventListener('pointermove', e => { if (e.pointerType === 'touch' || !drag) return; move(e.clientX); });
+    track.addEventListener('pointerup', e => { if (e.pointerType !== 'touch') end(e.clientX); });
+    track.addEventListener('pointercancel', e => { if (e.pointerType !== 'touch') end(e.clientX, true); });
+    let lock = '';
+    track.addEventListener('touchstart', e => { if (e.touches.length !== 1) return; const p = e.touches[0]; lock = ''; begin(p.clientX, p.clientY); }, { passive: true });
+    track.addEventListener('touchmove', e => { if (!drag) return; const p = e.touches[0];
+      if (!lock) { const dx = Math.abs(p.clientX - sx), dy = Math.abs(p.clientY - sy); if (dx < 5 && dy < 5) return; lock = dx >= dy ? 'x' : 'y'; if (lock === 'y') { drag = false; snap(); return; } }
+      e.preventDefault(); move(p.clientX); }, { passive: false });
+    track.addEventListener('touchend', e => { const p = e.changedTouches[0]; end(p ? p.clientX : lx); });
+    track.addEventListener('touchcancel', () => end(lx, true));
     track.addEventListener('keydown', e => { const k = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key]; if (!k) return; e.preventDefault(); to(Math.min(MAX, Math.max(MIN, value + k)) * STEP, 200); });
     addEventListener('resize', () => api.render(true));
     return api;
