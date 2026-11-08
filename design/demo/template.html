@@ -5,13 +5,13 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap">
 <style>
 /* Layout: one dark field; the signature unwinds into a single thread that runs down the page,
-   lighting onyx surfaces as it passes. Every section ends in a way into the inquiry. */
+   lighting what it passes. Every section ends in a way into the inquiry. */
 :root{
   color-scheme:dark;
   --k0:#050505;--k1:#0A0A0A;--k2:#111110;--k3:#161514;--k4:#1D1C1B;--k5:#252321;
   --ink:#F1EADD;--ink-2:#D6CCBC;--ink-3:#B4A996;
   --cream:#EBD3A6;--cream-hi:#FBF1DE;--glow:240,198,130;
-  --onyx:url({{ONYX}});
+  --on-brass:#17120C;
   --font:"EB Garamond",Garamond,"Times New Roman",serif;
   --r-pill:999px;--r-xl:28px;--r-lg:20px;--r-md:14px;
   --ease:cubic-bezier(.22,1,.36,1);
@@ -97,11 +97,9 @@ p{margin:0;text-wrap:pretty}
 .sec-head p{font-size:clamp(18px,1.4vw,21px);color:var(--ink-2);max-width:56ch}
 .card{position:relative;z-index:2;background:linear-gradient(180deg,#151413,#100F0E);border-radius:var(--r-xl);box-shadow:inset 0 1px 0 rgba(255,240,210,.05),0 30px 60px -36px rgba(0,0,0,.9)}
 
-/* onyx surfaces: dark until the thread reaches them */
-.stone{position:relative;border-radius:var(--r-md);overflow:hidden;background:var(--onyx) center 40%/cover;box-shadow:inset 0 0 30px rgba(50,25,0,.5);transition:box-shadow 1600ms var(--ease)}
-.stone::after{content:"";position:absolute;inset:0;background:rgba(6,5,4,.86);transition:background-color 1600ms var(--ease);pointer-events:none}
-.stone.lit{box-shadow:inset 0 0 30px rgba(50,25,0,.4),0 0 46px -4px rgba(var(--glow),.55)}
-.stone.lit::after{background:rgba(6,5,4,0)}
+/* the featured surface: graphite with a brass outline, glowing once the thread reaches it */
+.stone{position:relative;border-radius:var(--r-md);background:linear-gradient(180deg,#1A1816,#131211);box-shadow:inset 0 0 0 1px rgba(235,211,166,.3),0 30px 60px -36px rgba(0,0,0,.9);transition:box-shadow 1600ms var(--ease)}
+.stone.lit{box-shadow:inset 0 0 0 1px rgba(235,211,166,.65),0 0 52px -10px rgba(var(--glow),.45),0 30px 60px -36px rgba(0,0,0,.9)}
 
 /* why trade shows */
 .why{display:grid;grid-template-columns:minmax(0,1fr);max-width:820px;gap:clamp(32px,5vw,72px);align-items:stretch;margin-top:clamp(48px,6vw,72px)}
@@ -312,18 +310,16 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
 .sign svg{display:block;width:clamp(180px,20vw,280px);height:auto;overflow:visible}
 .sign svg path{fill:#1E1C19;transition:fill 1600ms var(--ease)}
 .sign svg{transition:filter 1600ms var(--ease)}
-.sign.lit svg path{fill:url(#onyxfill)}
+.sign.lit svg path{fill:var(--cream)}
 .sign.lit svg{filter:drop-shadow(0 0 16px rgba(240,198,130,.45)) drop-shadow(0 0 1px rgba(255,240,210,.7))}
 
 
-/* Buttons in lit onyx */
-.btn-main{color:#1E140A;background:linear-gradient(180deg,rgba(255,248,232,.22),rgba(255,240,210,.04) 55%,rgba(60,35,10,.14)),var(--onyx) 50% 40%/150% auto;
-  box-shadow:inset 0 1px 0 rgba(255,250,236,.9),inset 0 -2px 4px rgba(70,45,15,.3),0 8px 28px -8px rgba(var(--glow),.55);text-shadow:0 1px 0 rgba(255,246,226,.5);font-weight:500;
-  transition:transform 200ms var(--ease),box-shadow 300ms var(--ease),background-position 900ms var(--ease)}
-.btn-main:hover{background-position:0 0,60% 40%;box-shadow:inset 0 1px 0 rgba(255,250,236,.9),inset 0 -2px 4px rgba(70,45,15,.3),0 10px 36px -6px rgba(var(--glow),.75)}
-.chip input:checked+span{color:#1E140A;background:linear-gradient(180deg,rgba(255,248,232,.22),rgba(255,240,210,.04)),var(--onyx) 50% 40%/120% auto}
+/* Main buttons in flat brass */
+.btn-main{color:var(--on-brass);background:linear-gradient(180deg,var(--cream-hi),var(--cream));font-weight:500;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 26px -10px rgba(var(--glow),.55);transition:transform 200ms var(--ease),box-shadow 300ms var(--ease),filter 300ms var(--ease)}
+.btn-main:hover{filter:brightness(1.04);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 10px 34px -8px rgba(var(--glow),.7)}
 
-/* three specialties, the middle one lit onyx */
+/* three specialties, the middle one featured */
 .sec-head.center{margin-inline:auto;text-align:center;justify-items:center}
 .sec-head.center h2{max-width:none}
 .trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:center;margin-top:clamp(48px,6vw,72px)}
@@ -334,13 +330,11 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
 .tri li{display:flex;gap:10px;align-items:baseline}
 .tri li .ic{width:18px;height:18px;color:var(--cream);flex:none;transform:translateY(3px)}
 .tri .btn{width:100%}
-.tri-lit{transform:translateY(-14px);padding-block:clamp(36px,3vw,44px);color:#1E140A;border-radius:24px}
+.tri-lit{transform:translateY(-14px);padding-block:clamp(36px,3vw,44px);color:var(--ink);border-radius:24px}
 .tri-lit::after{border-radius:inherit}
 .tri-lit>*{position:relative;z-index:1}
-.tri-lit .tri-sub,.tri-lit ul,.tri-lit h3{color:#1E140A}
-.tri-lit .ic{color:#3A2A14!important}
-.tri-lit .ph{color:#4A3720;background:rgba(255,255,255,.35);box-shadow:none}
-.tri-tag{justify-self:start;font-size:18px;color:#F1EADD;background:#0A0A0A;border-radius:999px;padding:4px 14px}
+.tri-lit h3{color:var(--ink)}
+.tri-tag{justify-self:start;font-size:18px;color:var(--on-brass);background:var(--cream);border-radius:999px;padding:4px 14px}
 .btn-dark{color:#F1EADD;background:#0A0A0A;box-shadow:0 8px 24px -8px rgba(0,0,0,.6)}
 .btn-dark:hover{background:#000}
 @media (max-width:900px){.trio{grid-template-columns:1fr}.tri-lit{transform:none;order:-1}}
@@ -364,8 +358,6 @@ h2 em,.hero h1 em{font-style:italic;color:var(--cream)}
 h2.lum.lit,.f-quote.lum.lit,.why2-lead.lum.lit{text-shadow:0 0 28px rgba(var(--glow),.18)}
 .tri.lum.lit:not(.tri-lit){box-shadow:inset 0 1px 0 rgba(255,240,210,.08),0 0 0 1px rgba(var(--glow),.12),0 30px 60px -36px rgba(0,0,0,.9)}
 .stone.lum{filter:none}
-.stone:not(.lit)::after{background:rgba(6,5,4,.86)!important}
-.stone:not(.lit){box-shadow:inset 0 0 30px rgba(50,25,0,.5)!important}
 .tri-lit.lum:not(.lit){filter:brightness(.55)}
 @media (prefers-reduced-motion:reduce){.lum{filter:none}}
 
@@ -472,7 +464,7 @@ form.wiz.lum:not(.lit){filter:brightness(.7)}
 .chip .mark{position:absolute;top:16px;right:16px;width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(240,220,180,.25);transition:background-color 160ms,box-shadow 160ms}
 .chip input:checked+span{color:var(--ink);background:#1A1816;box-shadow:inset 0 0 0 1.5px rgba(235,211,166,.7)}
 .chip input:checked+span b{color:var(--ink)}
-.chip input:checked+span .mark{box-shadow:none;background:var(--onyx) 50% 40%/300% auto}
+.chip input:checked+span .mark{box-shadow:none;background:var(--cream)}
 .chip input:checked+span .mark::after{content:"";position:absolute;left:7px;top:5px;width:6px;height:10px;border:solid #1A1006;border-width:0 2px 2px 0;transform:rotate(45deg)}
 .fld label{font-size:18px;color:var(--ink-3)}
 .fld input{background:#121110;border-radius:14px}
@@ -492,7 +484,6 @@ form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <radialGradient id="cityglow"><stop offset="0" stop-color="#FFF0D0" stop-opacity=".9"/><stop offset=".35" stop-color="#E2C186" stop-opacity=".4"/><stop offset="1" stop-color="#E2C186" stop-opacity="0"/></radialGradient>
-  <pattern id="onyxfill" patternContentUnits="objectBoundingBox" width="1" height="1"><image href="{{ONYXRAW}}" width="1" height="1" preserveAspectRatio="xMidYMid slice"/></pattern>
   <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4DC"/><stop offset="1" stop-color="#E2C795"/></linearGradient>
 </defs></svg>
 
@@ -537,7 +528,7 @@ form.wiz{background:linear-gradient(180deg,#171513,#121110)!important;box-shadow
         <ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Show you'd pick]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Typical buyers]</span></li></ul></article>
       <article class="tri tri-lit stone rv"><span class="tri-tag">Most experience</span><h3>Medical &amp; healthcare</h3><p class="tri-sub"><span class="ph">[One line on medical and healthcare.]</span></p>
         <ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[e.g. RSNA, Chicago]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Distributors, hospital buyers]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Booth ready before you fly</li></ul>
-        <a class="btn btn-dark" href="#inquiry">Start your inquiry</a></article>
+        <a class="btn btn-main" href="#inquiry">Start your inquiry</a></article>
       <article class="card tri rv"><h3>Hardware</h3><p class="tri-sub"><span class="ph">[One line on hardware and devices.]</span></p>
         <ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Show you'd pick]</span></li><li><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="ph">[Typical buyers]</span></li></ul></article>
     </div>
