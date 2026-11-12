@@ -31,7 +31,7 @@ Asked for by the founder: rework the spacing, remove the "AI clutter", and make 
 - **Clutter removed**: outer glows (buttons, stone card, form, lit headings, dial needle, map), drop shadows and gradients on cards, the pool of light behind the form, the boxes around placeholders (they are now plain grey text in brackets), the icons and divider on the specialty cards ("Most experience" is plain text beside the card name), the looping "Scroll" tick, the floating pill around the navigation (now a plain bar on a soft dark scrim), and italics everywhere except "to America." and "inquiry." (the standing decision).
 - **Motion** is down to three moves: headings rise word by word, blocks ease up, the founder's two key sentences light up. The cards no longer tip in 3D, the portrait no longer wipes and drifts, the form no longer scales. The cursor spotlight now shows over the hero map only.
 - Kept: the onyx (main buttons, check mark, featured card, with its moving highlight), the line lighting content as it passes, the fine stroke with a subtle glow.
-- `design/preview/` (stills and recordings) shows the site **before** this pass and should be re-recorded.
+- `design/preview/` was re-recorded after this pass.
 
 ## Status
 
@@ -121,7 +121,7 @@ Contract templates (mutual and one-way NDA, master services agreement, EU and US
 
 ## Preview
 
-`design/preview/` holds two screen recordings of the scroll (desktop and phone, recorded in Chromium on 2026-11-12) and six stills. They show the site as of that date; re-record after visible changes.
+`design/preview/` holds two screen recordings of the scroll (desktop and phone, recorded in Chromium on 2026-11-12, after the declutter pass) and six stills. They show the site as of that date; re-record after visible changes with `node design/tools/record-preview.js` (start the built site on port 3210 first; needs Playwright and ffmpeg).
 
 ## Other things made for the owner
 
