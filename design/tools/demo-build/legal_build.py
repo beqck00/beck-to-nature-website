@@ -1,14 +1,13 @@
-# Builds the demo's legal pages (dark demo style) into demo/legal/:
+# Builds the demo's legal pages (dark demo style) into design/demo/, for a U.S. LLC:
 #  - the three website policies, taken from the Next.js build of app/privacy, app/cookies, app/terms (already adapted)
 #  - every contract template from .claude/skills/legal-templates, converted with pandoc, Beck To Nature fields pre-filled
 #  - legal.html, an index of all documents
 import re, subprocess, html as H, os
-REPO = '/home/user/beck-to-nature-website'
-S = '/tmp/claude-0/-home-user-beck-to-nature-website/c199b9ec-4b76-5314-8732-1ffb9b6e9ddd/scratchpad/demo/'
-OUT = S + 'legal/'
-os.makedirs(OUT, exist_ok=True)
+REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))   # run `npm run build` first: the policies come from the built site
+OUT = REPO + '/design/demo/'
 TPL = REPO + '/.claude/skills/legal-templates/templates/'
-LEGAL_NAME = '<mark>[Beck To Nature legal name]</mark>'
+LEGAL_NAME = '<mark>[Beck To Nature LLC]</mark>'
+STATE = '<mark>[Wisconsin]</mark>'
 
 fig = open(REPO + '/logo/beck-to-nature-figure.svg').read()
 figp = ''.join(re.findall(r'<path[^>]*/>|<circle[^>]*/>', fig)).replace('#B2CD2B', '#EBD3A6')
@@ -23,29 +22,31 @@ CREDIT = ('This document is adapted from a template prepared and made publicly a
 POLICIES = [
     ('privacy', 'Privacy policy', 'How we collect, use and protect personal information, for visitors in Europe and the U.S.'),
     ('cookies', 'Cookie notice', 'The site uses no cookies or tracking. This page says so, and what would change if that ever changes.'),
-    ('terms', 'Terms of use', 'The rules for using the website, including what the readiness check is and is not.'),
+    ('terms', 'Terms of use', 'The rules for using the website, including what an inquiry is and is not.'),
 ]
 # slug, title, template, one-line summary, how we would use it, things to settle before using it
 CONTRACTS = [
     ('mutual-nda', 'Mutual non-disclosure agreement', 'mutual-nda',
      'Both sides share confidential information.',
      'Sign before a first detailed conversation with a manufacturer, where they share product plans and we share buyer and show strategy.',
-     ['Written for a Delaware corporation; the party description is changed to a Hungarian Kft. placeholder. Confirm the legal form.',
-      'Choose the governing law and courts (Hungary or Wisconsin) with a lawyer.']),
+     ['The party description and the governing law are changed from Delaware to a placeholder for the LLC&rsquo;s own state. Confirm both.',
+      'A European client may ask for its own country&rsquo;s law instead; decide with a lawyer what you accept.']),
     ('one-way-nda', 'One-way non-disclosure agreement', 'one-way-nda',
      'Only one side shares confidential information.',
      'Use when only the client shares, for example unreleased product details before a show. The client is then the &ldquo;Company&rdquo; and Beck To Nature the Recipient.',
-     ['Decide which party is the Company for each deal.', 'Fill in the permitted use and governing law.']),
+     ['Decide which party is the Company for each deal.', 'Fill in the permitted use. The governing law is changed from Delaware to a placeholder for the LLC&rsquo;s own state.']),
     ('master-services-agreement', 'Master services agreement', 'master-services-agreement',
      'The framework contract with a client.',
      'The base contract for trade show projects and ongoing U.S. representation, with a statement of work per show.',
      ['This template was written for software subscriptions (authorized users, access protocols, user tiers). Those clauses must be replaced with a services scope: show selection, booth and logistics, buyer meetings and follow-up.',
       'Set fees, payment terms and expenses (booth space, build, freight and travel are extra).',
-      'The template uses Delaware law; decide on Hungarian or U.S. law with a lawyer.']),
+      'Governing law defaults to Delaware in the template and is left as a field: set the LLC&rsquo;s state, or agree another with the client.',
+      'Clients are European companies: add how VAT and withholding taxes are handled, and the currency.']),
     ('dpa-eu', 'Data processing addendum (EU and UK)', 'dpa-global',
      'GDPR terms for personal data we handle for a client.',
      'Attach to a client contract when we handle personal data for the client, such as buyer contact lists, meeting notes and lead follow-up.',
-     ['List our subprocessors in the annex (email, CRM, text message provider).', 'Check the roles: usually the client is controller and Beck To Nature is processor.']),
+     ['List our subprocessors in the annex (email, CRM, text message provider).', 'Check the roles: usually the client is controller and Beck To Nature is processor.',
+      'As a U.S. company receiving personal data from EU clients, we are the &ldquo;data importer&rdquo;: the standard contractual clauses in this addendum are what makes that transfer lawful, so do not remove them.']),
     ('dpa-us', 'Data processing addendum (U.S.)', 'dpa-us',
      'U.S. state privacy terms for personal data we handle for a client.',
      'The U.S. counterpart of the EU addendum, for clients and contacts covered by U.S. state privacy laws.',
@@ -53,18 +54,21 @@ CONTRACTS = [
     ('advisor-agreement', 'Advisor agreement', 'advisor-agreement',
      'Terms for an outside advisor.',
      'For an industry expert who advises us, for example a former hospital buyer or a U.S. regulatory specialist.',
-     ['Written for a U.S. startup paying advisors in stock options approved by a board. For Beck To Nature, replace this with a fee or remove the equity part.']),
+     ['Written for a corporation that pays advisors in stock options approved by a board of directors. An LLC has neither stock nor a board: replace the equity section with a fee, or with a profits interest drafted by a lawyer.']),
     ('offer-letter', 'Employee offer letter', 'employee-offer-letter',
      'An offer of employment.',
      'Only for hiring an employee in California, which this template is written for.',
-     ['Not suitable for a hire in Hungary or Wisconsin without rework: employment law differs a lot.']),
+     ['Not suitable for a hire in Wisconsin or another state without rework, and not for anyone working from Hungary: employment law differs a lot.',
+      'Someone working for the LLC from Hungary raises Hungarian employment, tax and social security questions; ask an adviser before making any offer.']),
     ('baa', 'Business associate agreement (HIPAA)', 'business-associate-agreement',
      'U.S. health privacy terms for patient data.',
      'Only if a U.S. healthcare client would give us protected health information about patients. Trade show work normally does not involve patient data, so this is usually not needed.',
      ['Written for cloud software; describe our services instead.', 'Ask a U.S. healthcare lawyer before signing one.']),
 ]
 FILL = [  # fields that clearly mean Beck To Nature
-    ('<mark>[Company</mark>], a Delaware corporation', LEGAL_NAME + ', a <mark>[Hungarian limited liability company (Kft.)]</mark>'),
+    ('<mark>[Company</mark>], a Delaware corporation', LEGAL_NAME + ', a ' + STATE + ' limited liability company'),
+    ('a <mark>[STATE OF INCORPORATION OF COMPANY]</mark> company', 'a ' + STATE + ' limited liability company'),
+    ('the State of Delaware, without', 'the State of ' + STATE + ', without'), ('laws of Delaware, without', 'laws of ' + STATE + ', without'),
     ('<mark>[Company]</mark>', LEGAL_NAME), ('[<mark>CompanyName</mark>]', LEGAL_NAME), ('<mark>[LEGAL NAME OF COMPANY]</mark>', LEGAL_NAME),
     ('<mark>[COMPANY NAME]</mark>', LEGAL_NAME), ('[<mark>Company Name</mark>]', LEGAL_NAME),
     ('<mark>[Company Email Address]</mark>', 'hello@becktonature.com'),
@@ -97,13 +101,12 @@ def marks(h):
 # website policies, from the Next.js build
 for slug, title, desc in POLICIES:
     src = open(f'{REPO}/.next/server/app/{slug}.html').read()
-    art = re.search(r'<article class="wrap legal-body">(.*?)</article>', src, re.S).group(1)
+    art = re.search(r'<main class="legal-doc">(.*?)</main>', src, re.S).group(1)
     art = re.sub(r'<!-- -->', '', art)
-    art = re.sub(r'<p class="legal-credit">.*?</p>', '', art, flags=re.S)
-    art = re.sub(r'<h1>.*?</h1>\s*<p class="legal-updated">(.*?)</p>', lambda m: f'<p class="eyebrow">Website policy · draft</p><h1>{title}</h1><p class="updated">{m.group(1)}</p>', art, flags=re.S)
+    art = re.sub(r'<p class="credit">.*?</p>', '', art, flags=re.S)
+    art = re.sub(r'<p class="eyebrow">.*?</p>\s*<h1>.*?</h1>\s*<p class="updated">(.*?)</p>', lambda m: f'<p class="eyebrow">Website policy · draft</p><h1>{title}</h1><p class="updated">{m.group(1)}</p>', art, flags=re.S)
     for s in ('privacy', 'cookies', 'terms'):
         art = art.replace(f'href="/{s}"', f'href="{s}.html"').replace(f'href="/{s}#', f'href="{s}.html#')
-    art = art.replace('class="legal-table"', 'class="tbl"').replace('class="legal-callout"', 'class="callout"')
     open(OUT + slug + '.html', 'w').write(page(slug, title, art + f'<p class="credit">{CREDIT}</p>', desc))
 
 # contract templates

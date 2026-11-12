@@ -33,14 +33,14 @@ The owner asked for the real Next.js site to be built from the approved demo, as
 | Sideways scrolling on phone | None, including on the dial step |
 | Legal pages, US LLC wording | Written; need a lawyer's review |
 | Real phones and Safari | **Not checked.** Everything above was checked in Chromium, including the phone size |
-| Demo's contract templates updated for a US LLC | See "Still to do" |
+| Demo's contract templates and policy copies, US LLC wording | Regenerated in `design/demo/`; need a lawyer's review |
 
 ## Still to do
 
 1. Try the site on a real iPhone (Safari) and an Android phone, and in desktop Safari and Firefox. Things to watch: the pinned opening on iOS when the address bar hides, and smoothness of the map while zoomed.
 2. Connect an email provider and send one real inquiry.
 3. Watch the whole scroll once on a slower laptop; if the zoomed map stutters, lower `Z` (zoom) in `lib/fx/flight.ts`.
-4. Update the eight contract templates in the demo for a US LLC (`design/tools/demo-build/legal_build.py` builds them; see "Legal" below), and regenerate `design/demo/*.html`.
+4. Contract templates: done for a US LLC (see "Legal"). To regenerate after editing the site's legal pages: `npm run build`, then `python3 design/tools/demo-build/legal_build.py` (needs pandoc).
 5. Record a short video of the scroll for the owner, and send screenshots.
 6. Owner decisions listed under "Open questions".
 
@@ -97,7 +97,12 @@ The three website pages are adapted from General Legal's CC0 templates (the `leg
 6. Which US state privacy laws apply at the company's size.
 7. Retention periods, hosting provider, email providers (placeholders in the privacy policy).
 
-Contract templates (mutual and one-way NDA, master services agreement, EU and US data processing addenda, advisor agreement, offer letter, HIPAA BAA) exist only in the demo (`design/demo/*.html`), not on the public site. They still say "Hungarian Kft." in places and need the US LLC update. Notes to add when updating: the services agreement template is written for software subscriptions and needs a services scope; the advisor agreement assumes a corporation with stock options (an LLC has neither); the offer letter is California-only.
+Contract templates (mutual and one-way NDA, master services agreement, EU and US data processing addenda, advisor agreement, offer letter, HIPAA BAA) exist only in `design/demo/*.html`, not on the public site. They name `[Beck To Nature LLC]`, a `[Wisconsin]` limited liability company, and use that state for governing law where the template had Delaware. Each page opens with notes on how the company would use it and what to settle first. The important ones:
+
+- **Master services agreement:** the template is written for software subscriptions. Its software clauses must be replaced with a services scope before it is usable; fees, expenses, VAT and currency need adding.
+- **Advisor agreement:** assumes a corporation with stock options and a board. An LLC has neither.
+- **Offer letter:** California only. Anyone working for the LLC from Hungary raises Hungarian employment and tax questions.
+- **EU data processing addendum:** as a US company the LLC is the "data importer"; keep the standard contractual clauses.
 
 ## Other things made for the owner
 
