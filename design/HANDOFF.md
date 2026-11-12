@@ -2,7 +2,7 @@
 
 Written so that anyone on the team (with or without Claude) can continue. Update this file whenever you finish a piece of work.
 
-Last updated: 2026-11-12, after the declutter, spacing and line-smoothing pass (see "Latest pass" below).
+Last updated: 2026-11-12, after the journey rebuild (see "Latest pass: the journey" below).
 
 ## What the site is
 
@@ -19,18 +19,33 @@ The owner asked for the real Next.js site to be built from the approved demo, as
 5. **Onyx** is the original candle onyx photo (`public/textures/onyx-candle.jpg`), with a bevelled edge and a highlight that follows the pointer and slides as you scroll. A procedural stone texture was tried and the owner asked to go back to the original (it is kept in `design/textures/onyx-stone.jpg`, made by `design/tools/make-onyx-texture.py`).
 6. **Legal pages** rewritten for a US LLC.
 
-## Latest pass: declutter, spacing, smoother line
+## Latest pass: the journey (sideways travel, no onyx, less text)
+
+Asked for by the founder after seeing the smoother line: remove the industry buttons under the "why" text, cut the text ("people won't read it"), remove the onyx entirely, add a little more spacing, and turn the whole page into a visual story: the line should not simply run down the page, it should stray, run off the side of the screen, and the site should follow it into the next section, zooming out and in.
+
+- **The journey** (`lib/fx/journey.ts`, replaces `thread.ts` and `scenes.ts`). Below the opening flight the sections are no longer stacked. Each one is placed on a wide "world" (`.journey > .journey-stage > .world`), and one pinned stage looks at it through a camera. Scroll order and placement: specialties (to the right), founder (further right and down), inquiry (back to the left), stories + closing signature (left again). `PLACES` at the top of the file sets this.
+  - For each stretch of scrolling the script (`keys`) says where the camera is and how much line is drawn: the line runs off the edge of the screen, the camera pulls back (zooms out), travels after it and closes in on the next section; on a section taller than the screen the camera moves straight down it at scroll speed.
+  - A section's parts come in as the camera arrives (`data-r` in `app/page.tsx`; headings rise word by word). No ScrollTrigger is used any more; GSAP remains for the flight only.
+  - Menu links, the buttons that lead to the inquiry, and keyboard focus are mapped to scroll positions with `journey.whereIs()`.
+  - Without motion ("reduce motion", or no JavaScript) the sections stack as a plain page, as before, with the closing signature written.
+  - The line is still built with `tangentPath`; tightest bend about 100px on a 1440px screen, 63px on a phone.
+- **Onyx removed everywhere.** Main buttons are flat cream, the check marks cream, the featured Medical card is a lighter graphite with a cream outline. `public/textures/onyx-candle.jpg` is deleted (copies remain under `design/`).
+- **Text cut.** "Why" is now the three statements and one sentence; the four industry buttons under it are gone. Specialties intro is one short sentence; the card caption is "Usual first show".
+- **Spacing** a step larger (`--sec`, `--head`, card padding and gaps).
+- Not checked: real phones and Safari (as before), and typing in the form on a phone with the on-screen keyboard open, which matters more now that the sections sit inside a pinned stage.
+
+## Earlier pass: declutter, spacing, smoother line
 
 Asked for by the founder: rework the spacing, remove the "AI clutter", and make the line's path smooth, with no sharp turns.
 
 - **The line** is no longer drawn through hand-placed points. Both lines are now built from tangents (`tangentPath` in `lib/fx/util.ts`): a few points the line passes through heading in a set direction, joined by long curves.
   - Flight: out of the hero signature it runs east and turns up into the Budapest-Chicago route on one wide arc; after Chicago it keeps turning the same way until it points straight down and leaves the stage (so it now exits further left than before).
-  - Page: from there through the featured card, down the open column right of the founder's texts, behind the form, between a story and its facts, then one wide turn, a run **under** the closing signature and a quarter turn up into the B. Phones: S-curves from side to side, same ending.
+  - Page (since replaced by the journey, above): through the featured card, down the right of the founder's texts, behind the form, between a story and its facts, then one wide turn, a run **under** the closing signature and a quarter turn up into the B.
   - Tightest bend, measured in Chromium: about 200px radius in the flight and 100px at the closing signature on a 1440px screen (it was 15px); 64px on a phone.
 - **Spacing**: one rhythm. `--sec` is the space between sections, `--head` the space between a section's heading and its content; other gaps are on a 4px grid.
 - **Clutter removed**: outer glows (buttons, stone card, form, lit headings, dial needle, map), drop shadows and gradients on cards, the pool of light behind the form, the boxes around placeholders (they are now plain grey text in brackets), the icons and divider on the specialty cards ("Most experience" is plain text beside the card name), the looping "Scroll" tick, the floating pill around the navigation (now a plain bar on a soft dark scrim), and italics everywhere except "to America." and "inquiry." (the standing decision).
 - **Motion** is down to three moves: headings rise word by word, blocks ease up, the founder's two key sentences light up. The cards no longer tip in 3D, the portrait no longer wipes and drifts, the form no longer scales. The cursor spotlight now shows over the hero map only.
-- Kept: the onyx (main buttons, check mark, featured card, with its moving highlight), the line lighting content as it passes, the fine stroke with a subtle glow.
+- Kept at that point: the onyx and the line lighting content as it passes (both removed in the journey pass), the fine stroke with a subtle glow.
 - `design/preview/` was re-recorded after this pass.
 
 ## Status
@@ -62,10 +77,9 @@ Asked for by the founder: rework the spacing, remove the "AI clutter", and make 
 
 - `app/page.tsx`: all page content (server-rendered). Placeholders the owners must fill in are wrapped in `<Ph>[...]</Ph>`.
 - `app/globals.css`: all styles. `html.fx` (set before first paint by a small script in `app/layout.tsx`) switches the scroll experience on; without it (no JavaScript, or "reduce motion") every section reads as a plain page.
-- `components/Experience.tsx`: the driver. One animation loop eases the flight's progress and the line's length after the scroll (faster when you scroll faster) and hands over between them so the line is one unbroken stroke.
+- `components/Experience.tsx`: the driver. One animation loop eases the flight's progress and the journey's progress after the scroll (faster when you scroll faster) and hands over between them so the line is one unbroken stroke.
 - `lib/fx/flight.ts`: the opening flight (canvas map, camera, line, timeline of the text).
-- `lib/fx/thread.ts`: the line below the flight and the closing signature. The route is a short list of knots (point + direction) tied to the featured card, the founder's texts, the form, the stories and the closing signature, so it survives layout changes. Phones get wide S-curves.
-- `lib/fx/scenes.ts`: ScrollTrigger animations for the sections.
+- `lib/fx/journey.ts`: everything below the flight: where the sections sit on the world, the line's route, the camera script and the closing signature. The route is a short list of knots (point + direction) tied to the sections, so it survives layout changes.
 - `components/Inquiry.tsx`, `lib/dial.ts`, `lib/inquiry.ts`: the form, the month dial, the questions and the data shape.
 - `app/api/inquiry/route.ts`, `lib/send-inquiry.ts`: receives an inquiry and emails it through Resend's HTTP API.
 - `lib/data/`: the dotted world map, the Europe outlines for the form, the signature strokes.
@@ -87,17 +101,18 @@ The old light design, and with it the AI "readiness check" (`app/api/readiness`,
 
 ## The owner's standing decisions
 
-- Black tones with brass and cream; EB Garamond; the original candle onyx (not a generated texture) used sparingly: main buttons, the selected-answer check mark, the featured Medical card.
+- Black tones with brass and cream; EB Garamond. **No onyx** (the founder asked for it to be removed entirely, 2026-11-12).
+- Short text. If a block needs more than a sentence or two, cut it.
 - Company voice: "we", "our founder". Never "I" or "my".
 - Do not claim "we'll be at your booth".
-- Every section leads to the inquiry. No pricing, FAQ, logo strip or testimonials.
+- Every section leads to the inquiry (but no row of industry buttons under the "why" text). No pricing, FAQ, logo strip or testimonials.
 - Specialties: Medical & healthcare (featured, middle), Software, Hardware, as three tier cards.
 - Order: hero, why, specialties, founder, inquiry, stories, footer.
-- The gold line: starts from the hero signature; smooth, slow, no loops, no sharp turns (keep every bend wide; measure after changing the route); may pass behind text and under cards; does **not** wrap around the inquiry card; no signature in the founder section; ends by writing the closing signature bottom left; lights content as it passes; follows faster when you scroll faster; fine stroke with a subtle glow.
+- The gold line: starts from the hero signature; smooth, no loops, no sharp turns (keep every bend wide; measure after changing the route); it strays across the page, runs off the side of the screen and the site follows it to the next section; may pass behind text and under cards; does **not** wrap around the inquiry card; no signature in the founder section; ends by writing the closing signature bottom left; follows faster when you scroll faster; fine stroke with a subtle glow.
 - Hero: dotted world map with routes; dots light up near the cursor; a 320px cursor spotlight on desktop (hero only).
-- Inquiry form: plain dark card (no onyx background, no glow), choice cards with a title, a muted subtitle and a corner circle that becomes an onyx check.
+- Inquiry form: plain dark card (no glow), choice cards with a title, a muted subtitle and a corner circle that becomes a cream check.
 - Readability: body text 18px or more, light greys; italic accent word only in "to America." and "inquiry.".
-- No decoration for its own sake: no glows, drop shadows, gradients on cards, icons on cards or boxed labels. The onyx and the line are the only rich elements.
+- No decoration for its own sake: no glows, drop shadows, gradients on cards, icons on cards or boxed labels. The map and the line are the only rich elements.
 - Earlier feedback to respect: keep things uncluttered; phone hero has equal space above and below the title.
 
 ## Legal

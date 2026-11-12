@@ -1,9 +1,9 @@
-// Re-records design/preview: two scroll recordings (desktop, phone) and six desktop stills.
+// Re-records design/preview: two scroll recordings (desktop, phone) and eight desktop stills.
 // usage: npm run build && npx next start -p 3210 &   then   node design/tools/record-preview.js   (needs playwright and ffmpeg)
 const { chromium } = require('playwright');
 const { execFileSync } = require('child_process');
 const fs = require('fs'), path = require('path'), os = require('os');
-const URL = 'http://localhost:3210/', OUT = path.join(__dirname, '..', 'preview'), SECONDS = 40;
+const URL = 'http://localhost:3210/', OUT = path.join(__dirname, '..', 'preview'), SECONDS = 58;
 
 (async () => {
   const b = await chromium.launch(), tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'btn-preview-'));
@@ -29,15 +29,17 @@ const URL = 'http://localhost:3210/', OUT = path.join(__dirname, '..', 'preview'
   const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
   await p.goto(URL, { waitUntil: 'networkidle' }); await p.waitForTimeout(3200);
   const span = await p.evaluate(() => document.querySelector('.flight').offsetHeight - innerHeight);
-  const top = (sel, off) => p.evaluate(([sel, off]) => document.querySelector(sel).getBoundingClientRect().top + scrollY - off, [sel, off]);
-  const stops = [['hero', 0], ['flight', span * 0.45], ['landing', span * 0.93], ['specialties', await top('#specialties', 40)], ['inquiry', await top('#inquiry', 60)], ['closing-signature', 1e9]];
+  const shot = (name) => p.screenshot({ path: path.join(OUT, `${name}.jpg`), type: 'jpeg', quality: 86 });
   let cur = 0;
-  for (const [name, y0] of stops) {
-    const y = Math.min(y0, await p.evaluate(() => document.documentElement.scrollHeight - innerHeight));
+  for (const [name, y] of [['hero', 0], ['flight', span * 0.45], ['landing', span * 0.93]]) {
     for (let s = cur; s < y; s += 120) { await p.evaluate((v) => scrollTo(0, v), s); await p.waitForTimeout(30); }
-    await p.evaluate((v) => scrollTo(0, v), y); cur = y; await p.waitForTimeout(2200);
-    await p.screenshot({ path: path.join(OUT, `${name}.jpg`), type: 'jpeg', quality: 86 });
+    await p.evaluate((v) => scrollTo(0, v), y); cur = y; await p.waitForTimeout(2200); await shot(name);
   }
+  // the journey's sections are reached through the menu, as a visitor would
+  for (const [name, hash] of [['specialties', '#specialties'], ['founder', '#founder'], ['inquiry', '#inquiry']]) { await p.click(`.nav-links a[href="${hash}"]`); await p.waitForTimeout(5000); await shot(name); }
+  const j = await p.evaluate(() => document.querySelector('.journey').getBoundingClientRect().top + scrollY);
+  await p.evaluate((v) => scrollTo(0, v), j + 900 * 2.45); await p.waitForTimeout(2500); await shot('travel');            // between two sections, pulled back
+  await p.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await p.waitForTimeout(6000); await shot('closing-signature');
   await b.close(); fs.rmSync(tmp, { recursive: true, force: true });
   console.log('stills done');
 })();

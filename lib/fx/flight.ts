@@ -129,7 +129,6 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     t.fromTo(land, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.004 }, T.land);
     t.fromTo(lines, { yPercent: 118 }, { yPercent: 0, duration: 0.07, stagger: 0.012, ease: "power3.out" }, T.land + 0.005);
     t.fromTo(land.querySelector(".why2-lead"), { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.06, ease: "power2.out" }, T.land + 0.045);
-    t.fromTo(land.querySelector(".firstq"), { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.06, ease: "power2.out" }, T.land + 0.08);
     t.to(state, { dim: band ? 0.3 : 0.55, duration: 0.09 }, T.land - 0.01);
     t.set({}, {}, 1);
     tl = t;
