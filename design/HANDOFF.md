@@ -2,7 +2,7 @@
 
 Written so that anyone on the team (with or without Claude) can continue. Update this file whenever you finish a piece of work.
 
-Last updated: 2026-11-12, after the journey rebuild (see "Latest pass: the journey" below).
+Last updated: 2026-11-12, after the journey rebuild and its zoom and easing revision (see "Latest pass: the journey" below).
 
 ## What the site is
 
@@ -23,8 +23,10 @@ The owner asked for the real Next.js site to be built from the approved demo, as
 
 Asked for by the founder after seeing the smoother line: remove the industry buttons under the "why" text, cut the text ("people won't read it"), remove the onyx entirely, add a little more spacing, and turn the whole page into a visual story: the line should not simply run down the page, it should stray, run off the side of the screen, and the site should follow it into the next section, zooming out and in.
 
-- **The journey** (`lib/fx/journey.ts`, replaces `thread.ts` and `scenes.ts`). Below the opening flight the sections are no longer stacked. Each one is placed on a wide "world" (`.journey > .journey-stage > .world`), and one pinned stage looks at it through a camera. Scroll order and placement: specialties (to the right), founder (further right and down), inquiry (back to the left), stories + closing signature (left again). `PLACES` at the top of the file sets this.
-  - For each stretch of scrolling the script (`keys`) says where the camera is and how much line is drawn: the line runs off the edge of the screen, the camera pulls back (zooms out), travels after it and closes in on the next section; on a section taller than the screen the camera moves straight down it at scroll speed.
+- **The journey** (`lib/fx/journey.ts`, replaces `thread.ts` and `scenes.ts`). Below the opening flight the sections are no longer stacked. Each one is placed on a wide "world" (`.journey > .journey-stage > .world`), and one pinned stage looks at it through a camera. Scroll order and placement: specialties (straight below the flight), founder (to the right), inquiry (back to the left), stories + closing signature (left again). `PLACES` at the top of the file sets this.
+  - Revised the same day at the founder's request. The first section (specialties) now sits straight under the flight, so the page simply scrolls into it with the line following. Between sections the line darts out of frame, the camera **closes in** on it (fast, then slower), rides it, and **pulls back** slowly as the next section arrives. Sections are placed close together and a faint dot field (the hero map's dots, drawn on `.journey-dots`) lights up along the line, so travel is never an empty screen.
+  - **No linear motion.** Everything follows `expoOut` (fast, then slower) or `expoInOut` (slow, fast, slower) from `lib/fx/util.ts`, the flight's camera and text included; CSS uses `--ease`. The one exception is the camera moving down a tall section, which follows the scroll directly, as ordinary scrolling does.
+  - The script (`segs`) is a list of stretches of scrolling: on a section, or travelling between two. `PLACES`, `TRAVEL`, `CLOSE_IN`, `PULL_BACK` and `zoom` at the top of the file tune it.
   - A section's parts come in as the camera arrives (`data-r` in `app/page.tsx`; headings rise word by word). No ScrollTrigger is used any more; GSAP remains for the flight only.
   - Menu links, the buttons that lead to the inquiry, and keyboard focus are mapped to scroll positions with `journey.whereIs()`.
   - Without motion ("reduce motion", or no JavaScript) the sections stack as a plain page, as before, with the closing signature written.
@@ -112,6 +114,7 @@ The old light design, and with it the AI "readiness check" (`app/api/readiness`,
 - Hero: dotted world map with routes; dots light up near the cursor; a 320px cursor spotlight on desktop (hero only).
 - Inquiry form: plain dark card (no glow), choice cards with a title, a muted subtitle and a corner circle that becomes a cream check.
 - Readability: body text 18px or more, light greys; italic accent word only in "to America." and "inquiry.".
+- Motion: never linear. Fast then slower going in; slow, fast, slower coming out. Travel between sections zooms in on the line and out onto the next section, with no long empty stretch.
 - No decoration for its own sake: no glows, drop shadows, gradients on cards, icons on cards or boxed labels. The map and the line are the only rich elements.
 - Earlier feedback to respect: keep things uncluttered; phone hero has equal space above and below the title.
 

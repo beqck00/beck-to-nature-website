@@ -10,6 +10,14 @@ export const sstep = (a: number, b: number, v: number) => {
   return t * t * (3 - 2 * t);
 };
 
+// Easing. Nothing on the site moves at a constant rate: things start fast and settle (out), or gather speed and
+// then settle (inOut), along an exponential curve.
+const K = 6.5, FLOOR = Math.pow(2, -K);
+/** Fast at first, then slower and slower. */
+export const expoOut = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : (1 - Math.pow(2, -K * t)) / (1 - FLOOR));
+/** Slow, then fast, then slower again. */
+export const expoInOut = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? (0.5 * (Math.pow(2, K * (2 * t - 1)) - FLOOR)) / (1 - FLOOR) : 1 - (0.5 * (Math.pow(2, -K * (2 * t - 1)) - FLOOR)) / (1 - FLOOR));
+
 /** A smooth SVG path through the points (Catmull-Rom converted to cubic Béziers). */
 export function smoothPath(pts: Pt[]): string {
   let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;

@@ -7,7 +7,7 @@
 import gsap from "gsap";
 import { WORLD_D, WORLD_DOTS } from "@/lib/data/world";
 import { SIG_H, SIG_STROKES, SIG_W } from "@/lib/data/signature";
-import { clamp, dashWindow, lerp, mapPath, type Pt, smoothPath, splitWords, sstep, strokePaths, tangentPath } from "./util";
+import { clamp, dashWindow, lerp, mapPath, type Pt, expoInOut, expoOut, smoothPath, splitWords, sstep, strokePaths, tangentPath } from "./util";
 
 // Map units, as in lib/data/world.ts.
 const K = Math.cos((44 * Math.PI) / 180);
@@ -115,20 +115,20 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     gsap.set([h1, cue, land, ...says, labelFrom, labelTo], { clearProps: "all" });
     state.dim = 1;
     const t = gsap.timeline({ paused: true, defaults: { ease: "none" } });
-    t.to(h1, { yPercent: -40, autoAlpha: 0, duration: T.heroOut - 0.01, ease: "power1.in" }, 0.004);
+    t.to(h1, { yPercent: -40, autoAlpha: 0, duration: T.heroOut - 0.01, ease: "expo.in" }, 0.004);
     t.to(cue, { autoAlpha: 0, duration: 0.03 }, 0);
     t.fromTo(labelFrom, { opacity: 0 }, { opacity: 1, duration: 0.04 }, T.zoomIn[0] + 0.02).to(labelFrom, { opacity: 0, duration: 0.04 }, T.zoomIn[1] + 0.04);
     t.fromTo(labelTo, { opacity: 0 }, { opacity: 1, duration: 0.04 }, T.zoomOut[0] - 0.05).to(labelTo, { opacity: 0, duration: 0.05 }, T.land + 0.01);
     says.forEach((el, i) => {
       const at = T.says[i], w = splitWords(el, "rise");
       t.fromTo(el, { autoAlpha: 0, y: 0 }, { autoAlpha: 1, duration: 0.004 }, at);
-      t.fromTo(w, { yPercent: 118 }, { yPercent: 0, duration: 0.05, stagger: 0.014, ease: "power3.out" }, at);
-      t.to(el, { autoAlpha: 0, y: -36, duration: 0.035, ease: "power1.in" }, at + 0.115);
+      t.fromTo(w, { yPercent: 118 }, { yPercent: 0, duration: 0.05, stagger: 0.014, ease: "expo.out" }, at);
+      t.to(el, { autoAlpha: 0, y: -36, duration: 0.035, ease: "expo.in" }, at + 0.115);
     });
     const lines = splitWords(land.querySelector("h2")!, "rise");
     t.fromTo(land, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.004 }, T.land);
-    t.fromTo(lines, { yPercent: 118 }, { yPercent: 0, duration: 0.07, stagger: 0.012, ease: "power3.out" }, T.land + 0.005);
-    t.fromTo(land.querySelector(".why2-lead"), { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.06, ease: "power2.out" }, T.land + 0.045);
+    t.fromTo(lines, { yPercent: 118 }, { yPercent: 0, duration: 0.07, stagger: 0.012, ease: "expo.out" }, T.land + 0.005);
+    t.fromTo(land.querySelector(".why2-lead"), { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.06, ease: "expo.out" }, T.land + 0.045);
     t.to(state, { dim: band ? 0.3 : 0.55, duration: 0.09 }, T.land - 0.01);
     t.set({}, {}, 1);
     tl = t;
@@ -205,7 +205,10 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   // how much of the line is drawn at progress p
   const lineAt = (p: number) => {
     const kf: Pt[] = [[0, 0], [T.atOrigin, LB], [T.zoomOut[0], LU], [T.land, LU + 0.12 * (L - LU)], [1, L]];
-    for (let i = 1; i < kf.length; i++) if (p <= kf[i][0]) return lerp(kf[i - 1][1], kf[i][1], (p - kf[i - 1][0]) / (kf[i][0] - kf[i - 1][0]));
+    for (let i = 1; i < kf.length; i++) if (p <= kf[i][0]) {
+      const t = (p - kf[i - 1][0]) / (kf[i][0] - kf[i - 1][0]);
+      return lerp(kf[i - 1][1], kf[i][1], i === 2 ? lerp(t, expoInOut(t), 0.45) : i === 4 ? expoOut(t) : t);   // the crossing gathers speed and settles; the exit darts off
+    }
     return L;
   };
 
@@ -224,7 +227,8 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     if (intro && written >= 1) intro = false;
 
     // camera
-    const zc = sstep(T.zoomIn[0], T.zoomIn[1], p) * (1 - sstep(T.zoomOut[0], T.zoomOut[1], p));
+    const span = (a: readonly [number, number]) => clamp((p - a[0]) / (a[1] - a[0]));
+    const zc = expoOut(span(T.zoomIn)) * (1 - expoInOut(span(T.zoomOut)));        // closes in fast and settles; pulls back slow, fast, slower
     const z = 1 + (Z - 1) * zc, len = still ? 0 : lineAt(p);
     if (len > 0) { const hp = core.getPointAtLength(len); headPt = [hp.x, hp.y]; }
     // the head of the line glides from where it sits in the wide shot to the anchor as the camera closes in, so it never leaves the screen
@@ -337,7 +341,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   function playIntro() {
     t0 = performance.now(); intro = true;
     h1.classList.add("ready");
-    introTween = gsap.fromTo(words, { yPercent: 118 }, { yPercent: 0, duration: 1.2, stagger: 0.09, ease: "power4.out", delay: 0.15, onComplete: () => { glyphAt = []; } });
+    introTween = gsap.fromTo(words, { yPercent: 118 }, { yPercent: 0, duration: 1.2, stagger: 0.09, ease: "expo.out", delay: 0.15, onComplete: () => { glyphAt = []; } });
   }
 
   return {

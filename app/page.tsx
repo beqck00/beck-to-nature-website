@@ -71,6 +71,7 @@ export default function Home() {
         {/* the journey: the sections sit on one wide dark world; the line strays from one to the next and the camera follows it */}
         <div className="journey">
         <div className="journey-stage">
+        <canvas className="journey-dots" aria-hidden="true" />
         <div className="world">
         <svg className="thread" aria-hidden="true">
           <path className="t-glow" /><path className="t-core" /><g className="t-end" />

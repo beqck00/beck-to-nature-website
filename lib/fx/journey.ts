@@ -1,23 +1,27 @@
 // The journey below the flight. The sections are not stacked in a column: each one sits somewhere on a wide dark
 // "world", and one pinned stage looks at that world through a camera. The gold line picks up where the flight's line
-// leaves the stage and strays across the world from section to section. As the page scrolls, the line runs off the
-// edge of the screen, the camera pulls back and travels after it, and closes in again on the next section. Inside a
-// section taller than the screen the camera simply moves down it, like ordinary scrolling. The line ends by writing
+// leaves the stage, comes down into the first section, and from there strays across the world from section to section.
+// Leaving a section, the line darts out of frame; the camera closes in on it (fast, then slower), rides it, and pulls
+// back out slowly as the next section arrives. Inside a section taller than the screen the camera simply moves down
+// it, like ordinary scrolling. Nothing moves at a constant rate (see expoOut and expoInOut). The line ends by writing
 // the "Beck" signature, joining it at the B.
 
 import { SIG_STROKES } from "@/lib/data/signature";
-import { clamp, dashWindow, type Knot, lerp, mapPath, type Pt, splitWords, sstep, strokePaths, tangentPath } from "./util";
+import { clamp, dashWindow, expoInOut, expoOut, type Knot, lerp, mapPath, type Pt, splitWords, strokePaths, tangentPath } from "./util";
 
 // Where each section sits relative to the one before it, in screens: how far across, and how far below its end.
-const PLACES: Pt[] = [[1.25, 0.55], [1.25, 0.5], [-1.25, 0.5], [-1.25, 0.5]];
-const TRAVEL = 0.95, DWELL = 0.6, LEAVE = 0.32;         // scroll distances, in screens: between sections, on a section that fits, the line running off
+// The first is straight under the flight, so the page simply scrolls into it. Kept close, so travel is never empty for long.
+const PLACES: Pt[] = [[0, 0], [1.12, 0.3], [-1.12, 0.3], [-1.12, 0.3]];
+const TRAVEL = 0.9, DWELL = 0.55;                       // scroll distances, in screens: between sections, and on a section that fits the screen
+const CLOSE_IN = 0.36, PULL_BACK = 0.5;                 // the share of a travel spent closing in on the line, and the point from which the camera pulls back
 const PAD_TOP = 124, PAD_BOTTOM = 72;                   // room kept above (for the navigation) and below a section
 
 // The signature in writing order: B bowls (from the lead-in on the far left), B stem, the two e's, k stem, k loop and tail.
 const split = SIG_STROKES[3].indexOf(" C 664 256"), s3a = SIG_STROKES[3].slice(0, split), s3aEnd = s3a.match(/(-?\d+\.?\d*) (-?\d+\.?\d*)\s*$/)!;
 const WRITING_ORDER = [SIG_STROKES[1], SIG_STROKES[0], s3a, SIG_STROKES[2], `M ${s3aEnd[1]} ${s3aEnd[2]}` + SIG_STROKES[3].slice(split)];
 
-type Key = { u: number; cx: number; cy: number; len: number; ease: boolean; dip: number };
+// One stretch of scrolling: either on a section (the camera moves down it) or travelling between two.
+type Seg = { u0: number; u1: number; travel: boolean; ax: number; ay: number; bx: number; by: number; l0: number; l1: number; l2?: number };
 
 export type Journey = {
   /** Lay the world out for the current screen size. startX is where the flight's line leaves its stage. */
@@ -37,7 +41,10 @@ export function createJourney(page: HTMLElement): Journey {
   const svg = world.querySelector<SVGSVGElement>(".thread")!, core = svg.querySelector<SVGPathElement>(".t-core")!, glow = svg.querySelector<SVGPathElement>(".t-glow")!;
   const head = svg.querySelector<SVGGElement>(".t-head")!, endG = svg.querySelector<SVGGElement>(".t-end")!, endSig = world.querySelector<HTMLElement>(".end-sig")!;
   const scenes = [...world.querySelectorAll<HTMLElement>(".scene")];
-  let W = 0, H = 0, keys: Key[] = [], Lc = 0, Lt = 0, eSegs: ReturnType<typeof strokePaths> = [], lenIn = 0;
+  const dots = stage.querySelector<HTMLCanvasElement>(".journey-dots")!, ctx = dots.getContext("2d")!;
+  let dpr = 1;
+  let W = 0, H = 0, segs: Seg[] = [], Lc = 0, Lt = 0, eSegs: ReturnType<typeof strokePaths> = [], lenIn = 0, zoom = 1.7;
+  let trail: Pt[] = [], step = 1;
   let stops: { el: HTMLElement; u0: number; u1: number; cyA: number; cyB: number; show: number }[] = [];
 
   // an element's box in world coordinates (the world is laid out untransformed while this runs)
@@ -66,14 +73,18 @@ export function createJourney(page: HTMLElement): Journey {
   function build(startX: number) {
     world.style.transform = "none";
     W = stage.clientWidth; H = stage.clientHeight;
+    dpr = Math.min(2, window.devicePixelRatio || 1); dots.width = Math.round(W * dpr); dots.height = Math.round(H * dpr);
     const narrow = W < 700, w = Math.min(W, 1240);
 
     // place the sections
     let x = 0, y = 0;
     const at = scenes.map((el, i) => {
-      x += PLACES[i][0] * W; y += PLACES[i][1] * H;
-      el.style.width = `${w}px`; el.style.left = `${x + (W - w) / 2}px`; el.style.top = `${y}px`;
-      const h = el.offsetHeight, top = y; y += h;
+      x += PLACES[i][0] * W; y += i ? PLACES[i][1] * H : PAD_TOP;
+      el.style.width = `${w}px`; el.style.left = `${x + (W - w) / 2}px`;
+      const h = el.offsetHeight;
+      if (!i) y += Math.max(0, (H - PAD_TOP - PAD_BOTTOM - h) / 2);          // the first one starts in view: centred if it fits
+      el.style.top = `${y}px`;
+      const top = y; y += h;
       // the camera's first and last position on this section; one position when the section fits on the screen
       let cyA = top - PAD_TOP + H / 2, cyB = top + h + PAD_BOTTOM - H / 2;
       if (cyB < cyA) cyA = cyB = (cyA + cyB) / 2;
@@ -87,7 +98,6 @@ export function createJourney(page: HTMLElement): Journey {
     const pad = (W - w) / 2 + parseFloat(getComputedStyle(scenes[0]).paddingLeft);
     const knots: Knot[] = [
       { p: [startX, 0], d: DOWN },
-      { p: [W * 1.08, H * 0.62], d: E },                                          // off the right-hand side of the first screen
       { p: [sp.cx, (spHead.bottom + trio.top) / 2], d: E },                       // across specialties, between the heading and the cards
       { p: [fo.right - pad - (fo.w - 2 * pad) * (narrow ? 0.02 : 0.07), essay.cy], d: DOWN },   // down the right of the founder's texts
       { p: [fo.cx, fo.bottom + (narrow ? 44 : 56)], d: LEFT },                    // and away to the left below them
@@ -107,43 +117,60 @@ export function createJourney(page: HTMLElement): Journey {
     eSegs.forEach((g) => (g.off += Lc));
     Lt = Lc + eSegs.reduce((a, g) => a + g.len, 0);
 
-    // sample the line, to find where it enters and leaves each view and where it passes each section's own point
+    // sample the line, to find where it enters each view and where it passes each section's own point
     const N = Math.ceil(Lc / 6), pts: Pt[] = [];
     for (let i = 0; i <= N; i++) { const p = core.getPointAtLength((Lc * i) / N); pts.push([p.x, p.y]); }
+    trail = pts; step = Lc / N; zoom = narrow ? 1.4 : 1.7;
     const lenOf = (i: number) => (Lc * i) / N;
     const nearest = (p: Pt) => { let best = 0, bd = 1e12; pts.forEach((s, i) => { const dd = (s[0] - p[0]) ** 2 + (s[1] - p[1]) ** 2; if (dd < bd) { bd = dd; best = i; } }); return best; };
-    const inside = (p: Pt, cx: number, cy: number, m: number) => Math.abs(p[0] - cx) < W / 2 + m && Math.abs(p[1] - cy) < H / 2 + m;
-    const mids = [2, 4, 5, 6].map((k) => nearest(knots[k].p));          // specialties, founder (its lower point), inquiry, stories
+    const inside = (p: Pt, cx: number, cy: number) => Math.abs(p[0] - cx) < W / 2 - 20 && Math.abs(p[1] - cy) < H / 2 - 20;
+    const mids = [1, 3, 4, 5].map((k) => nearest(knots[k].p));          // specialties, founder (its lower point), inquiry, stories
 
-    // the scroll script: for each stretch of scrolling, where the camera is and how much line is drawn
-    keys = []; stops = [];
-    let u = 0, i0 = nearest(knots[1].p);
-    lenIn = lenOf(Math.round(i0 * 0.62));
-    const key = (du: number, cx: number, cy: number, len: number, ease = false, dip = 0) => { u += du; keys.push({ u, cx, cy, len, ease, dip }); };
-    let cx = W / 2, cy = H / 2;
-    key(0, cx, cy, lenIn);
-    key(LEAVE * H, cx, cy, lenOf(i0));                                   // the line runs off the first screen
+    // the scroll script
+    segs = []; stops = [];
+    let u = 0;
+    lenIn = lenOf(Math.round(mids[0] * 0.5));                            // drawn while the stage is still scrolling in
     at.forEach((s, n) => {
       const last = n === at.length - 1, mid = mids[n];
-      let iIn = mid; while (iIn > i0 && inside(pts[iIn], s.cx, s.cyA, -20)) iIn--;                   // where the line comes into this section's first view
-      let iOut = mid; while (iOut < N && inside(pts[iOut], s.cx, s.cyB, 40)) iOut++;                 // where it leaves the last one
-      const uT = u;
-      key(TRAVEL * H, s.cx, s.cyA, lenOf(iIn), true, narrow ? 0.14 : 0.24);                             // travel: pull back, cross, close in
-      const through = Math.max(DWELL * H, s.cyB - s.cyA), u0 = u;
-      if (last) { key(through * 0.45, s.cx, lerp(s.cyA, s.cyB, 0.45), lenOf(mid)); key(through * 0.55, s.cx, s.cyB, Lt); }
-      else { key(through, s.cx, s.cyB, lenOf(mid)); key(LEAVE * H, s.cx, s.cyB, lenOf(iOut)); }      // the line runs off the screen
-      stops.push({ el: s.el, u0, u1: u0 + through, cyA: s.cyA, cyB: s.cyB, show: uT + TRAVEL * H * 0.5 });
-      i0 = iOut; cx = s.cx; cy = s.cyB;
+      let from = lenIn, show = -0.6 * H;
+      if (n) {
+        // travel: the line darts ahead into the next section's first view; the camera closes in on it, rides it, and pulls back
+        const p = at[n - 1];
+        let iIn = mid; while (iIn > mids[n - 1] && inside(pts[iIn], s.cx, s.cyA)) iIn--;
+        from = lenOf(Math.round(lerp(iIn, mid, 0.5)));
+        segs.push({ u0: u, u1: u + TRAVEL * H, travel: true, ax: p.cx, ay: p.cyB, bx: s.cx, by: s.cyA, l0: lenOf(mids[n - 1]), l1: from });
+        show = u + TRAVEL * H * 0.55; u += TRAVEL * H;
+      }
+      const through = Math.max(DWELL * H, s.cyB - s.cyA);
+      segs.push({ u0: u, u1: u + through, travel: false, ax: s.cx, ay: s.cyA, bx: s.cx, by: s.cyB, l0: from, l1: lenOf(mid), l2: last ? Lt : undefined });
+      stops.push({ el: s.el, u0: u, u1: u + through, cyA: s.cyA, cyB: s.cyB, show });
+      u += through;
     });
     journey.style.height = `${Math.ceil(u + H)}px`;
   }
 
+  const pointAt = (len: number): Pt => {
+    const f = clamp(len / step, 0, trail.length - 1), i = Math.min(trail.length - 2, Math.floor(f)), t = f - i;
+    return [lerp(trail[i][0], trail[i + 1][0], t), lerp(trail[i][1], trail[i + 1][1], t)];
+  };
+
   // camera and line at scroll distance u
   function at(u: number) {
-    if (u <= 0) return { cx: W / 2, cy: H / 2, z: 1, len: lenIn * sstep(-0.62 * H, 0, u) ** 1.4 };
-    let i = 1; while (i < keys.length - 1 && u > keys[i].u) i++;
-    const a = keys[i - 1], b = keys[i], t = clamp((u - a.u) / Math.max(1, b.u - a.u)), e = b.ease ? t * t * (3 - 2 * t) : t;
-    return { cx: lerp(a.cx, b.cx, e), cy: lerp(a.cy, b.cy, e), z: 1 - b.dip * Math.sin(Math.PI * t) ** 2, len: lerp(a.len, b.len, b.ease ? Math.min(1, t * 1.25) : t) };
+    const s0 = segs[0];
+    if (u <= 0) return { cx: s0.ax, cy: s0.ay, z: 1, len: lenIn * expoInOut(clamp(1 + u / (0.7 * H))) };
+    let i = 0; while (i < segs.length - 1 && u > segs[i].u1) i++;
+    const s = segs[i], t = clamp((u - s.u0) / Math.max(1, s.u1 - s.u0));
+    if (!s.travel) {
+      // on a section: the camera moves down it with the scroll; the line draws on, fast at first and then settling.
+      // On the last one it reaches its point half-way and then writes the signature.
+      const len = s.l2 === undefined ? lerp(s.l0, s.l1, expoOut(t)) : t < 0.45 ? lerp(s.l0, s.l1, expoOut(t / 0.45)) : lerp(s.l1, s.l2, expoInOut((t - 0.45) / 0.55));
+      return { cx: s.ax, cy: lerp(s.ay, s.by, t), z: 1, len };
+    }
+    // travelling: the line leaves first; the camera closes in on its head (fast, then slower), rides it, and lets go
+    // again as it pulls back to the next section (slow, fast, slower)
+    const len = lerp(s.l0, s.l1, expoOut(t * 0.85)), hd = pointAt(len), e = expoInOut(t);
+    const ride = t < CLOSE_IN ? expoOut(t / CLOSE_IN) : t < PULL_BACK ? 1 : 1 - expoInOut((t - PULL_BACK) / (1 - PULL_BACK));
+    return { cx: lerp(lerp(s.ax, s.bx, e), hd[0], ride), cy: lerp(lerp(s.ay, s.by, e), hd[1], ride), z: 1 + (zoom - 1) * ride, len };
   }
 
   function paintLine(len: number) {
@@ -158,8 +185,26 @@ export function createJourney(page: HTMLElement): Journey {
     }
   }
 
+  // The ground the line travels over: the same dotted field as the hero's map, barely there behind a section,
+  // clearer while travelling, and warm where the line's head is passing.
+  const GRID = 30;
+  function paintDots(c: { cx: number; cy: number; z: number; len: number }) {
+    const ride = (c.z - 1) / (zoom - 1), hd = c.len > 2 && c.len < Lc ? pointAt(c.len) : null, reach = 190;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    const x0 = c.cx - W / 2 / c.z, y0 = c.cy - H / 2 / c.z, r = 1.5 * c.z;
+    for (let gy = Math.floor(y0 / GRID) * GRID; gy < y0 + H / c.z + GRID; gy += GRID) {
+      for (let gx = Math.floor(x0 / GRID) * GRID; gx < x0 + W / c.z + GRID; gx += GRID) {
+        const near = hd ? Math.max(0, 1 - Math.hypot(gx - hd[0], gy - hd[1]) / reach) : 0, a = 0.05 + 0.1 * ride + 0.55 * near * near;
+        ctx.fillStyle = `rgba(${near > 0.05 ? "235,211,166" : "150,140,124"},${a.toFixed(3)})`;
+        const px = (gx - x0) * c.z, py = (gy - y0) * c.z, rr = r * (1 + 0.6 * near);
+        ctx.beginPath(); ctx.arc(px, py, rr, 0, 6.2832); ctx.fill();
+      }
+    }
+  }
+
   function render(u: number) {
     const c = at(u);
+    paintDots(c);
     world.style.transform = `translate(${(W / 2 - c.cx * c.z).toFixed(2)}px, ${(H / 2 - c.cy * c.z).toFixed(2)}px) scale(${c.z.toFixed(4)})`;
     paintLine(c.len);
     for (const s of stops) s.el.classList.toggle("in", u >= s.show);

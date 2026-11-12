@@ -3,7 +3,7 @@
 const { chromium } = require('playwright');
 const { execFileSync } = require('child_process');
 const fs = require('fs'), path = require('path'), os = require('os');
-const URL = 'http://localhost:3210/', OUT = path.join(__dirname, '..', 'preview'), SECONDS = 58;
+const URL = 'http://localhost:3210/', OUT = path.join(__dirname, '..', 'preview'), SECONDS = 50;
 
 (async () => {
   const b = await chromium.launch(), tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'btn-preview-'));
@@ -38,7 +38,7 @@ const URL = 'http://localhost:3210/', OUT = path.join(__dirname, '..', 'preview'
   // the journey's sections are reached through the menu, as a visitor would
   for (const [name, hash] of [['specialties', '#specialties'], ['founder', '#founder'], ['inquiry', '#inquiry']]) { await p.click(`.nav-links a[href="${hash}"]`); await p.waitForTimeout(5000); await shot(name); }
   const j = await p.evaluate(() => document.querySelector('.journey').getBoundingClientRect().top + scrollY);
-  await p.evaluate((v) => scrollTo(0, v), j + 900 * 2.45); await p.waitForTimeout(2500); await shot('travel');            // between two sections, pulled back
+  await p.evaluate((v) => scrollTo(0, v), j + 900 * 1.02); await p.waitForTimeout(2500); await shot('travel');            // between two sections, pulled back
   await p.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await p.waitForTimeout(6000); await shot('closing-signature');
   await b.close(); fs.rmSync(tmp, { recursive: true, force: true });
   console.log('stills done');
