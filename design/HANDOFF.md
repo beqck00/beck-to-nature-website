@@ -16,7 +16,7 @@ The owner asked for the real Next.js site to be built from the approved demo, as
 2. **The gold line** then runs down the rest of the page, lights each element as it passes (dims again when scrolling back), and ends by writing the signature at the bottom left, joined at the B.
 3. **Section choreography** (GSAP ScrollTrigger): headings rise word by word, key sentences light up word by word, specialty cards tip into place, the inquiry form rises into a pool of light.
 4. **Inquiry form** is the main call to action: six questions, one at a time. The first question can be answered from the "why" block or a specialty card (`data-industry` links), which drops the visitor into the form at question 2.
-5. **Onyx** is a new, more stone-like procedural texture (`public/textures/onyx.webp`), with a bevelled edge and a highlight that follows the pointer and slides as you scroll.
+5. **Onyx** is the original candle onyx photo (`public/textures/onyx-candle.jpg`), with a bevelled edge and a highlight that follows the pointer and slides as you scroll. A procedural stone texture was tried and the owner asked to go back to the original (it is kept in `design/textures/onyx-stone.jpg`, made by `design/tools/make-onyx-texture.py`).
 6. **Legal pages** rewritten for a US LLC.
 
 ## Status
@@ -73,7 +73,7 @@ The old light design, and with it the AI "readiness check" (`app/api/readiness`,
 
 ## The owner's standing decisions
 
-- Black tones with brass and cream; EB Garamond; the onyx stone used sparingly: main buttons, the selected-answer check mark, the featured Medical card.
+- Black tones with brass and cream; EB Garamond; the original candle onyx (not a generated texture) used sparingly: main buttons, the selected-answer check mark, the featured Medical card.
 - Company voice: "we", "our founder". Never "I" or "my".
 - Do not claim "we'll be at your booth".
 - Every section leads to the inquiry. No pricing, FAQ, logo strip or testimonials.
@@ -114,7 +114,7 @@ Contract templates (mutual and one-way NDA, master services agreement, EU and US
 - Colour palette: https://claude.ai/artifact/KJGhgzRzGpd11zGFQhdCN2 ; copy in `design/colour-palette.html`.
 - Business card (two directions): https://claude.ai/artifact/KNRBhoRagiCDzPjTPgdg5d
 - These links are private to the owner's Claude account; the copies in `design/` are what the team shares.
-- `design/tools/make-onyx-texture.py`: regenerates the stone texture (`python3 make-onyx-texture.py 23 out.png`; needs numpy and Pillow). Seed 23 is the one in use.
+- `design/tools/make-onyx-texture.py`: makes the procedural stone texture that was tried and set aside (`python3 make-onyx-texture.py 23 out.png`; needs numpy and Pillow). The site uses the original candle onyx photo.
 
 ## Open questions for the owner
 

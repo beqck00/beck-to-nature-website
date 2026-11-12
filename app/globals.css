@@ -8,7 +8,7 @@
   --ink:#F1EADD;--ink-2:#D6CCBC;--ink-3:#B4A996;
   --cream:#EBD3A6;--cream-hi:#FBF1DE;--glow:240,198,130;
   --on-brass:#17120C;--signal:#E8B4A0;
-  --onyx:url(/textures/onyx.webp);
+  --onyx:url(/textures/onyx-candle.jpg);
   --font:var(--font-garamond),"EB Garamond",Garamond,"Times New Roman",serif;
   --r-pill:999px;--r-xl:28px;--r-lg:20px;--r-md:14px;
   --ease:cubic-bezier(.22,1,.36,1);
@@ -53,7 +53,7 @@ button{font:inherit}
 /* the main button is cut from the onyx: a polished pill with a bevelled edge and a highlight that slides on hover */
 .btn-main{position:relative;color:#1E140A;font-weight:500;text-shadow:0 1px 0 rgba(255,246,226,.5);
   background:linear-gradient(105deg,transparent 35%,rgba(255,252,240,.5) 50%,transparent 65%) -120% 0/220% 100% no-repeat,
-    linear-gradient(180deg,rgba(255,248,232,.26),rgba(255,240,210,.04) 55%,rgba(60,35,10,.16)),var(--onyx) 50% 40%/190% auto;
+    linear-gradient(180deg,rgba(255,248,232,.26),rgba(255,240,210,.04) 55%,rgba(60,35,10,.16)),var(--onyx) 50% 40%/150% auto;
   box-shadow:inset 0 1px 0 rgba(255,250,236,.9),inset 0 -2px 4px rgba(70,45,15,.34),inset 0 0 0 1px rgba(70,42,12,.28),0 8px 28px -8px rgba(var(--glow),.55);
   transition:transform 200ms var(--ease),box-shadow 300ms var(--ease),background-position 900ms var(--ease)}
 .btn-main:hover{background-position:120% 0,0 0,62% 44%;box-shadow:inset 0 1px 0 rgba(255,250,236,.9),inset 0 -2px 4px rgba(70,45,15,.34),inset 0 0 0 1px rgba(70,42,12,.28),0 10px 36px -6px rgba(var(--glow),.75)}
@@ -178,7 +178,7 @@ html:not(.fx) .lum{filter:none}
 .ok svg{width:13px;height:13px;fill:none;stroke:var(--on-brass);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .tri .btn{width:100%;margin-top:auto;min-height:48px;font-size:17px}
 .tri-tag{font-size:14px;color:var(--ink);background:#0A0A0A;border-radius:999px;padding:3px 12px}
-.tri.stone{--t1:var(--on-brass);--t2:#241A0E;--t3:#33250F;color:var(--t1);background:linear-gradient(180deg,rgba(255,248,230,.3),rgba(255,246,226,.2)),var(--onyx) center 40%/cover}
+.tri.stone{--t1:var(--on-brass);--t2:#241A0E;--t3:#33250F;color:var(--t1);background:var(--onyx) center 40%/cover}
 .tri.stone .tri-small,.tri.stone ul{font-weight:500}
 .fx .tri.stone:not(.lit){--t1:var(--ink);--t2:var(--ink-2);--t3:var(--ink-3)}       /* still dark: keep the text light so it reads */
 .tri.stone h3,.tri.stone .tri-big,.tri.stone .tri-small,.tri.stone ul,.tri.stone .ph,.tri.stone .tri-icon svg,.tri.stone .ok,.tri.stone .ok svg{transition:color 1200ms var(--ease),stroke 1200ms var(--ease),background-color 1200ms var(--ease)}
@@ -248,7 +248,7 @@ legend.q+*{clear:both}
 .chip span:active{transform:scale(.98)}
 .chip .mark{position:absolute;top:16px;right:16px;width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(240,220,180,.25);transition:background-color 160ms,box-shadow 160ms}
 .chip input:checked+span{background:#1A1816;box-shadow:inset 0 0 0 1.5px rgba(235,211,166,.7)}
-.chip input:checked+span .mark{box-shadow:inset 0 1px 0 rgba(255,250,236,.8);background:var(--onyx) 50% 40%/420% auto}
+.chip input:checked+span .mark{box-shadow:inset 0 1px 0 rgba(255,250,236,.8);background:var(--onyx) 50% 40%/300% auto}
 .chip input:checked+span .mark::after{content:"";position:absolute;left:7px;top:5px;width:6px;height:10px;border:solid #1A1006;border-width:0 2px 2px 0;transform:rotate(45deg)}
 .chip input:focus-visible+span{outline:2px solid var(--cream);outline-offset:3px}
 @media (max-width:560px){.chips{grid-template-columns:1fr}.chip span{min-height:72px}}
