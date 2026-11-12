@@ -1,23 +1,32 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+
+// EB Garamond, served from this site (no third-party font requests).
+const garamond = localFont({
+  src: [
+    { path: "./fonts/EBGaramond-VariableFont_wght.woff2", style: "normal", weight: "400 800" },
+    { path: "./fonts/EBGaramond-Italic-VariableFont_wght.woff2", style: "italic", weight: "400 800" },
+  ],
+  variable: "--font-garamond",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Beck To Nature",
-  description:
-    "Beck To Nature helps Central European manufacturers enter the US market, starting with the right US trade show.",
+  description: "Beck To Nature takes Central European manufacturers to US trade shows: the right show, buyers booked before you fly, and every lead followed up.",
   icons: { icon: "/logo/beck-to-nature-icon.svg" },
 };
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-  themeColor: "#FFFFFF",
-};
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#0A0A0A", colorScheme: "dark" };
+
+// Runs before the first paint: "fx" switches the scroll experience on, unless the visitor asked for reduced motion.
+const boot = `(function(){var d=document.documentElement;d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('fx')})()`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={garamond.variable} suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: boot }} /></head>
       <body>{children}</body>
     </html>
   );

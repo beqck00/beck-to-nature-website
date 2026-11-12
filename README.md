@@ -1,6 +1,6 @@
 # Beck To Nature website
 
-Next.js 16 + Motion. The US readiness check calls Claude through the server route in `app/api/readiness/route.ts`.
+Next.js 16 with GSAP for the scroll experience. Read `design/HANDOFF.md` for the current state and what is left to do.
 
 ## Run it locally
 
@@ -11,10 +11,9 @@ Next.js 16 + Motion. The US readiness check calls Claude through the server rout
    cd beck-to-nature-website
    npm install
    ```
-3. Copy `.env.local.example` to `.env.local` and put an Anthropic API key in it. This file is never committed; everyone needs their own copy.
-4. `npm run dev`, then open http://localhost:3000.
+3. `npm run dev`, then open http://localhost:3000.
 
-Without a key the site works, but the live readiness check shows "isn't available right now". "See an example result" always works.
+The inquiry form emails the team through [Resend](https://resend.com). To try that locally, create `.env.local` (never committed) with `RESEND_API_KEY`, `INQUIRY_FROM` and optionally `INQUIRY_TO`; see `design/HANDOFF.md`. Without them the form works but ends by offering to open the visitor's email app instead.
 
 ## Working together
 
@@ -27,9 +26,11 @@ Claude Code sessions do the pull automatically when they start (see `.claude/set
 
 ## Layout
 
-- `app/page.tsx`: page content
-- `app/globals.css`: all styles (from the original draft)
-- `components/`: nav, photo slots, FAQ, copy buttons, readiness check wizard
-- `lib/readiness.ts`: readiness check types, schema and the example result
-- `public/logo/`: logo files used by the site
-- `index.html`, `logo/`, `higgsfield-prompts.md`: the original draft and source assets
+- `app/page.tsx`: page content. `app/globals.css`: all styles.
+- `components/Experience.tsx`, `lib/fx/`: the scroll experience (opening flight, the gold line, section animations).
+- `components/Inquiry.tsx`, `lib/inquiry.ts`, `lib/dial.ts`, `app/api/inquiry/`: the inquiry form and its server route.
+- `app/privacy`, `app/cookies`, `app/terms`: legal pages (drafts for a US LLC).
+- `lib/data/`: the dotted world map, Europe outlines and the signature strokes.
+- `public/`: logo files and the onyx texture. `app/fonts/`: EB Garamond.
+- `design/`: handoff notes, the earlier demo, colour palette, textures, and the tools used to make them.
+- `index.html`, `logo/`, `higgsfield-prompts.md`: the original draft and source assets.

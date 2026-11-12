@@ -1,193 +1,163 @@
-import Nav from "@/components/Nav";
-import Reveal from "@/components/Reveal";
-import PhotoSlot from "@/components/PhotoSlot";
-import Faq from "@/components/Faq";
-import CopyButton from "@/components/CopyButton";
-import ReadinessCheck from "@/components/ReadinessCheck";
-import { LEGAL_LINKS } from "@/components/LegalPage";
+import Experience from "@/components/Experience";
+import Inquiry from "@/components/Inquiry";
+import { Ph } from "@/components/Ph";
+import { INDUSTRIES } from "@/lib/inquiry";
 
-const SERVICES = [
-  { h: "Trade show entry", p: "We choose the US show where your buyers actually are, and handle booth space, design, shipping and on-site logistics.", incl: "Show selection · booth partners · freight and customs" },
-  { h: "Buyer and distributor meetings", p: "We research and invite distributors, purchasing groups and end users before the show, and we join the meetings with you.", incl: "Target lists · pre-booked meetings · briefing notes" },
-  { h: "Follow-up and US representation", p: "Most deals close in the weeks after a show. On a monthly basis we follow up every lead and represent you in US business hours.", incl: "Lead follow-up · US-hours calls · monthly report" },
-  { h: "Market groundwork", p: "We coordinate the specialists you need in the US, from regulatory consultants to company setup, so you have one point of contact.", incl: "Regulatory partners · US entity guidance · pricing" },
+const Arrow = () => <svg className="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
+const Check = () => <span className="ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8.5" /></svg></span>;
+
+type Tier = { name: string; icon: React.ReactNode; show: React.ReactNode; points: React.ReactNode[]; featured?: boolean };
+const TIERS: Tier[] = [
+  { name: "Software", icon: <path d="M8.5 8 4.5 12l4 4M15.5 8l4 4-4 4M13.5 5.5l-3 13" />, show: <Ph>[Show]</Ph>,
+    points: [<Ph key="a">[Typical buyers]</Ph>, <Ph key="b">[What we prepare]</Ph>, "Buyers booked before you fly"] },
+  { name: "Medical & healthcare", icon: <path d="M3.5 12h4l2-4.5 3.5 9 2-4.5h5.5" />, show: <Ph>[RSNA]</Ph>, featured: true,
+    points: [<Ph key="a">[Distributors, hospital buyers]</Ph>, <Ph key="b">[Regulatory partners]</Ph>, "Booth ready before you fly"] },
+  { name: "Hardware", icon: <><rect x="6.5" y="6.5" width="11" height="11" rx="2" /><path d="M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3M3.5 9.5h3M3.5 14.5h3M17.5 9.5h3M17.5 14.5h3" /></>, show: <Ph>[Show]</Ph>,
+    points: [<Ph key="a">[Typical buyers]</Ph>, <Ph key="b">[What we prepare]</Ph>, "Every lead followed up"] },
 ];
-
-const PROCESS = [
-  { h: "Assess", p: "We review your product and certifications and tell you honestly whether the US makes sense now." },
-  { h: "Choose the show", p: "One show, chosen for where your buyers are." },
-  { h: "Prepare", p: "Booth, freight, US-ready materials and a calendar of meetings." },
-  { h: "At the show", p: "We are at the booth and in every meeting with you." },
-  { h: "Follow up", p: "We turn conversations into distributors and first orders." },
-];
-
-const FAQ = [
-  { q: "Do you handle FDA approval?", a: "We don't file regulatory submissions ourselves. We work with specialist US regulatory consultants and plan your trade-show presence around where you are in the process. Many companies exhibit before clearance, with clear labelling that the product is not yet for sale in the US." },
-  { q: "Which trade shows do you work with?", a: "The one where your buyers are. For radiology and imaging that is usually RSNA in Chicago. For other industries we pick from the major US shows in your sector, based on who attends." },
-  { q: "How is pricing structured?", a: "A fixed fee for each trade show, an optional monthly retainer for follow-up, and, where it makes sense, a success fee on deals from our leads. You get a written quote after the first call. The figures in the readiness check are indicative only." },
-  { q: "Do we need a US company before the first show?", a: "Usually not. Most companies exhibit first and set up a US entity once there is real demand. We tell you when it is worth doing." },
-];
-
-const Ph = ({ children }: { children: React.ReactNode }) => <span className="ph">{children}</span>;
 
 export default function Home() {
   return (
     <>
-      <Nav />
-      <main id="top">
-        <section className="hero">
-          <div className="wrap">
-            <Reveal className="hero-center">
-              <p className="kicker">Beck To Nature</p>
-              <h1>Take your products to America.</h1>
-              <p className="lede">We did it ourselves first, bringing our own products from Hungary to US customers. Now we help Central European manufacturers do the same, starting with the right US trade show.</p>
-              <div className="hero-ctas">
-                <a className="btn btn-green" href="#contact">Book a free call</a>
-                <a className="more" href="#check">Check your US readiness</a>
-              </div>
-            </Reveal>
-          </div>
-          <div className="wrap hero-check" id="check">
-            <Reveal className="head" delay={0.08}>
-              <h2>Is your company ready for the US?</h2>
-              <p className="lede">Six short questions, about a minute. You get the US trade shows that fit, what is missing, and an indicative budget.</p>
-            </Reveal>
-            <ReadinessCheck />
-          </div>
-          <div className="wrap">
-            <Reveal delay={0.12}>
-              <PhotoSlot className="hero-photo" title="Main photo" hint="The founders at a US trade show, or a real booth from a past show." />
-            </Reveal>
-            <div className="facts">
-              <span>Family-owned, Hungarian–American</span>
-              <span>Budapest and <Ph>[Wisconsin]</Ph></span>
-              <span>Member of <Ph>[AmCham Hungary]</Ph></span>
-            </div>
-          </div>
-        </section>
+      <a className="skip" href="#inquiry">Skip to the inquiry form</a>
+      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true"><defs>
+        <radialGradient id="cityglow"><stop offset="0" stopColor="#FFF0D0" stopOpacity=".9" /><stop offset=".35" stopColor="#E2C186" stopOpacity=".4" /><stop offset="1" stopColor="#E2C186" stopOpacity="0" /></radialGradient>
+      </defs></svg>
 
-        <section id="story" className="alt">
-          <div className="wrap">
-            <Reveal className="head"><h2>We started with our own products.</h2></Reveal>
-            <div className="story">
-              <Reveal className="story-text">
-                <p>Beck To Nature started with one product: an all-natural crib mattress made in Hungary. To sell it in the United States we had to learn everything ourselves: US safety rules, distributors, trade shows, shipping and American customers.</p>
-                <p>Over the following years we brought more natural, non-toxic furniture and mattresses from Hungary to the US. The family behind the company combines a Ph.D. in chemical engineering with <Ph>[years]</Ph> of engineering and sourcing work between Europe and America.</p>
-                <p>Today we offer that same route across the Atlantic to other manufacturers who want to sell in America. Same family, same values, and the experience of having done it ourselves.</p>
-                <ol className="timeline">
-                  <li><span className="yr"><Ph>[Year]</Ph></span><span>Beck To Nature founded, first natural crib mattress sold in the US</span></li>
-                  <li><span className="yr"><Ph>[Year]</Ph></span><span>The range grows to eco-friendly furniture and mattresses from Hungary</span></li>
-                  <li><span className="yr">2026</span><span>Beck To Nature opens its US market-entry service to other European companies</span></li>
-                </ol>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <PhotoSlot title="Story photo" hint="An original Beck To Nature product, its packaging, or an early trade-show photo." />
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        <section id="services">
-          <div className="wrap">
-            <Reveal className="head">
-              <h2>Everything you need to sell in the US.</h2>
-              <p className="lede">From choosing the right trade show to your first American order.</p>
-            </Reveal>
-            <div className="services">
-              {SERVICES.map((s, i) => (
-                <Reveal key={s.h} className="svc" delay={(i % 2) * 0.08}>
-                  <h3>{s.h}</h3>
-                  <p>{s.p}</p>
-                  <p className="incl">{s.incl}</p>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="alt" id="process">
-          <div className="wrap">
-            <Reveal className="head">
-              <h2>One show at a time.</h2>
-              <p className="lede">A trade show is the safest way to test the US market before you commit to a full launch.</p>
-            </Reveal>
-            <div className="process">
-              {PROCESS.map((s, i) => (
-                <Reveal key={s.h} delay={i * 0.06}>
-                  <b aria-label={`Step ${i + 1}`}>{i + 1}</b>
-                  <h3>{s.h}</h3>
-                  <p>{s.p}</p>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="team" className="alt">
-          <div className="wrap">
-            <Reveal className="head">
-              <h2>The family behind Beck To Nature</h2>
-              <p className="lede">You work directly with the founder, who will be at your booth. Text in <Ph>[brackets]</Ph> is still to be filled in.</p>
-            </Reveal>
-            <div className="team">
-              <Reveal>
-                <article className="founder">
-                  <PhotoSlot title="Founder photo" hint="A real, recent portrait. Natural light works best." icon={false} allowVideo={false} />
-                  <div>
-                    <h3 style={{ fontSize: "1.55rem", letterSpacing: "-.022em" }}><Ph>[Dr. Ildikó Beck]</Ph></h3>
-                    <p className="role">Founder &amp; Managing Director</p>
-                    <p className="quote">“<Ph>[One sentence in her own words about why she helps European companies reach America.]</Ph>”</p>
-                    <p className="bio">A chemical engineer with a Ph.D., <Ph>[she]</Ph> co-founded Beck To Nature and spent <Ph>[X years]</Ph> bringing Hungarian products to American customers. <Ph>[Add engineering and sourcing experience, e.g. at General Electric.]</Ph></p>
-                    <ul className="creds">
-                      <li>Ph.D. in chemical engineering</li>
-                      <li>Co-founder, Beck To Nature</li>
-                      <li><Ph>[Engineering and sourcing, General Electric]</Ph></li>
-                      <li>Hungarian and English</li>
-                    </ul>
-                  </div>
-                </article>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        <section id="faq">
-          <div className="wrap">
-            <Reveal className="head"><h2>Questions, answered.</h2></Reveal>
-            <Faq items={FAQ} />
-          </div>
-        </section>
-
-        <section id="contact" className="alt">
-          <div className="wrap contact">
-            <Reveal className="head" >
-              <h2>Let&apos;s talk about your US plans</h2>
-              <p className="lede">A free 30-minute call. You&apos;ll get an honest view on whether the US is the right next step, and which show to start with.</p>
-            </Reveal>
-            <Reveal className="lines" delay={0.08}>
-              <div className="line"><div><span className="k">Email</span><b id="email">hello@becktonature.com</b></div><CopyButton targetId="email" /></div>
-              <div className="line"><div><span className="k">Phone, Budapest</span><b id="phone"><Ph>[+36 …]</Ph></b></div><CopyButton targetId="phone" /></div>
-              <div className="line"><div><span className="k">US office</span><b><Ph>[Hartland, Wisconsin]</Ph></b></div></div>
-            </Reveal>
-          </div>
-        </section>
-      </main>
-
-      <footer>
-        <div className="wrap foot">
-          <a className="foot-logo" href="#top" aria-label="Beck To Nature, back to top">
-            <img className="mark-foot" src="/logo/beck-to-nature-icon.svg" alt="" />
-            <img className="wordmark-foot" src="/logo/beck-to-nature-wordmark.svg" alt="" />
+      <header className="nav frame">
+        <div className="nav-inner">
+          <a className="brand" href="#top" aria-label="Beck To Nature, back to top">
+            <img className="fig" src="/logo/figure-cream.svg" alt="" width="22" height="27" /><img className="wm" src="/logo/wordmark-cream.svg" alt="" width="67" height="32" />
           </a>
-          <div className="foot-meta">
-            <span>© 2026 Beck To Nature · Budapest · <Ph>[Hartland, Wisconsin]</Ph></span>
-            <span>Draft. Photo buttons only preview on your screen; nothing is uploaded.</span>
-            <nav className="foot-links" aria-label="Legal">
-              {LEGAL_LINKS.map((l) => <a key={l.href} href={l.href}>{l.label}</a>)}
-            </nav>
-          </div>
+          <nav className="nav-links" aria-label="Sections">
+            <a href="#why">Why trade shows</a><a href="#specialties">Specialties</a><a href="#founder">Our founder</a><a href="#inquiry">Inquiry</a><a href="#cases">Case stories</a>
+          </nav>
+          <a className="btn btn-main btn-sm" href="#inquiry">Start your inquiry</a>
         </div>
-      </footer>
+      </header>
+
+      <div className="page" id="top">
+        {/* the gold line below the flight */}
+        <svg className="thread" aria-hidden="true">
+          <path className="t-glow" /><path className="t-core" /><g className="t-end" />
+          <g className="t-head"><circle r="12" fill="url(#cityglow)" opacity=".7" /></g>
+        </svg>
+
+        {/* the opening flight: hero, the ride across the Atlantic, and the "why" block it lands on */}
+        <section className="flight" aria-labelledby="h1">
+          <div className="flight-stage">
+            <div className="flight-sky">
+              <canvas className="flight-map" aria-hidden="true" />
+              <div className="flight-veil" aria-hidden="true" />
+              <svg className="flight-line" aria-hidden="true">
+                <path className="t-glow" /><path className="t-core" /><g className="t-sig" />
+                <g className="t-head"><circle r="12" fill="url(#cityglow)" opacity=".7" /></g>
+              </svg>
+              <div className="flight-hero">
+                <h1 id="h1"><span className="l1">Take your products</span> <span className="l2">to America.</span></h1>
+              </div>
+              <p className="cue" aria-hidden="true"><i />Scroll</p>
+              <div className="flight-says" aria-hidden="true">
+                <p className="say">One booth.</p><p className="say">One week.</p><p className="say">A clear answer.</p>
+              </div>
+              <p className="fl-label" data-city="from" aria-hidden="true">Budapest</p>
+              <p className="fl-label" data-city="to" aria-hidden="true">Chicago</p>
+            </div>
+            <div className="flight-land frame" id="why">
+              <div className="why2">
+                <h2><span>One booth.</span> <span>One week.</span> <span>A clear answer.</span></h2>
+                <div className="why2-body">
+                  <p className="why2-lead">Before you commit to America, put your product in front of the people who would buy it. In a few days you learn whether there is demand, who you are up against, what still needs fixing, and who could sell it for you.</p>
+                  <div className="firstq">
+                    <p className="firstq-k">Start with one question. What does your company make?</p>
+                    <div className="firstq-row">
+                      {INDUSTRIES.map(([label]) => <a key={label} className="btn btn-ghost" href="#inquiry" data-industry={label}>{label}</a>)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="sec frame" id="specialties" aria-labelledby="sp-h">
+          <div className="sec-head center">
+            <h2 id="sp-h">Where we specialize.</h2>
+            <p>We work across industries. These three are where we go deepest: the right show, buyers booked before you fly, a booth that&rsquo;s ready when you land, and every lead followed up.</p>
+          </div>
+          <div className="trio">
+            {TIERS.map((t) => (
+              <article key={t.name} className={t.featured ? "tri stone" : "tri"}>
+                <div className="tri-head">
+                  <span className="tri-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{t.icon}</svg></span>
+                  {t.featured && <span className="tri-tag">Most experience</span>}
+                </div>
+                <h3>{t.name}</h3>
+                <p className="tri-big">{t.show}</p><p className="tri-small">The show we would usually start with</p>
+                <hr className="tri-rule" />
+                <ul>{t.points.map((p, i) => <li key={i}><Check />{p}</li>)}</ul>
+                <a className={t.featured ? "btn btn-dark" : "btn btn-ghost"} href="#inquiry" data-industry={t.name}>Start your inquiry</a>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="sec frame" id="founder" aria-labelledby="fo-h">
+          <div className="founder">
+            <div className="portrait" role="img" aria-label="Founder photo placeholder"><span>[Founder photo]</span></div>
+            <div className="founder-text">
+              <h2 id="fo-h">Our founder.</h2>
+              <p className="f-name"><Ph>[Founder name]</Ph><span className="f-role">Founder of Beck To Nature</span></p>
+              <p className="f-quote">&ldquo;<Ph>[One sentence from the founder on why Beck To Nature exists.]</Ph>&rdquo;</p>
+            </div>
+          </div>
+          <div className="essay">
+            <div><h3>Why</h3><p><Ph>[Why the founder started Beck To Nature.]</Ph></p></div>
+            <div><h3>How</h3><p><Ph>[How Beck To Nature works with a client.]</Ph></p></div>
+            <div><h3>Experience</h3><p><Ph>[The founder&rsquo;s background, years, shows attended, languages.]</Ph></p></div>
+            <div><h3>Mission &amp; vision</h3><p><Ph>[Mission.]</Ph> <Ph>[Vision.]</Ph></p></div>
+          </div>
+          <div className="promise">
+            <p className="promise-k">What you get</p>
+            <p className="promise-t"><Ph>[What clients get from Beck To Nature, in one or two strong sentences.]</Ph></p>
+            <div className="f-links"><a href="#founder"><Ph>[LinkedIn]</Ph></a><a href="#founder"><Ph>[Instagram]</Ph></a><a href="#founder"><Ph>[Other link]</Ph></a></div>
+            <a className="btn btn-main to-inquiry" href="#inquiry">Work with us <Arrow /></a>
+          </div>
+        </section>
+
+        <section className="sec frame" id="inquiry" aria-labelledby="iq-h">
+          <div className="iq">
+            <div className="iq-glow" aria-hidden="true" />
+            <div className="iq-head">
+              <h2 id="iq-h">Start your <em>inquiry.</em></h2>
+              <p>Six questions, about a minute. No commitment.</p>
+            </div>
+            <Inquiry />
+          </div>
+        </section>
+
+        <section className="sec frame" id="cases" aria-labelledby="cs-h">
+          <div className="sec-head"><h2 id="cs-h">Two stories.</h2></div>
+          {[0, 1].map((i) => (
+            <div className="story" key={i}>
+              <p className="story-result"><Ph>[The result, in one line.]</Ph></p>
+              <div className="story-facts"><p><Ph>[Company]</Ph> · <Ph>[Industry]</Ph></p><p><Ph>[Which US show]</Ph></p><p className="muted"><Ph>[Where they started, what changed.]</Ph></p></div>
+            </div>
+          ))}
+          <a className="text-cta" href="#inquiry">Write your own story <Arrow /></a>
+        </section>
+
+        <footer className="frame" id="foot">
+          <div className="end-sig" role="img" aria-label="Beck signature" />
+          <div className="foot">
+            <span>© 2026 Beck To Nature · <Ph>[Hartland, Wisconsin]</Ph> · Budapest · hello@becktonature.com</span>
+            <nav aria-label="Legal"><a href="/privacy">Privacy policy</a><a href="/cookies">Cookie notice</a><a href="/terms">Terms</a></nav>
+          </div>
+        </footer>
+      </div>
+
+      <div className="spot" aria-hidden="true" />
+      <Experience />
     </>
   );
 }
