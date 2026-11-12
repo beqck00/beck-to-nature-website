@@ -104,6 +104,10 @@ Contract templates (mutual and one-way NDA, master services agreement, EU and US
 - **Offer letter:** California only. Anyone working for the LLC from Hungary raises Hungarian employment and tax questions.
 - **EU data processing addendum:** as a US company the LLC is the "data importer"; keep the standard contractual clauses.
 
+## Preview
+
+`design/preview/` holds two screen recordings of the scroll (desktop and phone, recorded in Chromium on 2026-11-12) and six stills. They show the site as of that date; re-record after visible changes.
+
 ## Other things made for the owner
 
 - Demo (older single-file prototype, now behind the real site): https://claude.ai/artifact/E6QCw4FMUY33dcEV54bAUr ; source in `design/demo/`, build scripts in `design/tools/demo-build/` (paths inside them point at a temporary folder and need adjusting).
