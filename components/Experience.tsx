@@ -46,7 +46,8 @@ export default function Experience() {
       let sx = 0, sy = 0, queued = false;
       window.addEventListener("pointermove", (e) => {
         sx = e.clientX; sy = e.clientY;
-        if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; spot.style.transform = `translate(${sx}px, ${sy}px)`; spot.classList.add("on"); }); }
+        if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; spot.style.transform = `translate(${sx}px, ${sy}px)`; }); }
+        spot.classList.toggle("on", !!(e.target as Element).closest?.(".flight-sky"));      // the spotlight belongs to the hero map only
         const stone = (e.target as Element).closest?.<HTMLElement>(".stone");
         if (stone) { const r = stone.getBoundingClientRect(); stone.style.setProperty("--mx", `${e.clientX - r.left}px`); stone.style.setProperty("--my", `${e.clientY - r.top}px`); }
       }, passive);

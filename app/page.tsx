@@ -6,13 +6,13 @@ import { INDUSTRIES } from "@/lib/inquiry";
 const Arrow = () => <svg className="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
 const Check = () => <span className="ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8.5" /></svg></span>;
 
-type Tier = { name: string; icon: React.ReactNode; show: React.ReactNode; points: React.ReactNode[]; featured?: boolean };
+type Tier = { name: string; show: React.ReactNode; points: React.ReactNode[]; featured?: boolean };
 const TIERS: Tier[] = [
-  { name: "Software", icon: <path d="M8.5 8 4.5 12l4 4M15.5 8l4 4-4 4M13.5 5.5l-3 13" />, show: <Ph>[Show]</Ph>,
+  { name: "Software", show: <Ph>[Show]</Ph>,
     points: [<Ph key="a">[Typical buyers]</Ph>, <Ph key="b">[What we prepare]</Ph>, "Buyers booked before you fly"] },
-  { name: "Medical & healthcare", icon: <path d="M3.5 12h4l2-4.5 3.5 9 2-4.5h5.5" />, show: <Ph>[RSNA]</Ph>, featured: true,
+  { name: "Medical & healthcare", show: <Ph>[RSNA]</Ph>, featured: true,
     points: [<Ph key="a">[Distributors, hospital buyers]</Ph>, <Ph key="b">[Regulatory partners]</Ph>, "Booth ready before you fly"] },
-  { name: "Hardware", icon: <><rect x="6.5" y="6.5" width="11" height="11" rx="2" /><path d="M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3M3.5 9.5h3M3.5 14.5h3M17.5 9.5h3M17.5 14.5h3" /></>, show: <Ph>[Show]</Ph>,
+  { name: "Hardware", show: <Ph>[Show]</Ph>,
     points: [<Ph key="a">[Typical buyers]</Ph>, <Ph key="b">[What we prepare]</Ph>, "Every lead followed up"] },
 ];
 
@@ -56,7 +56,7 @@ export default function Home() {
               <div className="flight-hero">
                 <h1 id="h1"><span className="l1">Take your products</span> <span className="l2">to America.</span></h1>
               </div>
-              <p className="cue" aria-hidden="true"><i />Scroll</p>
+              <p className="cue" aria-hidden="true">Scroll</p>
               <div className="flight-says" aria-hidden="true">
                 <p className="say">One booth.</p><p className="say">One week.</p><p className="say">A clear answer.</p>
               </div>
@@ -89,12 +89,10 @@ export default function Home() {
             {TIERS.map((t) => (
               <article key={t.name} className={t.featured ? "tri stone" : "tri"}>
                 <div className="tri-head">
-                  <span className="tri-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{t.icon}</svg></span>
+                  <h3>{t.name}</h3>
                   {t.featured && <span className="tri-tag">Most experience</span>}
                 </div>
-                <h3>{t.name}</h3>
                 <p className="tri-big">{t.show}</p><p className="tri-small">The show we would usually start with</p>
-                <hr className="tri-rule" />
                 <ul>{t.points.map((p, i) => <li key={i}><Check />{p}</li>)}</ul>
                 <a className={t.featured ? "btn btn-dark" : "btn btn-ghost"} href="#inquiry" data-industry={t.name}>Start your inquiry</a>
               </article>
@@ -127,7 +125,6 @@ export default function Home() {
 
         <section className="sec frame" id="inquiry" aria-labelledby="iq-h">
           <div className="iq">
-            <div className="iq-glow" aria-hidden="true" />
             <div className="iq-head">
               <h2 id="iq-h">Start your <em>inquiry.</em></h2>
               <p>Six questions, about a minute. No commitment.</p>

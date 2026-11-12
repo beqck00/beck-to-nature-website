@@ -1,9 +1,10 @@
 // The gold line below the flight. It picks up where the flight's line leaves the stage, runs down the page as one
 // smooth stroke, lights each element as its head passes (and dims it again on the way back up), and ends by writing
-// the "Beck" signature at the bottom left, joining it at the B.
+// the "Beck" signature at the bottom left, joining it at the B. The route is built from tangents (see tangentPath), so it
+// has no corners and no tight turns.
 
 import { SIG_STROKES } from "@/lib/data/signature";
-import { clamp, dashWindow, lerp, mapPath, type Pt, smoothPath, sstep, strokePaths } from "./util";
+import { clamp, dashWindow, type Knot, mapPath, type Pt, strokePaths, tangentPath } from "./util";
 
 // Elements the line lights as it passes.
 const LUM = "#specialties .sec-head, .tri, .portrait, .founder-text h2, .f-name, .f-quote, .essay > div, .promise, .iq-head, #wiz, #cases .sec-head, .story, #cases .text-cta, .foot";
@@ -51,34 +52,32 @@ export function createThread(page: HTMLElement): Thread {
     const r = relRest(endSig), k = Math.min(r.w / 850, r.h / 380), ox = r.left + (r.w - 850 * k) / 2 - 10 * k, oy = r.top + (r.h - 380 * k) / 2 - 20 * k;
     const P = (x: number, y: number): Pt => [ox + x * k, oy + y * k];
     const eS = { B: P(22, 182), bottom: oy + 386 * k, right: ox + 842 * k, strokes: WRITING_ORDER.map((d) => mapPath(d, P)) };
-    // the line meets the signature only at the B: a soft hook rising into the B's lead-in stroke
-    const u = Math.max(18, 160 * k), B = eS.B;
-    const hook: Pt[] = [[B[0] - u * 0.9, B[1] - u * 0.3], [B[0] - u * 0.8, B[1] + u * 0.9], [B[0] - u * 0.35, B[1] + u * 0.9], [B[0] - u * 0.05, B[1] + u * 0.35], B];
-
-    let pts: Pt[] = [[startX, top], [startX, top + 46]];                       // starts straight down, as the flight's line ends
+    // The route: a handful of points the line passes through heading straight down, joined by long S-curves, so it
+    // only ever drifts from side to side. It may pass behind text and under cards.
+    const DOWN: Pt = [0, 1], LEFT: Pt = [-1, 0], ARC = 0.5523;                  // ARC: handle length of a quarter circle, per unit radius
+    const mid = (sel: string) => { const b = relRest(page.querySelector(sel)!); return b.top + b.h / 2; };
+    const B = eS.B, under = eS.bottom + (narrow ? 36 : 52), rB = under - B[1];  // the line runs under the signature, then rises into the B
+    const knots: Knot[] = [{ p: [startX, top], d: DOWN }];
+    let rT: number;
     if (!narrow) {
-      // The route the owners drew on a 528px-wide picture of the page, mapped onto the live layout: x scales with the
-      // page width; y is pinned to the end of the flight, the featured card, the founder's quote and the closing signature.
-      const card = relRest(page.querySelector(".tri.stone")!), quote = relRest(page.querySelector(".f-quote")!);
-      const A: Pt[] = [[560, top], [640, card.top + card.h / 2], [1305, quote.bottom + 60], [1915, B[1]]];
-      const my = (v: number) => {
-        let i = 0; while (i < A.length - 2 && v > A[i + 1][0]) i++;
-        return lerp(A[i][1], A[i + 1][1], (v - A[i][0]) / (A[i + 1][0] - A[i][0]));
-      };
-      const route: Pt[] = [[160, 580], [172, 604], [196, 628], [212, 650], [196, 690], [176, 722], [168, 750], [185, 790], [212, 832], [232, 870], [240, 910], [250, 950],
-        [262, 1000], [262, 1060], [248, 1130], [232, 1200], [228, 1262], [250, 1300], [300, 1318], [352, 1325], [385, 1345], [394, 1395], [384, 1450], [366, 1510],
-        [342, 1556], [292, 1585], [242, 1622], [222, 1662], [232, 1702], [268, 1742], [294, 1782], [294, 1830], [268, 1868]];
-      for (const [x, y] of route) pts.push([(x * W) / 528, my(y)]);
-      pts.push([B[0] + 150, B[1] - 125], [B[0] - 25, B[1] - 100]);
+      const sec = page.querySelector<HTMLElement>("#specialties")!, sb = rel(sec), cs = getComputedStyle(sec);
+      const L = sb.left + parseFloat(cs.paddingLeft), R = sb.right - parseFloat(cs.paddingRight), card = relRest(page.querySelector(".tri.stone")!);
+      knots.push({ p: [card.left + card.w / 2, card.top + card.h / 2], d: DOWN },   // through the featured card
+        { p: [R - (R - L) * 0.07, mid(".essay")], d: DOWN },                     // down the open column right of the founder's texts
+        { p: [W / 2, mid("#wiz")], d: DOWN },                                    // behind the inquiry form
+        { p: [L + (R - L) * 0.555, mid("#cases")], d: DOWN });                    // between a story and its facts
+      rT = clamp((under - knots[knots.length - 1].p[1]) * 0.5, 120, 260);
     } else {
-      // phones: wide, slow S-curves across the screen (behind the text), easing out towards the closing signature
-      const end = eS.bottom - 80, ease = 260, phase = Math.asin(clamp((startX / W - 0.54) / 0.34, -1, 1));
-      const wind = (y: number) => clamp(W * 0.54 + W * 0.34 * Math.sin(((y - top) / 1050) * Math.PI * 2 + phase) + 5 * Math.sin(((y - top) / 290) * Math.PI * 2), 16, W - 16);
-      for (let y = top + 40; y < end; y += 40) pts.push([lerp(wind(y), eS.right + 30, sstep(end - ease, end, y)), y]);
-      pts.push([lerp(eS.right + 30, B[0], 0.5), B[1] - 120], [B[0] - 14, B[1] - 90]);
+      // phones: wide, slow S-curves from side to side (behind the text)
+      rT = 104;
+      const side = [W * 0.8, W * 0.2], first = startX > W / 2 ? 1 : 0;
+      for (let y = top + 520, i = first; y < under - rT - 380; y += 520, i++) knots.push({ p: [side[i % 2], y], d: DOWN });
     }
-    pts = pts.concat(hook);
-    const d = smoothPath(pts);
+    // the close: a wide turn to the left, a run under the signature, and a quarter turn up into the B's first stroke
+    const xr = Math.min(eS.right + 40 + rT, W - 24), up: Pt = [8 / 62.5, -62 / 62.5], run = Math.max(1, xr - rT - (B[0] + rB)) / 3;
+    knots.push({ p: [xr, under - rT], d: DOWN, out: rT * ARC }, { p: [xr - rT, under], d: LEFT, in: rT * ARC, out: run },
+      { p: [B[0] + rB, under], d: LEFT, in: run, out: rB * ARC }, { p: B, d: up, in: rB * ARC });
+    const d = tangentPath(knots);
     core.setAttribute("d", d); glow.setAttribute("d", d);
     Lc = core.getTotalLength();
     eSegs = strokePaths(endG, eS.strokes);

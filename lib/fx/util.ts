@@ -20,6 +20,20 @@ export function smoothPath(pts: Pt[]): string {
   return d;
 }
 
+/** A point the line passes through, the direction it is travelling there, and (optionally) how long the curve
+    handles into and out of it are. Without them the handles are 0.4 of the distance to the neighbouring point. */
+export type Knot = { p: Pt; d: Pt; in?: number; out?: number };
+
+/** A path through the knots that leaves and enters each one along its direction, so there is never a corner. */
+export function tangentPath(knots: Knot[]): string {
+  let d = `M ${knots[0].p[0].toFixed(1)} ${knots[0].p[1].toFixed(1)}`;
+  for (let i = 0; i < knots.length - 1; i++) {
+    const a = knots[i], b = knots[i + 1], chord = Math.hypot(b.p[0] - a.p[0], b.p[1] - a.p[1]), ha = a.out ?? chord * 0.4, hb = b.in ?? chord * 0.4;
+    d += ` C ${(a.p[0] + a.d[0] * ha).toFixed(1)} ${(a.p[1] + a.d[1] * ha).toFixed(1)} ${(b.p[0] - b.d[0] * hb).toFixed(1)} ${(b.p[1] - b.d[1] * hb).toFixed(1)} ${b.p[0].toFixed(1)} ${b.p[1].toFixed(1)}`;
+  }
+  return d;
+}
+
 /** Map every "x y" number pair in an SVG path string through fn. */
 export const mapPath = (d: string, fn: (x: number, y: number) => Pt) =>
   d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => fn(+x, +y).map((v) => v.toFixed(2)).join(" "));

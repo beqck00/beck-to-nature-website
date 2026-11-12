@@ -7,7 +7,7 @@
 import gsap from "gsap";
 import { WORLD_D, WORLD_DOTS } from "@/lib/data/world";
 import { SIG_H, SIG_STROKES, SIG_W } from "@/lib/data/signature";
-import { clamp, dashWindow, lerp, mapPath, type Pt, smoothPath, splitWords, sstep, strokePaths } from "./util";
+import { clamp, dashWindow, lerp, mapPath, type Pt, smoothPath, splitWords, sstep, strokePaths, tangentPath } from "./util";
 
 // Map units, as in lib/data/world.ts.
 const K = Math.cos((44 * Math.PI) / 180);
@@ -174,13 +174,22 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const ctrl = mp((CITIES[FROM][0] + CITIES[TO][0]) / 2, Math.min(CITIES[FROM][1], CITIES[TO][1]) - LIFT);
     const unit = (a: Pt, b: Pt): Pt => { const d = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; return [(b[0] - a[0]) / d, (b[1] - a[1]) / d]; };
     const d0 = unit(B, ctrl), d1 = unit(ctrl, U);
-    const pre: Pt = [Math.min(W - 14, B[0] - d0[0] * 0.07 * W), B[1] - d0[1] * 0.07 * W], post: Pt = [U[0] + d1[0] * 0.05 * W, U[1] + d1[1] * 0.05 * W];
-    xOut = W * 0.3;
-    const pts: Pt[] = [start, [lerp(start[0], pre[0], 0.3), lerp(start[1], pre[1], 0.03)], [lerp(start[0], pre[0], 0.66), lerp(start[1], pre[1], 0.26)], [lerp(start[0], pre[0], 0.93), lerp(start[1], pre[1], 0.7)], pre];
-    pts.push(...arc(FROM, TO, LIFT, 26));
-    const down = H - U[1];
-    pts.push(post, [post[0] - 0.01 * W, U[1] + 0.3 * down], [lerp(post[0], xOut, 0.45), U[1] + 0.62 * down], [xOut, H - 0.12 * down], [xOut, H + 2]);   // leaves straight down, where the page's line picks it up
-    const d = smoothPath(pts);
+    const post: Pt = [U[0] + d1[0] * 0.05 * W, U[1] + d1[1] * 0.05 * W];
+    // Out of the signature's tail the line runs east, then turns up and round into the route on one arc, as wide as
+    // the space between the signature and Budapest allows.
+    const phi = Math.atan2(-d0[1], d0[0]), arcH = (a: number, r: number) => (4 / 3) * Math.tan(a / 4) * r;
+    const R = Math.max(0.1 * W, Math.min((start[1] - B[1]) / (1 - Math.cos(phi)), (W - 12 - B[0]) / (1 - Math.sin(phi))));
+    const C: Pt = [B[0] - R * Math.sin(phi), B[1] - R * Math.cos(phi)], A: Pt = [C[0], C[1] + R], hA = arcH(phi / 2, R);
+    const M: Pt = [C[0] + R * Math.sin(phi / 2), C[1] + R * Math.cos(phi / 2)], run = Math.hypot(A[0] - start[0], A[1] - start[1]) * 0.45;
+    const lead = tangentPath([{ p: start, d: [1, 0], out: run }, { p: A, d: [1, 0], in: run, out: hA },
+      { p: M, d: [Math.cos(phi / 2), -Math.sin(phi / 2)], in: hA, out: hA }, { p: B, d: d0, in: hA }]);
+    const pts: Pt[] = [...arc(FROM, TO, LIFT, 26), post];
+    // From Chicago it keeps turning the way it is already heading, on one long arc, until it points straight down and
+    // leaves the stage, where the page's line picks it up.
+    const down = H + 2 - post[1], psi = Math.max(0.05, Math.atan2(-d1[0], d1[1])), hE = arcH(psi, down / Math.sin(psi));
+    xOut = Math.max(20, post[0] - down * Math.tan(psi / 2));
+    const exit = tangentPath([{ p: post, d: d1, out: hE }, { p: [xOut, H + 2], d: [0, 1], in: hE }]);
+    const route = smoothPath(pts), d = lead + route.slice(route.indexOf(" C")) + exit.slice(exit.indexOf(" C"));
     core.setAttribute("d", d); glow.setAttribute("d", d);
     L = core.getTotalLength();
     let bestB = 1e9, bestU = 1e9;
