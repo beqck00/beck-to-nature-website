@@ -50,7 +50,8 @@ export type Flight = {
   destroy(): void;
 };
 
-export function createFlight(root: HTMLElement): Flight {
+/** still: the visitor asked for reduced motion; nothing is animated and no text is hidden. */
+export function createFlight(root: HTMLElement, still = false): Flight {
   const q = <E extends Element>(s: string) => root.querySelector(s) as E;
   const sky = q<HTMLElement>(".flight-sky"), canvas = q<HTMLCanvasElement>(".flight-map"), veil = q<HTMLElement>(".flight-veil");
   const svg = q<SVGSVGElement>(".flight-line"), glow = q<SVGPathElement>(".t-glow"), core = q<SVGPathElement>(".t-core");
@@ -138,7 +139,7 @@ export function createFlight(root: HTMLElement): Flight {
     W = sky.clientWidth; H = sky.clientHeight; dpr = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     band = matchMedia(BAND).matches;
-    if (band) { s = W / 124; offX = 0; offY = H - 84 * s - (W < 700 ? 10 : 28); Z = 6; rClose = 3; }
+    if (band) { s = W / 124; offX = 0; offY = H - 84 * s - (W < 700 ? 10 : 28); Z = 4.6; rClose = 3.2; }
     else { s = Math.max(W / 124, H / 84); offX = (W - 124 * s) / 2; offY = 0; Z = 3.4; rClose = 5.2; }
     r0 = 0.34 * s; rClose = Math.max(rClose, r0);
     for (let i = 0; i < n; i++) { const p = mp(dots[i].mx, dots[i].my); X[i] = p[0]; Y[i] = p[1]; }
@@ -190,7 +191,7 @@ export function createFlight(root: HTMLElement): Flight {
     }
     anchor = [W * 0.5, H * (band ? 0.64 : 0.6)];
     glyphAt = [];
-    timeline();
+    if (!still) timeline();
   }
 
   // how much of the line is drawn at progress p
@@ -218,7 +219,9 @@ export function createFlight(root: HTMLElement): Flight {
     const zc = sstep(T.zoomIn[0], T.zoomIn[1], p) * (1 - sstep(T.zoomOut[0], T.zoomOut[1], p));
     const z = 1 + (Z - 1) * zc, len = still ? 0 : lineAt(p);
     if (len > 0) { const hp = core.getPointAtLength(len); headPt = [hp.x, hp.y]; }
-    const cx = lerp(W / 2, headPt[0] - (anchor[0] - W / 2) / z, zc), cy = lerp(H / 2, headPt[1] - (anchor[1] - H / 2) / z, zc);
+    // the head of the line glides from where it sits in the wide shot to the anchor as the camera closes in, so it never leaves the screen
+    const ax = lerp(headPt[0], anchor[0], zc), ay = lerp(headPt[1], anchor[1], zc);
+    const cx = headPt[0] - (ax - W / 2) / z, cy = headPt[1] - (ay - H / 2) / z;
     const sx = (x: number) => (x - cx) * z + W / 2, sy = (y: number) => (y - cy) * z + H / 2;
 
     // the line and the signature
@@ -226,8 +229,11 @@ export function createFlight(root: HTMLElement): Flight {
     const sigFrom = Lsig * sstep(0, T.heroOut, p), sigTo = Lsig * written;
     for (const g of segs) dashWindow(g.els, g.len, clamp(sigFrom - g.off, 0, g.len), clamp(sigTo - g.off, 0, g.len));
     dashWindow([core, glow], L, Math.min(len, LB * sstep(T.zoomIn[0] + 0.03, T.zoomIn[1] + 0.05, p)), len);   // the first leg retracts to Budapest once the camera is close
+    // the line thickens as the camera closes in, but only so far
+    const thick = Math.min(z, band ? 2.2 : 3.2) / z;
+    core.style.strokeWidth = (1.8 * thick).toFixed(3); glow.style.strokeWidth = (6 * thick).toFixed(3);
     head.classList.toggle("on", len > 2 && len < L - 2);
-    if (len > 0) head.setAttribute("transform", `translate(${headPt[0].toFixed(1)} ${headPt[1].toFixed(1)})`);
+    if (len > 0) head.setAttribute("transform", `translate(${headPt[0].toFixed(1)} ${headPt[1].toFixed(1)}) scale(${thick.toFixed(3)})`);
     veil.style.opacity = (1 - zc).toFixed(3);
 
     // heat: dots near the pointer (wide shot) and near the head of the line warm up, then cool

@@ -133,6 +133,7 @@ export default function Home() {
               <p>Six questions, about a minute. No commitment.</p>
             </div>
             <Inquiry />
+            <noscript><p className="note" style={{ textAlign: "center", marginTop: 0 }}>The form needs JavaScript. You can also write to us at hello@becktonature.com.</p></noscript>
           </div>
         </section>
 

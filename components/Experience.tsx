@@ -17,7 +17,7 @@ export default function Experience() {
     if (!page || !flightEl || !stage) return;
     const still = prefersReducedMotion();
     root.classList.toggle("fx", !still);
-    const flight = createFlight(flightEl), thread = createThread(page);
+    const flight = createFlight(flightEl, still), thread = createThread(page);
     const ac = new AbortController(), on = { signal: ac.signal }, passive = { signal: ac.signal, passive: true };
     let raf = 0, killScenes = () => {};
 

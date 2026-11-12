@@ -24,24 +24,22 @@ The owner asked for the real Next.js site to be built from the approved demo, as
 | Piece | State |
 |---|---|
 | `npm run build` | Passes |
-| Hero at rest (map, routes, headline, signature) | Works, checked on desktop |
-| Flight: zoom in at Budapest, first statement | Works, checked on desktop |
-| Rest of the flight (statements 2-3, arrival, landing block) | Written, **not yet checked** |
-| Phone layout of the flight (map as a band at the bottom) | Written, **not yet checked** |
-| Line down the page, closing signature | Written (ported from the demo), **not yet checked** in the new site |
-| Section choreography | Written, **not yet checked** |
-| Inquiry form (React) | Written, **not yet checked** end to end |
-| `/api/inquiry` | Written; needs an email provider key to actually send (see below) |
+| Opening flight, start to landing | Checked on desktop (1440x900) and phone (iPhone 13 size) |
+| Line down the page, closing signature | Checked on desktop and phone |
+| Section choreography | Checked on desktop and phone (screenshots at rest; not reviewed frame by frame) |
+| Inquiry form | Checked end to end on desktop and phone: validation messages, the dial by mouse and by touch, the map, the list, both server calls, the "sent" and "could not send" results |
+| `/api/inquiry` | Works; needs an email provider key to actually send (see below). Sending a real email has **not** been tested |
+| Reduced-motion version, and the page without JavaScript | Checked: complete, still pages (the form itself needs JavaScript; a note gives the email address) |
+| Sideways scrolling on phone | None, including on the dial step |
 | Legal pages, US LLC wording | Written; need a lawyer's review |
-| Reduced-motion version | Written, **not yet checked** |
-| Demo's contract templates updated for a US LLC | **Not done** (see "Still to do") |
-| README and CLAUDE.md updated | Done in the same commit as this file |
+| Real phones and Safari | **Not checked.** Everything above was checked in Chromium, including the phone size |
+| Demo's contract templates updated for a US LLC | See "Still to do" |
 
 ## Still to do
 
-1. Check every "not yet checked" row above on desktop (1440x900) and phone (390x844): scroll through, fix what is off. `design/tools/screenshots.js` takes screenshots at chosen scroll positions (needs Playwright and the site running on port 3210).
-2. Check the form end to end: all six steps, validation messages, the month dial by mouse and touch, the country map, the "sent" and "could not send" results.
-3. Check there is no sideways scrolling on phone at any step (the month dial once caused this; its ruler is now clipped).
+1. Try the site on a real iPhone (Safari) and an Android phone, and in desktop Safari and Firefox. Things to watch: the pinned opening on iOS when the address bar hides, and smoothness of the map while zoomed.
+2. Connect an email provider and send one real inquiry.
+3. Watch the whole scroll once on a slower laptop; if the zoomed map stutters, lower `Z` (zoom) in `lib/fx/flight.ts`.
 4. Update the eight contract templates in the demo for a US LLC (`design/tools/demo-build/legal_build.py` builds them; see "Legal" below), and regenerate `design/demo/*.html`.
 5. Record a short video of the scroll for the owner, and send screenshots.
 6. Owner decisions listed under "Open questions".

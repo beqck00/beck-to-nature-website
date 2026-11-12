@@ -5,6 +5,7 @@
 // for the visitor by dispatching a "btn:prefill" event with an industry name.
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { EUROPE, EUROPE_VIEWBOX } from "@/lib/data/europe";
 import { CONTACT_EMAIL, INDUSTRIES, isEmail, STAGES, US_HISTORY } from "@/lib/inquiry";
 import { mountDial } from "@/lib/dial";
@@ -45,13 +46,13 @@ export default function Inquiry() {
   const advance = useRef(0);
   const stepEl = useRef<HTMLDivElement>(null);
   const nudge = () => { const el = stepEl.current; if (!el) return; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); buzz([10, 40, 10]); };
-  const set = <K extends keyof Answers>(k: K, v: Answers[K]) => setA((s) => ({ ...s, [k]: v }));
+  const set = <K extends keyof Answers>(k: K, v: Answers[K]) => { setError(""); setA((s) => ({ ...s, [k]: v })); };
 
   const problem = useCallback((i: number, s: Answers): string => {
     if (i === 0 && !s.industry) return "Pick the closest match.";
     if (i === 1) {
-      if (!s.name.trim() || (s.phone.replace(/\D/g, "").length < 6 && !isEmail(s.email))) return "Add your name and a phone number or email.";
       if (s.email.trim() && !isEmail(s.email)) return "Check the email address.";
+      if (!s.name.trim() || (s.phone.replace(/\D/g, "").length < 6 && !isEmail(s.email))) return "Add your name and a phone number or email.";
       if (s.sms && s.phone.replace(/\D/g, "").length < 6) return "Add a phone number for text messages, or untick the box.";
     }
     if (i === 2 && !s.stage) return "Pick where your product is today.";
@@ -225,7 +226,7 @@ export default function Inquiry() {
         <p className="note">Your answers go to our founder, not to a mailing list. See our <a href="/privacy">privacy policy</a>.</p>
       </form>
 
-      {outcome && (
+      {outcome && createPortal(
         <div className={`reward${shown ? " show" : ""}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-done`}>
           <canvas ref={burst} aria-hidden="true" />
           <div className="card reward-card">
@@ -244,7 +245,8 @@ export default function Inquiry() {
             </>)}
             <button className="btn btn-quiet btn-sm" type="button" ref={done} onClick={close}>{outcome === "sent" ? "Done" : "Back to the form"}</button>
           </div>
-        </div>
+        </div>,
+        document.body,     // above the menu bar and everything else
       )}
     </>
   );
