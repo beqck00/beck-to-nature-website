@@ -55,7 +55,7 @@ export function createThread(page: HTMLElement): Thread {
     const u = Math.max(18, 160 * k), B = eS.B;
     const hook: Pt[] = [[B[0] - u * 0.9, B[1] - u * 0.3], [B[0] - u * 0.8, B[1] + u * 0.9], [B[0] - u * 0.35, B[1] + u * 0.9], [B[0] - u * 0.05, B[1] + u * 0.35], B];
 
-    let pts: Pt[] = [[startX, top]];
+    let pts: Pt[] = [[startX, top], [startX, top + 46]];                       // starts straight down, as the flight's line ends
     if (!narrow) {
       // The route the owners drew on a 528px-wide picture of the page, mapped onto the live layout: x scales with the
       // page width; y is pinned to the end of the flight, the featured card, the founder's quote and the closing signature.

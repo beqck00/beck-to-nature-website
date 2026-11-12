@@ -168,12 +168,17 @@ export function createFlight(root: HTMLElement): Flight {
     const start: Pt = [ox + 842 * k, oy + 292 * k];
 
     // the line: signature tail -> Budapest -> (the Budapest-Chicago route) -> Chicago -> off the bottom edge
-    const B = cities[FROM], U = cities[TO], dx = B[0] - start[0], dy = B[1] - start[1];
+    // It joins and leaves the route along the route's own direction, so there is no elbow at either city.
+    const B = cities[FROM], U = cities[TO];
+    const ctrl = mp((CITIES[FROM][0] + CITIES[TO][0]) / 2, Math.min(CITIES[FROM][1], CITIES[TO][1]) - LIFT);
+    const unit = (a: Pt, b: Pt): Pt => { const d = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; return [(b[0] - a[0]) / d, (b[1] - a[1]) / d]; };
+    const d0 = unit(B, ctrl), d1 = unit(ctrl, U);
+    const pre: Pt = [Math.min(W - 14, B[0] - d0[0] * 0.07 * W), B[1] - d0[1] * 0.07 * W], post: Pt = [U[0] + d1[0] * 0.05 * W, U[1] + d1[1] * 0.05 * W];
     xOut = W * 0.3;
-    const pts: Pt[] = [start, [start[0] + 0.35 * dx, start[1] + 0.04 * dy], [start[0] + 0.78 * dx, start[1] + 0.32 * dy], [start[0] + 0.98 * dx, start[1] + 0.72 * dy]];
+    const pts: Pt[] = [start, [lerp(start[0], pre[0], 0.3), lerp(start[1], pre[1], 0.03)], [lerp(start[0], pre[0], 0.66), lerp(start[1], pre[1], 0.26)], [lerp(start[0], pre[0], 0.93), lerp(start[1], pre[1], 0.7)], pre];
     pts.push(...arc(FROM, TO, LIFT, 26));
     const down = H - U[1];
-    pts.push([U[0] - 0.012 * W, U[1] + 0.25 * down], [lerp(U[0], xOut, 0.5), U[1] + 0.62 * down], [xOut, H + 2]);
+    pts.push(post, [post[0] - 0.01 * W, U[1] + 0.3 * down], [lerp(post[0], xOut, 0.45), U[1] + 0.62 * down], [xOut, H - 0.12 * down], [xOut, H + 2]);   // leaves straight down, where the page's line picks it up
     const d = smoothPath(pts);
     core.setAttribute("d", d); glow.setAttribute("d", d);
     L = core.getTotalLength();
@@ -220,7 +225,7 @@ export function createFlight(root: HTMLElement): Flight {
     svg.setAttribute("viewBox", `${(cx - W / (2 * z)).toFixed(2)} ${(cy - H / (2 * z)).toFixed(2)} ${(W / z).toFixed(2)} ${(H / z).toFixed(2)}`);
     const sigFrom = Lsig * sstep(0, T.heroOut, p), sigTo = Lsig * written;
     for (const g of segs) dashWindow(g.els, g.len, clamp(sigFrom - g.off, 0, g.len), clamp(sigTo - g.off, 0, g.len));
-    dashWindow([core, glow], L, 0, len);
+    dashWindow([core, glow], L, Math.min(len, LB * sstep(T.zoomIn[0] + 0.03, T.zoomIn[1] + 0.05, p)), len);   // the first leg retracts to Budapest once the camera is close
     head.classList.toggle("on", len > 2 && len < L - 2);
     if (len > 0) head.setAttribute("transform", `translate(${headPt[0].toFixed(1)} ${headPt[1].toFixed(1)})`);
     veil.style.opacity = (1 - zc).toFixed(3);
@@ -296,7 +301,7 @@ export function createFlight(root: HTMLElement): Flight {
 
     // city labels ride with the camera
     const place = (elx: HTMLElement, c: Pt, dxp: number) => { elx.style.transform = `translate(${(sx(c[0]) + dxp).toFixed(1)}px, ${(sy(c[1]) - 34).toFixed(1)}px)`; };
-    place(labelFrom, cities[FROM], band ? -84 : 16); place(labelTo, cities[TO], 16);
+    place(labelFrom, cities[FROM], -(labelFrom.offsetWidth + 18)); place(labelTo, cities[TO], 16);
 
     // headline letters catch the light of a passing comet (wide shot, pointer devices)
     if (hover && !still) {

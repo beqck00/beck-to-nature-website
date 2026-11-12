@@ -61,7 +61,7 @@ export function createScenes(page: HTMLElement): () => void {
     });
     light(".story-result");
     fadeUp("#cases .text-cta");
-    fadeUp(".foot");
+    all(".foot").forEach((f) => gsap.from(f, { autoAlpha: 0, duration: 0.9, ease: "power2.out", scrollTrigger: { trigger: f, start: "top 100%", toggleActions: play } }));   // at the very bottom, so it must trigger as soon as it shows
   }, page);
 
   return () => ctx.revert();
