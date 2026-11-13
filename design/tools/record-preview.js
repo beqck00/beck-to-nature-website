@@ -36,7 +36,7 @@ const URL = 'http://localhost:3210/', OUT = path.join(__dirname, '..', 'preview'
     await p.evaluate((v) => scrollTo(0, v), y); cur = y; await p.waitForTimeout(2200); await shot(name);
   }
   // the journey's sections are reached through the menu, as a visitor would
-  for (const [name, hash] of [['specialties', '#specialties'], ['founder', '#founder'], ['inquiry', '#inquiry']]) { await p.click(`.nav-links a[href="${hash}"]`); await p.waitForTimeout(5000); await shot(name); }
+  for (const [name, hash] of [['ildi', '#ildi'], ['expertise', '#expertise'], ['inquiry', '#inquiry'], ['track-record', '#cases']]) { await p.click(`.nav-links a[href="${hash}"]`); await p.waitForTimeout(5000); await shot(name); }
   const j = await p.evaluate(() => document.querySelector('.journey').getBoundingClientRect().top + scrollY);
   await p.evaluate((v) => scrollTo(0, v), j + 900 * 1.02); await p.waitForTimeout(2500); await shot('travel');            // between two sections, pulled back
   await p.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await p.waitForTimeout(6000); await shot('closing-signature');
