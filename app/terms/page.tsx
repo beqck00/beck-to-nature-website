@@ -103,7 +103,7 @@ export default function TermsPage() {
       <h2>10. Notice for California users</h2>
       <p>
         Under California Civil Code section 1789.3, California users are entitled to the following notice. The Site is provided
-        by {LEGAL_NAME}, <Ph>[street address, Hartland, Wisconsin, ZIP, USA]</Ph>. The Site is free to use. To make a complaint about the Site or to ask for
+        by {LEGAL_NAME}, <Ph>[street address]</Ph>, Wake Forest, North Carolina, USA. The Site is free to use. To make a complaint about the Site or to ask for
         more information, write to that address or to <Mail />. You may also contact the Complaint Assistance Unit of the Division of Consumer Services of the
         California Department of Consumer Affairs at 1625 North Market Blvd., Suite N 112, Sacramento, CA 95834, or by telephone at (800) 952-5210.
       </p>
@@ -116,9 +116,9 @@ export default function TermsPage() {
       <p>
         <b>11.2 Governing law and courts.</b> These Terms, and any dispute arising from or related to them or the Site, are governed by the laws of the State
         of {LEGAL_STATE}, without regard to its conflict-of-law rules. Any such dispute will be brought only in the state or federal courts located
-        in <Ph>[Waukesha County, Wisconsin]</Ph>, and you and we consent to the jurisdiction of those courts. Either of us may still ask any court with
+        in <Ph>[Wake County, North Carolina]</Ph>, and you and we consent to the jurisdiction of those courts. Either of us may still ask any court with
         jurisdiction for an injunction or similar relief to protect intellectual property, or bring an individual claim in small claims
-        court. <Ph>[Decide with a lawyer: the state and county, and whether to add the template&rsquo;s arbitration clause with jury-trial and class-action
+        court. <Ph>[Decide with a lawyer: the county, and whether to add the template&rsquo;s arbitration clause with jury-trial and class-action
         waivers.]</Ph>
       </p>
       <p>
@@ -145,7 +145,7 @@ export default function TermsPage() {
         <b>11.8 Copyright and trademarks.</b> Copyright © 2026 {LEGAL_NAME}. All rights reserved. The Beck To Nature name and logo are our trademarks and may
         not be used without our written permission.
       </p>
-      <p><b>11.9 Contact.</b> Questions about these Terms: <Mail />, or by post at <Ph>[street address, Hartland, Wisconsin, ZIP, USA]</Ph>.</p>
+      <p><b>11.9 Contact.</b> Questions about these Terms: <Mail />, or by post at <Ph>[street address]</Ph>, Wake Forest, North Carolina, USA.</p>
     </LegalPage>
   );
 }

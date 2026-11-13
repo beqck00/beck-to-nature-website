@@ -3,16 +3,22 @@ import Inquiry from "@/components/Inquiry";
 import { Ph } from "@/components/Ph";
 
 const Arrow = () => <svg className="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
-const Check = () => <span className="ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8.5" /></svg></span>;
+// What Ildi brings, one row each: the area, and the proof (from her own account of her work).
+const DEPTH: [string, string][] = [
+  ["Medical technology and pharma", "Eleven years at GE HealthCare, first in Wisconsin, then in global roles."],
+  ["AI and medical software", "Led an AI program that outlines organs on CT scans for radiotherapy, and supported its FDA 510(k) preparation. Built and led a 26-person data team."],
+  ["Regulated consumer products", "Took a crib mattress through US lab testing, labelling and annual registrations, and kept it compliant."],
+  ["Trade shows and buyers", "Booths, buyer meetings and follow-up at CES, ABC Kids Expo and shows of more than 35,000 people."],
+];
 
-type Tier = { name: string; show: React.ReactNode; points: React.ReactNode[]; featured?: boolean };
-const TIERS: Tier[] = [
-  { name: "Software", show: <Ph>[Show]</Ph>,
-    points: [<Ph key="a">[Typical buyers]</Ph>, <Ph key="b">[What we prepare]</Ph>, "Buyers booked before you fly"] },
-  { name: "Medical & healthcare", show: <Ph>[RSNA]</Ph>, featured: true,
-    points: [<Ph key="a">[Distributors, hospital buyers]</Ph>, <Ph key="b">[Regulatory partners]</Ph>, "Booth ready before you fly"] },
-  { name: "Hardware", show: <Ph>[Show]</Ph>,
-    points: [<Ph key="a">[Typical buyers]</Ph>, <Ph key="b">[What we prepare]</Ph>, "Every lead followed up"] },
+// Her record, as short facts. Client names are as she gave them; confirm each one may be named before launch.
+const STORIES: { result: string; who: string; show: string; what: string }[] = [
+  { result: "A Hungarian crib mattress, sold in the US under a Los Angeles brand.", who: "Natural coconut-fibre crib mattresses · Hungary, then Slovenia", show: "ABC Kids Expo, Las Vegas and Nashville; New York; Atlanta",
+    what: "Online sales first, then a private-label deal with a Los Angeles crib maker and container shipments from Slovenia. US testing, labelling and registrations throughout." },
+  { result: "A Hungarian medtech startup in front of buyers at CES.", who: "Heartbit · Medical technology", show: "CES, Las Vegas",
+    what: "Prepared the show, the marketing and the meetings with buyers at the booth." },
+  { result: "Two Hungarian baby brands tested on the US market.", who: "Bebeyo and Nosiboo · Baby products", show: "ABC Kids Expo, Las Vegas",
+    what: "Showed Bebeyo’s first version on the Beck To Nature booth to gauge US interest, and helped Nosiboo run its own booth." },
 ];
 
 export default function Home() {
@@ -29,7 +35,7 @@ export default function Home() {
             <img className="fig" src="/logo/figure-cream.svg" alt="" width="22" height="27" /><img className="wm" src="/logo/wordmark-cream.svg" alt="" width="67" height="32" />
           </a>
           <nav className="nav-links" aria-label="Sections">
-            <a href="#why">Why trade shows</a><a href="#specialties">Specialties</a><a href="#founder">Our founder</a><a href="#inquiry">Inquiry</a><a href="#cases">Case stories</a>
+            <a href="#why">Why trade shows</a><a href="#ildi">Ildi Beck</a><a href="#expertise">Expertise</a><a href="#inquiry">Inquiry</a><a href="#cases">Track record</a>
           </nav>
           <a className="btn btn-main btn-sm" href="#inquiry">Start your inquiry</a>
         </div>
@@ -54,8 +60,6 @@ export default function Home() {
               <div className="flight-says" aria-hidden="true">
                 <p className="say">One booth.</p><p className="say">One week.</p><p className="say">A clear answer.</p>
               </div>
-              <p className="fl-label" data-city="from" aria-hidden="true">Budapest</p>
-              <p className="fl-label" data-city="to" aria-hidden="true">Chicago</p>
             </div>
             <div className="flight-land frame" id="why">
               <div className="why2">
@@ -78,47 +82,31 @@ export default function Home() {
           <g className="t-head"><circle r="12" fill="url(#cityglow)" opacity=".7" /></g>
         </svg>
 
-        <section className="sec frame scene" id="specialties" aria-labelledby="sp-h">
-          <div className="sec-head center">
-            <h2 id="sp-h">Where we specialize.</h2>
-            <p data-r>Three industries where we go deepest.</p>
+        <section className="sec frame scene" id="ildi" aria-labelledby="il-h">
+          <div className="sec-head">
+            <h2 id="il-h">Dr. Ildikó Beck.</h2>
+            <p data-r>Twenty years of taking regulated products to new markets, eleven of them at GE HealthCare.</p>
           </div>
-          <div className="trio">
-            {TIERS.map((t) => (
-              <article key={t.name} className={t.featured ? "tri lead" : "tri"} data-r>
-                <div className="tri-head">
-                  <h3>{t.name}</h3>
-                  {t.featured && <span className="tri-tag">Most experience</span>}
-                </div>
-                <p className="tri-big">{t.show}</p><p className="tri-small">Usual first show</p>
-                <ul>{t.points.map((p, i) => <li key={i}><Check />{p}</li>)}</ul>
-                <a className={t.featured ? "btn btn-main" : "btn btn-ghost"} href="#inquiry" data-industry={t.name}>Start your inquiry</a>
-              </article>
-            ))}
+          <div className="ildi">
+            <div className="portrait" data-r role="img" aria-label="Photo of Ildikó Beck (placeholder)"><span>[Photo of Ildi]</span></div>
+            <dl className="facts" data-r>
+              <div><dt>Role</dt><dd>Founder and managing director, Beck To Nature</dd></div>
+              <div><dt>In the US market</dt><dd>Since 2004</dd></div>
+              <div><dt>GE HealthCare</dt><dd>11 years, in Wisconsin and in global roles</dd></div>
+              <div><dt>Education</dt><dd>PhD in chemical engineering, Budapest University of Technology</dd></div>
+              <div><dt>Citizenship</dt><dd>American</dd></div>
+              <div><dt>AmCham Hungary</dt><dd>Board member, 2018 to 2022</dd></div>
+            </dl>
           </div>
         </section>
 
-        <section className="sec frame scene" id="founder" aria-labelledby="fo-h">
-          <div className="founder">
-            <div className="portrait" data-r role="img" aria-label="Founder photo placeholder"><span>[Founder photo]</span></div>
-            <div className="founder-text">
-              <h2 id="fo-h">Our founder.</h2>
-              <p className="f-name" data-r><Ph>[Founder name]</Ph><span className="f-role">Founder of Beck To Nature</span></p>
-              <p className="f-quote" data-r>&ldquo;<Ph>[One sentence from the founder on why Beck To Nature exists.]</Ph>&rdquo;</p>
-            </div>
-          </div>
-          <div className="essay">
-            <div data-r><h3>Why</h3><p><Ph>[Why the founder started Beck To Nature.]</Ph></p></div>
-            <div data-r><h3>How</h3><p><Ph>[How Beck To Nature works with a client.]</Ph></p></div>
-            <div data-r><h3>Experience</h3><p><Ph>[The founder&rsquo;s background, years, shows attended, languages.]</Ph></p></div>
-            <div data-r><h3>Mission &amp; vision</h3><p><Ph>[Mission.]</Ph> <Ph>[Vision.]</Ph></p></div>
-          </div>
-          <div className="promise" data-r>
-            <p className="promise-k">What you get</p>
-            <p className="promise-t"><Ph>[What clients get from Beck To Nature, in one or two strong sentences.]</Ph></p>
-            <div className="f-links"><a href="#founder"><Ph>[LinkedIn]</Ph></a><a href="#founder"><Ph>[Instagram]</Ph></a><a href="#founder"><Ph>[Other link]</Ph></a></div>
-            <a className="btn btn-main to-inquiry" href="#inquiry">Work with us <Arrow /></a>
-          </div>
+        <section className="sec frame scene" id="expertise" aria-labelledby="ex-h">
+          <div className="sec-head"><h2 id="ex-h">Where she goes deepest.</h2></div>
+          <ul className="rows">
+            {DEPTH.map(([area, proof]) => <li key={area} data-r><h3>{area}</h3><p>{proof}</p></li>)}
+          </ul>
+          <p className="method" data-r>She opens doors from nothing: trade shows, industry associations and universities. Then she follows every lead.</p>
+          <a className="btn btn-main to-inquiry" href="#inquiry" data-r>Work with Ildi <Arrow /></a>
         </section>
 
         <section className="sec frame scene" id="inquiry" aria-labelledby="iq-h">
@@ -134,11 +122,11 @@ export default function Home() {
 
         <div className="scene" id="close">
         <section className="sec frame" id="cases" aria-labelledby="cs-h">
-          <div className="sec-head"><h2 id="cs-h">Two stories.</h2></div>
-          {[0, 1].map((i) => (
-            <div className="story" key={i} data-r>
-              <p className="story-result"><Ph>[The result, in one line.]</Ph></p>
-              <div className="story-facts"><p><Ph>[Company]</Ph> · <Ph>[Industry]</Ph></p><p><Ph>[Which US show]</Ph></p><p className="muted"><Ph>[Where they started, what changed.]</Ph></p></div>
+          <div className="sec-head"><h2 id="cs-h">What she has done.</h2></div>
+          {STORIES.map((st) => (
+            <div className="story" key={st.who} data-r>
+              <p className="story-result">{st.result}</p>
+              <div className="story-facts"><p>{st.who}</p><p>{st.show}</p><p className="muted">{st.what}</p></div>
             </div>
           ))}
           <a className="text-cta" href="#inquiry" data-r>Write your own story <Arrow /></a>
@@ -147,7 +135,7 @@ export default function Home() {
         <footer className="frame" id="foot">
           <div className="end-sig" role="img" aria-label="Beck signature" />
           <div className="foot" data-r>
-            <span>© 2026 Beck To Nature · <Ph>[Hartland, Wisconsin]</Ph> · Budapest · hello@becktonature.com</span>
+            <span>© 2026 Beck To Nature LLC · Wake Forest, North Carolina · hello@becktonature.com</span>
             <nav aria-label="Legal"><a href="/privacy">Privacy policy</a><a href="/cookies">Cookie notice</a><a href="/terms">Terms</a></nav>
           </div>
         </footer>

@@ -3,8 +3,8 @@
 import { Ph } from "./Ph";
 
 export { Ph };
-export const LEGAL_NAME = <Ph>[Beck To Nature LLC]</Ph>;
-export const LEGAL_STATE = <Ph>[Wisconsin]</Ph>;
+export const LEGAL_NAME = <>Beck To Nature LLC</>;
+export const LEGAL_STATE = <>North Carolina</>;
 export const SITE = <Ph>[becktonature.com]</Ph>;
 export const EMAIL = "hello@becktonature.com";
 export const Mail = () => <a href={`mailto:${EMAIL}`}>{EMAIL}</a>;
@@ -33,7 +33,7 @@ export default function LegalPage({ title, updated, children }: { title: string;
       </main>
       <footer className="legal-foot">
         <div className="foot">
-          <span>© 2026 Beck To Nature · <Ph>[Hartland, Wisconsin]</Ph> · Budapest · {EMAIL}</span>
+          <span>© 2026 Beck To Nature LLC · Wake Forest, North Carolina · {EMAIL}</span>
           <nav aria-label="Legal"><a href="/privacy">Privacy policy</a><a href="/cookies">Cookie notice</a><a href="/terms">Terms</a></nav>
         </div>
       </footer>

@@ -5,8 +5,8 @@ export const CONTACT_EMAIL = "hello@becktonature.com";
 
 export const INDUSTRIES: [string, string][] = [
   ["Medical & healthcare", "Devices, diagnostics, care"],
-  ["Software", "Platforms, apps, SaaS"],
-  ["Hardware", "Devices, machinery, components"],
+  ["Software and AI", "Platforms, apps, AI"],
+  ["Consumer products", "Products for homes and families"],
   ["Something else", "Tell us more later"],
 ];
 export const STAGES: [string, string][] = [

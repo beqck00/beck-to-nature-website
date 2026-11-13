@@ -24,7 +24,7 @@ export default function PrivacyPage() {
       <h2>Who we are and how to reach us</h2>
       <p>
         Beck To Nature decides how and why your personal information is used. You can reach us at <Mail /> or by post
-        at <Ph>[street address, Hartland, Wisconsin, ZIP, USA]</Ph>.
+        at <Ph>[street address]</Ph>, Wake Forest, North Carolina, USA.
       </p>
 
       <h2>Personal information we collect</h2>
@@ -236,7 +236,7 @@ export default function PrivacyPage() {
       </p>
 
       <h2>Contact us</h2>
-      <p>Questions about this policy or your personal information: <Mail />, or by post at <Ph>[street address, Hartland, Wisconsin, ZIP, USA]</Ph>.</p>
+      <p>Questions about this policy or your personal information: <Mail />, or by post at <Ph>[street address]</Ph>, Wake Forest, North Carolina, USA.</p>
     </LegalPage>
   );
 }

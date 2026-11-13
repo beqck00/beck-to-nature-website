@@ -93,13 +93,13 @@ export function createJourney(page: HTMLElement): Journey {
 
     // the line: a few points it passes through in a set direction, joined by long curves
     const E: Pt = [0.97, 0.24], Wd: Pt = [-0.97, 0.24], DOWN: Pt = [0, 1], LEFT: Pt = [-1, 0], ARC = 0.5523;
-    const sp = box(q("#specialties")), spHead = box(q("#specialties .sec-head")), trio = box(q(".trio"));
-    const fo = box(q("#founder")), essay = box(q(".essay")), iqHead = box(q(".iq-head")), wiz = box(q("#wiz")), cases = box(q("#cases"));
+    const sp = box(q("#ildi")), spHead = box(q("#ildi .sec-head")), trio = box(q(".ildi"));
+    const fo = box(q("#expertise")), essay = box(q(".rows")), iqHead = box(q(".iq-head")), wiz = box(q("#wiz")), cases = box(q("#cases"));
     const pad = (W - w) / 2 + parseFloat(getComputedStyle(scenes[0]).paddingLeft);
     const knots: Knot[] = [
       { p: [startX, 0], d: DOWN },
-      { p: [sp.cx, (spHead.bottom + trio.top) / 2], d: E },                       // across specialties, between the heading and the cards
-      { p: [fo.right - pad - (fo.w - 2 * pad) * (narrow ? 0.02 : 0.07), essay.cy], d: DOWN },   // down the right of the founder's texts
+      { p: [sp.cx, (spHead.bottom + trio.top) / 2], d: E },                       // across Ildi's section, between the heading and her photo and facts
+      { p: [fo.right - pad - (fo.w - 2 * pad) * (narrow ? 0.02 : 0.07), essay.cy], d: DOWN },   // down the right of the expertise rows
       { p: [fo.cx, fo.bottom + (narrow ? 44 : 56)], d: LEFT },                    // and away to the left below them
       { p: [wiz.cx, (iqHead.bottom + wiz.top) / 2], d: Wd },                      // across the inquiry, above the form
       { p: narrow ? [W * 0.8, cases.top + cases.h * 0.45] : [cases.left + pad + (cases.w - 2 * pad) * 0.555, cases.cy], d: DOWN },   // between a story and its facts
@@ -124,7 +124,7 @@ export function createJourney(page: HTMLElement): Journey {
     const lenOf = (i: number) => (Lc * i) / N;
     const nearest = (p: Pt) => { let best = 0, bd = 1e12; pts.forEach((s, i) => { const dd = (s[0] - p[0]) ** 2 + (s[1] - p[1]) ** 2; if (dd < bd) { bd = dd; best = i; } }); return best; };
     const inside = (p: Pt, cx: number, cy: number) => Math.abs(p[0] - cx) < W / 2 - 20 && Math.abs(p[1] - cy) < H / 2 - 20;
-    const mids = [1, 3, 4, 5].map((k) => nearest(knots[k].p));          // specialties, founder (its lower point), inquiry, stories
+    const mids = [1, 3, 4, 5].map((k) => nearest(knots[k].p));          // Ildi, expertise (its lower point), inquiry, stories
 
     // the scroll script
     segs = []; stops = [];

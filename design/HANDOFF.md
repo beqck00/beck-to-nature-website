@@ -6,7 +6,7 @@ Last updated: 2026-11-12, after the journey rebuild and its zoom and easing revi
 
 ## What the site is
 
-Beck To Nature takes Central European manufacturers to US trade shows. It is run by one person, but the site speaks as a company ("we", "our founder"). The company will be a **US-based LLC** (state not confirmed; the drafts use `[Wisconsin]` as a placeholder).
+Beck To Nature takes Central European manufacturers to US trade shows. It is run by one person, but the site speaks as a company ("we", "our founder"). The company is **Beck To Nature LLC**, a North Carolina LLC (formed 2011, active again from November 2026), led by Dr. Ildikó Beck.
 
 ## What is being built right now
 
@@ -61,6 +61,18 @@ The owner shared three references (20 UX and animation principles, 22 background
 
 **The artifact copy** (a self-contained copy of the site published as a Claude artifact) was tried on 2026-11-13. The owner found it poor, so it was removed from the repo (it is in git history at f666f5b). Show the site with videos instead (`design/tools/record-preview.js`).
 
+## Added on 2026-11-13: the site is built around Ildi Beck
+
+The owner sent a document about Dr. Ildikó Beck (the company is built around her) and asked to use it to rethink the site, to drop the three specialty cards ("AI-ish"), and to stop showing the Budapest and Chicago labels during the flight.
+
+- **New order below the flight:** Ildi (photo, one line, her facts as label/value rows) → Where she goes deepest (four rows, area and proof, no cards, then one line on how she works and "Work with Ildi") → the inquiry → What she has done (three real stories) → footer.
+- **Facts used** (from her document): founder and managing director; in the US market since 2004; 11 years at GE HealthCare, 2004 to 2009 in Wisconsin and then in global roles; PhD in chemical engineering, Budapest University of Technology, 2007; American citizen; AmCham Hungary board member 2018 to 2022; led an AI program for organ outlining on CT for radiotherapy and supported its FDA 510(k) preparation; built and led a 26-person data team; crib mattresses through CPSC-accepted lab testing, labelling and registrations; ABC Kids Expo (Las Vegas, Nashville), New York, Atlanta; Heartbit at CES; Bebeyo and Nosiboo at ABC Kids Expo.
+- **Not used on purpose:** anything about the LiveStocker grant application (a client's confidential project), the company's street address, and her personal email.
+- **To confirm with Ildi before launch:** that Heartbit, Bebeyo and Nosiboo may be named; her photo; whether the street address (Wake Forest, NC) may appear in the legal pages (they now say Beck To Nature LLC, North Carolina, with the street as a placeholder).
+- **The form's industries** now follow her expertise: Medical & healthcare, Software and AI, Consumer products, Something else.
+- **Flight:** the Budapest and Chicago labels are gone.
+- **Nav:** Why trade shows, Ildi Beck, Expertise, Inquiry, Track record.
+
 ## What the owner taught (read before designing anything)
 
 Collected from the whole conversation with the owner, so a new session does not have to rediscover it.
@@ -85,7 +97,7 @@ Collected from the whole conversation with the owner, so a new session does not 
 **Content and voice**
 - Company voice: "we", "our founder", never "I" or "my". Never claim "we'll be at your booth".
 - Every section leads to the inquiry. No pricing, FAQ, logo strip or testimonials.
-- Specialties: Medical & healthcare (featured, middle), Software, Hardware.
+- The site is built around Dr. Ildikó Beck: her record is the proof. No three-card layouts ("AI-ish"); use rows, facts and real stories.
 - US-based LLC; legal drafts need a lawyer.
 
 **The inquiry form (the main call to action)**

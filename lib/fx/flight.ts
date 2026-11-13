@@ -58,7 +58,6 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   const sigG = q<SVGGElement>(".t-sig"), head = q<SVGGElement>(".t-head");
   const h1 = q<HTMLElement>("h1"), cue = q<HTMLElement>(".cue"), land = q<HTMLElement>(".flight-land");
   const says = [...root.querySelectorAll<HTMLElement>(".say")];
-  const labelFrom = q<HTMLElement>('.fl-label[data-city="from"]'), labelTo = q<HTMLElement>('.fl-label[data-city="to"]');
   const ctx = canvas.getContext("2d")!;
   const hover = !matchMedia("(hover: none), (pointer: coarse)").matches;
 
@@ -112,13 +111,11 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   let tl: gsap.core.Timeline | null = null;
   function timeline() {
     tl?.kill();
-    gsap.set([h1, cue, land, ...says, labelFrom, labelTo], { clearProps: "all" });
+    gsap.set([h1, cue, land, ...says], { clearProps: "all" });
     state.dim = 1;
     const t = gsap.timeline({ paused: true, defaults: { ease: "none" } });
     t.to(h1, { yPercent: -40, autoAlpha: 0, duration: T.heroOut - 0.01, ease: "expo.in" }, 0.004);
     t.to(cue, { autoAlpha: 0, duration: 0.03 }, 0);
-    t.fromTo(labelFrom, { opacity: 0 }, { opacity: 1, duration: 0.04 }, T.zoomIn[0] + 0.02).to(labelFrom, { opacity: 0, duration: 0.04 }, T.zoomIn[1] + 0.04);
-    t.fromTo(labelTo, { opacity: 0 }, { opacity: 1, duration: 0.04 }, T.zoomOut[0] - 0.05).to(labelTo, { opacity: 0, duration: 0.05 }, T.land + 0.01);
     says.forEach((el, i) => {
       const at = T.says[i], w = splitWords(el, "rise");
       t.fromTo(el, { autoAlpha: 0, y: 0 }, { autoAlpha: 1, duration: 0.004 }, at);
@@ -317,9 +314,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     });
     ctx.globalAlpha = 1;
 
-    // city labels ride with the camera
     const place = (elx: HTMLElement, c: Pt, dxp: number) => { elx.style.transform = `translate(${(sx(c[0]) + dxp).toFixed(1)}px, ${(sy(c[1]) - 34).toFixed(1)}px)`; };
-    place(labelFrom, cities[FROM], -(labelFrom.offsetWidth + 18)); place(labelTo, cities[TO], 16);
 
     // headline letters catch the light of a passing comet (wide shot, pointer devices)
     if (hover && !still) {
