@@ -157,6 +157,8 @@ export default function Inquiry() {
     [`Name: ${a.name.trim()}`, `Email: ${a.email.trim()}`, `Phone: ${a.phone.trim()}`, ...rows.map(([k, v]) => `${k}: ${v}`)].join("\n"))}`, [a]); // eslint-disable-line react-hooks/exhaustive-deps
   const map = useMemo(() => [...EUROPE].sort((x, y) => Number(x.name === a.country) - Number(y.name === a.country)), [a.country]);
   const stepClass = `step${dir < 0 ? " back" : ""}`;
+  const trail = ([[0, a.industry], [1, a.name.trim()], [2, a.stage], [3, a.us], [4, step > 4 ? `In ${a.months} months` : ""]] as [number, string][]).filter(([i, v]) => i < step && v);
+  const okPhone = a.phone.replace(/\D/g, "").length >= 6, okEmail = isEmail(a.email);
 
   return (
     <>
@@ -167,6 +169,13 @@ export default function Inquiry() {
           <ol className="dots" aria-hidden="true">{Array.from({ length: STEPS }, (_, i) => <li key={i} className={i === step ? "cur" : i < step ? "done" : undefined} />)}</ol>
         </div>
 
+        {/* what they have answered so far, so nobody has to go back just to check; each answer reopens its question */}
+        {trail.length > 0 && (
+          <ol className="trail" aria-label="Your answers so far">
+            {trail.map(([i, v]) => <li key={i}><button type="button" onClick={() => show(i, -1)} aria-label={`Change: ${v}`}>{v}</button></li>)}
+          </ol>
+        )}
+
         <div key={step} ref={stepEl} className={stepClass}>
           {step === 0 && (
             <fieldset className="set"><legend className="q">What does your company make?</legend>
@@ -176,9 +185,9 @@ export default function Inquiry() {
             <p className="q">Where can we reach you?<small>We save these details when you continue, so we can follow up even if you stop here.</small></p>
             <div className="row2">
               <div className="fld"><label htmlFor={`${id}-name`}>Your name</label><input id={`${id}-name`} autoComplete="name" value={a.name} onChange={(e) => set("name", e.target.value)} /></div>
-              <div className="fld"><label htmlFor={`${id}-phone`}>Phone</label><input id={`${id}-phone`} type="tel" autoComplete="tel" placeholder="+36 …" value={a.phone} onChange={(e) => set("phone", e.target.value)} /></div>
+              <div className="fld"><label htmlFor={`${id}-phone`}>Phone</label><span className="ok-wrap"><input id={`${id}-phone`} type="tel" autoComplete="tel" placeholder="+36 …" value={a.phone} onChange={(e) => set("phone", e.target.value)} />{okPhone && <i className="okmark" aria-hidden="true" />}</span></div>
             </div>
-            <div className="fld"><label htmlFor={`${id}-email`}>Work email</label><input id={`${id}-email`} type="email" autoComplete="email" placeholder="name@company.com" value={a.email} onChange={(e) => set("email", e.target.value)} /></div>
+            <div className="fld"><label htmlFor={`${id}-email`}>Work email</label><span className="ok-wrap"><input id={`${id}-email`} type="email" autoComplete="email" placeholder="name@company.com" value={a.email} onChange={(e) => set("email", e.target.value.trim())} />{okEmail && <i className="okmark" aria-hidden="true" />}</span></div>
             <label className="consent"><input type="checkbox" checked={a.sms} onChange={(e) => set("sms", e.target.checked)} />
               <span>Text me about this inquiry.<small>Optional. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. Agreeing is not a condition of working with us.</small></span></label>
             <div className="hp" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={a.website} onChange={(e) => set("website", e.target.value)} /></label></div>

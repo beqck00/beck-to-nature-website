@@ -50,6 +50,17 @@ Asked for by the founder: rework the spacing, remove the "AI clutter", and make 
 - Kept at that point: the onyx and the line lighting content as it passes (both removed in the journey pass), the fine stroke with a subtle glow.
 - `design/preview/` was re-recorded after this pass.
 
+## Added on 2026-11-13: principles pass and the artifact copy
+
+The owner shared three references (20 UX and animation principles, 22 backgrounds to make designs less flat, and a Revolut form breakdown with "show the value in the row, group, make risky things obvious"). Applied:
+
+- **Form, Revolut-style:** the answers so far sit as a row of small values above the question; each one reopens its question (show the value, don't make people go back to check). Phone and email show a small check once they will work. Steps change in 280ms (was 480).
+- **Feedback:** buttons squash quickly when pressed and spring back (anticipation, follow-through, under 300ms); the check on a picked answer pops (squash and stretch, exaggerated feedback). Links in the menu and footer have bigger hit areas than they look (Fitts).
+- **Less flat:** a fine speckle over the whole page, drawn with an SVG noise filter inside the CSS (no image file, no outside request). Off with reduced motion.
+- Kept from the "frequency of use" rule: nothing that is used often (menu, links) animates on hover beyond a colour change.
+
+**The artifact copy.** `node design/tools/build-artifact.mjs` (after `npm run build`) writes a self-contained copy of the site to `design/artifact/`: the home page with styles, fonts and logos inline and one script (the same `Experience` and `Inquiry` components bundled with React by esbuild), plus the three legal pages. It is published as a Claude artifact at https://claude.ai/artifact/XiBr7WSHuWYBszFpvG39Zk (private to the owner's account). The copy cannot send the form; it ends with "open in your email app". Re-run the script and republish after changes to the site.
+
 ## Status
 
 | Piece | State |

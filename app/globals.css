@@ -191,11 +191,11 @@ form.wiz{position:relative;z-index:3;padding:clamp(24px,3vw,48px);display:grid;g
 .dots{list-style:none;display:flex;gap:6px;margin:0;padding:0}
 .dots li{width:28px;height:4px;border-radius:2px;background:#2C2A27;transition:background-color 400ms var(--ease)}
 .dots li.cur{background:#7A6748}.dots li.done{background:var(--cream)}
-.step{display:grid;gap:16px;min-width:0;animation:stepIn 480ms var(--ease) both}
+.step{display:grid;gap:16px;min-width:0;animation:stepIn 280ms var(--ease) both}
 .set{border:0;margin:0;padding:0;min-width:0}
 .step.back{animation-name:stepBack}
-@keyframes stepIn{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
-@keyframes stepBack{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+@keyframes stepIn{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+@keyframes stepBack{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
 .step.shake{animation:shake 420ms cubic-bezier(.36,.07,.19,.97)}
 @keyframes shake{20%,80%{transform:translateX(-4px)}35%,65%{transform:translateX(6px)}50%{transform:translateX(-6px)}}
 .q{font-size:clamp(28px,2.8vw,40px);letter-spacing:-.01em;line-height:1.15;margin:0 0 8px;padding:0}
@@ -334,3 +334,31 @@ legend.q+*{clear:both}
 .legal-foot .foot{max-width:1344px;margin:0 auto}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:1ms!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* ── after the UX and animation principles the owner shared ─────────────────────────────────────────── */
+/* less flat: a fine speckle over the black, drawn in the page (no image file, no request) */
+body::after{content:"";position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.07;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .86 0 0 0 0 .7 0 0 0 1.6 -.55'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* buttons: a quick squash when pressed, a spring back when released (anticipation, follow-through), under 300ms */
+.btn{transition:transform 260ms cubic-bezier(.34,1.56,.64,1),box-shadow 200ms var(--ease),background-color 150ms var(--ease)}
+.btn:active{transform:scale(.95);transition-duration:90ms}
+/* bigger hit areas than they look */
+.nav-links a,.foot a{position:relative}
+.nav-links a::after,.foot a::after{content:"";position:absolute;inset:-8px -6px}
+/* the check pops when an answer is picked (squash and stretch, exaggerated feedback) */
+.chip input:checked+span .mark{animation:pop 300ms cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+.chip span{transition:box-shadow 160ms,background-color 160ms,transform 260ms cubic-bezier(.34,1.56,.64,1)}
+.chip span:active{transform:scale(.97);transition-duration:90ms}
+/* answers so far: one quiet row of values above the question; each reopens its question */
+.trail{list-style:none;margin:0 0 -6px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.trail button{min-height:36px;padding:0 14px;border:0;border-radius:999px;background:#1E1C1A;color:var(--ink-2);font:inherit;font-size:16px;cursor:pointer;transition:background-color 150ms,color 150ms}
+.trail button:hover{background:#2A2724;color:var(--ink)}
+.trail li{animation:trailIn 260ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes trailIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+/* a field shows a small check once what is in it will work */
+.ok-wrap{position:relative;display:block}
+.okmark{position:absolute;right:14px;top:50%;width:20px;height:20px;margin-top:-10px;border-radius:50%;background:var(--cream);animation:pop 300ms cubic-bezier(.34,1.56,.64,1)}
+.okmark::after{content:"";position:absolute;left:7px;top:4px;width:5px;height:9px;border:solid var(--on-brass);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ok-wrap input{padding-right:46px}
+@media (prefers-reduced-motion:reduce){body::after{display:none}}
