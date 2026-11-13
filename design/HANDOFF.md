@@ -59,7 +59,72 @@ The owner shared three references (20 UX and animation principles, 22 background
 - **Less flat:** a fine speckle over the whole page, drawn with an SVG noise filter inside the CSS (no image file, no outside request). Off with reduced motion.
 - Kept from the "frequency of use" rule: nothing that is used often (menu, links) animates on hover beyond a colour change.
 
-**The artifact copy.** `node design/tools/build-artifact.mjs` (after `npm run build`) writes a self-contained copy of the site to `design/artifact/`: the home page with styles, fonts and logos inline and one script (the same `Experience` and `Inquiry` components bundled with React by esbuild), plus the three legal pages. It is published as a Claude artifact at https://claude.ai/artifact/XiBr7WSHuWYBszFpvG39Zk (private to the owner's account). The copy cannot send the form; it ends with "open in your email app". Re-run the script and republish after changes to the site.
+**The artifact copy** (a self-contained copy of the site published as a Claude artifact) was tried on 2026-11-13. The owner found it poor, so it was removed from the repo (it is in git history at f666f5b). Show the site with videos instead (`design/tools/record-preview.js`).
+
+## What the owner taught (read before designing anything)
+
+Collected from the whole conversation with the owner, so a new session does not have to rediscover it.
+
+**Motion**
+- Never linear. Everything eases: out (fast, then slower) for things arriving, in-out (slow, fast, slower) for moves between states. In code: `expoOut` / `expoInOut` in `lib/fx/util.ts`, `--ease` in CSS, `expo.out` in GSAP.
+- The 20 principles the owner shared (Disney's 12, Laws of UX, Emil Kowalski): squash and stretch; anticipation (a small pull back before a big move); staging (one focus at a time); pose to pose; follow-through (parts settle after the main body stops); slow in and slow out; move in arcs, not straight lines; secondary action (a small flourish that backs up the main one); snappy timing (UI feedback under 300ms); exaggerated feedback (push past real so the moment lands); solid drawing (depth and volume); overall appeal; Fitts's law (bigger, closer targets); bigger hit areas than they look; Hick's law (fewer choices); Miller's law (chunk into about 7); Doherty threshold (respond within 400ms); Postel's law (accept messy input, give back clean output); Jakob's law (work like the sites people already use); frequency of use (the more often something is used, the less it should animate).
+- Scrolling should feel like a journey: the line follows you; between sections it runs out of frame while the view zooms in, then the view settles out onto the next section. Little empty space while travelling. It should make people want to keep scrolling, never feel boring.
+
+**The gold line**
+- Starts from the hero "Beck" signature; ends by writing the closing signature bottom left, joined at the B.
+- Smooth and calm: no loops, no zigzag, no sharp or tight turns anywhere (a minimum turn radius is enforced).
+- May pass behind text and under cards; does not wrap around the inquiry card.
+- Fine stroke with a subtle glow; lights things as it passes; follows faster when you scroll faster.
+
+**Look**
+- Black with brass and cream, EB Garamond. No onyx (the owner went back and forth; the current decision is none). No glows, drop shadows or gradients on cards; solid tone-on-tone panels.
+- Less flat backgrounds are welcome when subtle. The owner's list of ideas: felt, fluted glass, thermal gradients, water ripples, speckled graphite (in use), single-hue landscapes, blueprint grids, halftone, grainy gradients, grass, dithered images, paper, contour lines, cloud sky, pixel mosaics, lens distortion, stippled gradients, square-dot grids (the dotted map), blurred photos, iridescent shapes, impressionist paintings, ASCII and pixels.
+- Uncluttered, generous but not empty spacing; short text ("people won't read it"); italic accent words only in "to America." and "inquiry.".
+- Text easy to read: body 18px or more, light greys on black.
+
+**Content and voice**
+- Company voice: "we", "our founder", never "I" or "my". Never claim "we'll be at your booth".
+- Every section leads to the inquiry. No pricing, FAQ, logo strip or testimonials.
+- Specialties: Medical & healthcare (featured, middle), Software, Hardware.
+- US-based LLC; legal drafts need a lawyer.
+
+**The inquiry form (the main call to action)**
+- One question at a time, six steps; choice cards with a title, a muted subtitle and a corner check.
+- Revolut-style: show the value already given instead of making people check; group things; one clear next action; risky things look risky; every small interaction reduces effort and builds confidence.
+
+**Working with the owner**
+- Show progress as a video of the site (desktop and phone), not an artifact.
+- Upload everything to GitHub as you go, so the other two people can continue when credits run out. Keep this file current.
+
+## Task list for the next session (for Claude Fable)
+
+The owner will switch to Claude Fable and say "continue". Work down this list; tick items off here (change `[ ]` to `[x]`) and push after each one. Record a video at the end and send it.
+
+### Heavy work (for Fable)
+
+1. [ ] **Review the whole scroll against the 20 principles**, frame by frame on desktop and phone (record, then step through the video). Fix every linear or abrupt move, every place where two things compete for attention (staging), and every pause with nothing on screen.
+2. [ ] **The journey's zoom, tuned by eye.** Each handover between sections: the line darts out of frame, the view closes in fast then slower, rides the line, and pulls back slowly onto the next section. Check the amounts (`zoom`, `CLOSE_IN`, `PULL_BACK`, `TRAVEL` in `lib/fx/journey.ts`) so it feels lively but never seasick, and that there is always something on screen (the dot field, the line's head, the next section arriving).
+3. [ ] **Anticipation and follow-through in the journey.** A slight pull back of the view before it closes in (anticipation); after it settles on a section, let the section's parts arrive a beat apart and settle (follow-through, secondary action). Keep each under a second.
+4. [ ] **Move in arcs.** Section parts that rise in should travel on a slight curve, not straight up. The camera's path between sections should curve, not cut diagonally.
+5. [ ] **Line geometry check.** Measure the tightest turn of both lines (flight and journey) on desktop, a 1024px laptop and a phone; keep it at or above the current minimums. Make sure the line never crosses a word in a heading.
+6. [ ] **The form, Revolut breakdown applied fully.** Bigger, calmer type for the question; the answer row grouped and readable; a clear "ready" state on Continue once the step is valid; Enter always moves on; the phone field accepts any format and shows it back cleanly (Postel); the dial and map feel physical (squash on grab, settle on release). Test every step with keyboard only, mouse, and touch.
+7. [ ] **A second background texture, carefully.** Try one more of the owner's "less flat" ideas where it supports the story, for example faint contour lines or a blueprint grid behind the inquiry, or stippled grain on the founder section. Subtle; no new requests to other sites; record before and after for the owner.
+8. [ ] **Solid drawing and overall appeal.** Give the specialty cards and the form a sense of depth without glows or shadows (tone steps, edges, the way they move on hover and press).
+9. [ ] **Performance.** Smooth scrolling on a mid-range laptop and phone: profile the flight's canvas and the journey; cut work per frame where it stutters. The Doherty threshold applies to every response.
+10. [ ] **Real devices.** If a device or browser preview is available, check iPhone Safari (pinned stages and the address bar), Android Chrome, desktop Safari and Firefox. Note anything that cannot be checked.
+
+### Light work (done on 2026-11-13, before switching)
+
+- [x] Videos instead of artifacts: rule added to `CLAUDE.md`; the artifact copy removed.
+- [x] Fresh recordings in `design/preview/`.
+- [x] Progress dots on the form react in 240ms (UI feedback under 300ms).
+- [x] Earlier the same day: answers-so-far row in the form, checks on valid phone and email, press squash on buttons, pop on picked answers, bigger hit areas on small links, speckled-graphite texture.
+
+### Waiting on the owner (nobody can do these without them)
+
+- Founder name, photo, quote and four short texts; the two case stories; the show names on the specialty cards.
+- The LLC's legal name, state and address; a lawyer's review of the legal pages.
+- Hosting (Vercel suggested), an email account for the form (Resend), an SMS provider if texts are wanted.
 
 ## Status
 

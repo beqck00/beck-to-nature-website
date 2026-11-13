@@ -189,7 +189,7 @@ button{font:inherit}
 form.wiz{position:relative;z-index:3;padding:clamp(24px,3vw,48px);display:grid;gap:24px;align-content:start;border-radius:28px;background:var(--k3);box-shadow:inset 0 0 0 1px rgba(240,220,180,.12)}
 .wiz-top{display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--ink-2);white-space:nowrap;margin-bottom:-8px}
 .dots{list-style:none;display:flex;gap:6px;margin:0;padding:0}
-.dots li{width:28px;height:4px;border-radius:2px;background:#2C2A27;transition:background-color 400ms var(--ease)}
+.dots li{width:28px;height:4px;border-radius:2px;background:#2C2A27;transition:background-color 240ms var(--ease)}
 .dots li.cur{background:#7A6748}.dots li.done{background:var(--cream)}
 .step{display:grid;gap:16px;min-width:0;animation:stepIn 280ms var(--ease) both}
 .set{border:0;margin:0;padding:0;min-width:0}
