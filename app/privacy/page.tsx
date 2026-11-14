@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage, { LEGAL_NAME, LEGAL_STATE, Mail, Ph, SITE } from "@/components/LegalPage";
+import { at } from "@/lib/base";
 
 export const metadata: Metadata = { title: "Privacy policy · Beck To Nature", description: "How Beck To Nature collects, uses and protects personal information." };
 
@@ -53,7 +54,7 @@ export default function PrivacyPage() {
           last 10 minutes. The count is held in memory only and is not written to disk.
         </li>
       </ul>
-      <p>We do not use cookies, analytics, advertising pixels or similar tracking technologies on the Site. See our <a href="/cookies">cookie notice</a>.</p>
+      <p>We do not use cookies, analytics, advertising pixels or similar tracking technologies on the Site. See our <a href={at("/cookies")}>cookie notice</a>.</p>
       <h3>Information from others</h3>
       <p>
         Occasionally a client, a trade show organizer or another business contact introduces a company to us and passes on a person&rsquo;s business contact

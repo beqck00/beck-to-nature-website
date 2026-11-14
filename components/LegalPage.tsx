@@ -1,6 +1,7 @@
 // Shared layout for the legal pages (privacy policy, cookie notice, terms of use), in the site's dark style.
 // Drafted from General Legal's CC0 templates (see .claude/skills/legal-templates) and adapted for a U.S. LLC.
 import { Ph } from "./Ph";
+import { at } from "@/lib/base";
 
 export { Ph };
 export const LEGAL_NAME = <>Beck To Nature LLC</>;
@@ -14,10 +15,10 @@ export default function LegalPage({ title, updated, children }: { title: string;
     <div className="legal-page">
       <header className="legal-top">
         <div className="legal-top-in">
-          <a className="brand" href="/" aria-label="Beck To Nature, home">
-            <img className="fig" src="/logo/figure-cream.svg" alt="" width="22" height="27" /><img className="wm" src="/logo/wordmark-cream.svg" alt="" width="67" height="32" />
+          <a className="brand" href={at("/")} aria-label="Beck To Nature, home">
+            <img className="fig" src={at("/logo/figure-cream.svg")} alt="" width="22" height="27" /><img className="wm" src={at("/logo/wordmark-cream.svg")} alt="" width="67" height="32" />
           </a>
-          <nav aria-label="Site"><a href="/">Back to the site</a></nav>
+          <nav aria-label="Site"><a href={at("/")}>Back to the site</a></nav>
         </div>
       </header>
       <main className="legal-doc">
@@ -34,7 +35,7 @@ export default function LegalPage({ title, updated, children }: { title: string;
       <footer className="legal-foot">
         <div className="foot">
           <span>© 2026 Beck To Nature LLC · Wake Forest, North Carolina · {EMAIL}</span>
-          <nav aria-label="Legal"><a href="/privacy">Privacy policy</a><a href="/cookies">Cookie notice</a><a href="/terms">Terms</a></nav>
+          <nav aria-label="Legal"><a href={at("/privacy")}>Privacy policy</a><a href={at("/cookies")}>Cookie notice</a><a href={at("/terms")}>Terms</a></nav>
         </div>
       </footer>
     </div>

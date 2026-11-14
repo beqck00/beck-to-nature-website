@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage, { LEGAL_NAME, LEGAL_STATE, Mail, Ph, SITE } from "@/components/LegalPage";
+import { at } from "@/lib/base";
 
 export const metadata: Metadata = { title: "Terms of use · Beck To Nature", description: "The terms that apply when you use Beck To Nature's website." };
 
@@ -46,7 +47,7 @@ export default function TermsPage() {
         confidentiality agreement in place. We are glad to sign one first. Until then, we treat what you send us with care but without a duty of
         confidentiality.
       </p>
-      <p><b>2.4 Text messages.</b> If you agree on the inquiry form to receive text messages, the terms in our <a href="/privacy#texts">privacy policy</a> apply. You can reply STOP at any time.</p>
+      <p><b>2.4 Text messages.</b> If you agree on the inquiry form to receive text messages, the terms in our <a href={at("/privacy#texts")}>privacy policy</a> apply. You can reply STOP at any time.</p>
 
       <h2>3. Ownership and feedback</h2>
       <p>
@@ -57,7 +58,7 @@ export default function TermsPage() {
 
       <h2>4. Privacy</h2>
       <p>
-        Our <a href="/privacy">privacy policy</a> explains how we handle personal information, and our <a href="/cookies">cookie notice</a> explains our use
+        Our <a href={at("/privacy")}>privacy policy</a> explains how we handle personal information, and our <a href={at("/cookies")}>cookie notice</a> explains our use
         of cookies (currently none). If these Terms and the privacy policy conflict about how we handle personal information, the privacy policy applies.
       </p>
 

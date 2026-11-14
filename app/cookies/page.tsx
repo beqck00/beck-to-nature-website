@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage, { LEGAL_NAME, LEGAL_STATE, Mail, Ph, SITE } from "@/components/LegalPage";
+import { at } from "@/lib/base";
 
 export const metadata: Metadata = { title: "Cookie notice · Beck To Nature", description: "Beck To Nature's website does not use cookies or tracking technologies." };
 
@@ -48,7 +49,7 @@ export default function CookiesPage() {
       </p>
       <p>
         Like every website, the Site&rsquo;s hosting provider receives basic technical information, such as your IP address, when your browser requests a
-        page. That is not a cookie. Our <a href="/privacy">privacy policy</a> explains how this information is handled.
+        page. That is not a cookie. Our <a href={at("/privacy")}>privacy policy</a> explains how this information is handled.
       </p>
 
       <h2>Your choices</h2>

@@ -1,6 +1,7 @@
 import Experience from "@/components/Experience";
 import Inquiry from "@/components/Inquiry";
 import { Ph } from "@/components/Ph";
+import { at } from "@/lib/base";
 
 const Arrow = () => <svg className="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
 // What Ildi brings, one row each: the area, and the proof (from her own account of her work).
@@ -32,7 +33,7 @@ export default function Home() {
       <header className="nav frame">
         <div className="nav-inner">
           <a className="brand" href="#top" aria-label="Beck To Nature, back to top">
-            <img className="fig" src="/logo/figure-cream.svg" alt="" width="22" height="27" /><img className="wm" src="/logo/wordmark-cream.svg" alt="" width="67" height="32" />
+            <img className="fig" src={at("/logo/figure-cream.svg")} alt="" width="22" height="27" /><img className="wm" src={at("/logo/wordmark-cream.svg")} alt="" width="67" height="32" />
           </a>
           <nav className="nav-links" aria-label="Sections">
             <a href="#why">Why trade shows</a><a href="#ildi">Ildi Beck</a><a href="#expertise">Expertise</a><a href="#inquiry">Inquiry</a><a href="#cases">Track record</a>
@@ -136,7 +137,7 @@ export default function Home() {
           <div className="end-sig" role="img" aria-label="Beck signature" />
           <div className="foot" data-r>
             <span>© 2026 Beck To Nature LLC · Wake Forest, North Carolina · hello@becktonature.com</span>
-            <nav aria-label="Legal"><a href="/privacy">Privacy policy</a><a href="/cookies">Cookie notice</a><a href="/terms">Terms</a></nav>
+            <nav aria-label="Legal"><a href={at("/privacy")}>Privacy policy</a><a href={at("/cookies")}>Cookie notice</a><a href={at("/terms")}>Terms</a></nav>
           </div>
         </footer>
         </div>

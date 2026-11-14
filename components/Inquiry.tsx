@@ -10,6 +10,7 @@ import { EUROPE, EUROPE_VIEWBOX } from "@/lib/data/europe";
 import { CONTACT_EMAIL, INDUSTRIES, isEmail, STAGES, US_HISTORY } from "@/lib/inquiry";
 import { mountDial } from "@/lib/dial";
 import { Ph } from "./Ph";
+import { at, STATIC_HOST } from "@/lib/base";
 
 const STEPS = 6;
 const COUNTRIES = EUROPE.filter((c) => c.pick).map((c) => c.name).sort();
@@ -63,7 +64,8 @@ export default function Inquiry() {
 
   const post = useCallback(async (s: Answers, partial: boolean) => {
     visit.current ||= crypto.randomUUID();
-    const res = await fetch("/api/inquiry", {
+    if (STATIC_HOST) return false;                                          // no server here: the form ends with "open in your email app"
+    const res = await fetch(at("/api/inquiry"), {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...s, name: s.name.trim(), email: s.email.trim(), phone: s.phone.trim(), company: s.company.trim(), id: visit.current, partial }),
     });
@@ -232,7 +234,7 @@ export default function Inquiry() {
             ? <button type="button" className="btn btn-main next" onClick={() => go(a, step)}>Continue</button>
             : <button type="submit" className="btn btn-main next" disabled={busy}>{busy ? "Sending…" : "Send inquiry"}</button>}
         </div>
-        <p className="note">Your answers go to our founder, not to a mailing list. See our <a href="/privacy">privacy policy</a>.</p>
+        <p className="note">Your answers go to our founder, not to a mailing list. See our <a href={at("/privacy")}>privacy policy</a>.</p>
       </form>
 
       {outcome && createPortal(

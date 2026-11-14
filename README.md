@@ -1,6 +1,6 @@
 # Beck To Nature website
 
-Next.js 16 with GSAP for the scroll experience. Read `design/HANDOFF.md` for the current state and what is left to do.
+Next.js 16 with GSAP for the scroll experience. Live at https://beqck00.github.io/beck-to-nature-website/ (GitHub Pages, published on every push to `main`). Read `design/HANDOFF.md` for the current state and what is left to do.
 
 ## Run it locally
 
