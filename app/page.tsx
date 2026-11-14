@@ -123,7 +123,7 @@ export default function Home() {
 
         <div className="scene" id="close">
         <section className="sec frame" id="cases" aria-labelledby="cs-h">
-          <div className="sec-head"><h2 id="cs-h">What she has done.</h2></div>
+          <div className="sec-head"><h2 id="cs-h">Selected engagements.</h2></div>
           {STORIES.map((st) => (
             <div className="story" key={st.who} data-r>
               <p className="story-result">{st.result}</p>
