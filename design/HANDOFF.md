@@ -76,7 +76,7 @@ The owner sent a document about Dr. Ildikó Beck (the company is built around he
 ## Hosting: GitHub Pages (added 2026-11-14)
 
 - `.github/workflows/pages.yml` builds a static copy on every push to `main` and publishes it to https://beqck00.github.io/beck-to-nature-website/.
-- One-time setup by the repository owner: Settings -> Pages -> Build and deployment -> Source: **GitHub Actions**. Until that is set, the workflow's deploy step fails.
+- **Live since 2026-11-16.** The repository is public and Pages is set to Source: GitHub Actions (both done by the owner). Every push to `main` redeploys in about two minutes.
 - The static copy is built with `GITHUB_PAGES=1` (see `next.config.ts`): Next's static export under the `/beck-to-nature-website` base path, trailing slashes, and without `app/api` (the workflow deletes it before building).
 - **The form cannot send on GitHub Pages** (there is no server). It ends with "open in your email app", with the answers filled in. To have it send, host on something with a server (e.g. Vercel) or point the form at a form service, and update the privacy policy to name it.
 - Every root-relative link or image path must go through `at()` from `lib/base.ts`, or it breaks under the base path. With a custom domain (e.g. becktonature.com) set `PAGES_BASE_PATH` to an empty string in the workflow.
