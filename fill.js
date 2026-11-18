@@ -36,7 +36,7 @@ await sleep(2500);
 await pick('Category', L.category);
 const isbn=await waitFor(()=>document.querySelector('input[name=isbn]'),5000);
 if(isbn&&L.isbn){ if(isbn.value!==L.isbn){ isbn.focus(); setVal(isbn,L.isbn); await sleep(2500);} log.push('isbn '+isbn.value);}
-await pick('Language', L.language);
+if(L.isbn) await pick('Language', L.language);
 await pick('Condition', L.condition);
 const price=await waitFor(()=>document.querySelector('input[name=price]'));
 price.focus(); setVal(price,String(L.price)); await sleep(500);
