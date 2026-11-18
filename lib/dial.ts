@@ -50,7 +50,22 @@ export function mountDial(
     }
     track.setAttribute("aria-valuenow", String(value)); track.setAttribute("aria-valuetext", `${value} months`);
   };
-  const cl = (p: number) => Math.min(MAX * STEP + STEP * 0.4, Math.max(MIN * STEP - STEP * 0.4, p));
+  // past either end the dial resists more the further it is pulled (rubber band), and never goes past STEP * 0.6
+  const lo = MIN * STEP, hi = MAX * STEP, give = STEP * 0.6;
+  const band = (p: number) => p > hi ? hi + give * (1 - Math.exp(-(p - hi) / give)) : p < lo ? lo - give * (1 - Math.exp(-(lo - p) / give)) : p;
+  // a spring with no bounce that starts at the speed the finger let go (px per ms), so a flick carries straight into the settle
+  const spring = (t: number, v0: number) => {
+    cancelAnimationFrame(raf);
+    if (reduce) { pos = t; render(); return; }
+    let x = pos, v = v0 * 1000, last = performance.now();
+    const w = 13;                                                        // stiffness: settles in about half a second, critically damped
+    const st = (now: number) => {
+      const dt = Math.min(0.032, (now - last) / 1000); last = now;
+      v += (-w * w * (x - t) - 2 * w * v) * dt; x += v * dt; pos = x; render();
+      if (Math.abs(x - t) > 0.3 || Math.abs(v) > 6) raf = requestAnimationFrame(st); else { pos = t; render(); }
+    };
+    raf = requestAnimationFrame(st);
+  };
   const to = (t: number, dur = 250) => {
     cancelAnimationFrame(raf);
     if (reduce) { pos = t; render(); return; }
@@ -60,10 +75,10 @@ export function mountDial(
   };
   const snap = () => to(Math.min(MAX, Math.max(MIN, Math.round(pos / STEP))) * STEP);
 
-  let drag = false, lx = 0, sx = 0, sy = 0, t0 = 0, moved = 0, hist: [number, number][] = [];
-  const begin = (x: number, y: number) => { drag = true; cancelAnimationFrame(raf); lx = sx = x; sy = y; t0 = performance.now(); moved = 0; hist = [[t0, pos]]; };
+  let drag = false, lx = 0, sx = 0, sy = 0, t0 = 0, moved = 0, raw = 0, hist: [number, number][] = [];
+  const begin = (x: number, y: number) => { drag = true; cancelAnimationFrame(raf); lx = sx = x; sy = y; t0 = performance.now(); moved = 0; raw = pos; hist = [[t0, pos]]; };
   const move = (x: number) => {
-    const dx = x - lx; lx = x; moved += Math.abs(dx); pos = cl(pos - dx);
+    const dx = x - lx; lx = x; moved += Math.abs(dx); raw -= dx; pos = band(raw);
     const now = performance.now(); hist.push([now, pos]);
     while (hist.length > 2 && now - hist[0][0] > 90) hist.shift();
     render();
@@ -77,10 +92,9 @@ export function mountDial(
     }
     const [ta, pa] = hist[0], [tb, pb] = hist[hist.length - 1];
     const vel = now - tb > 70 || tb - ta < 8 ? 0 : (pb - pa) / (tb - ta);
-    if (reduce || Math.abs(vel) < 0.08) return snap();
-    let v = Math.max(-2.4, Math.min(2.4, vel)) * 14;
-    const glide = () => { v *= 0.9; pos = cl(pos + v); render(); if (Math.abs(v) > 0.5 && pos > MIN * STEP - 18 && pos < MAX * STEP + 18) raf = requestAnimationFrame(glide); else snap(); };
-    raf = requestAnimationFrame(glide);
+    // where a flick would come to rest, rounded to a month; the spring takes it there from the release speed
+    const v = Math.max(-2.4, Math.min(2.4, vel)), aim = Math.min(MAX, Math.max(MIN, Math.round((pos + v * 140) / STEP))) * STEP;
+    spring(aim, v);
   };
 
   const ac = new AbortController(), on = { signal: ac.signal };

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import EndBounce from "@/components/EndBounce";
 
 // EB Garamond, served from this site (no third-party font requests).
 const garamond = localFont({
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   icons: { icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/logo/favicon-gold.svg` },
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#0A0A0A", colorScheme: "dark" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#121211", colorScheme: "dark" };
 
 // Runs before the first paint: "fx" switches the scroll experience on, unless the visitor asked for reduced motion.
 const boot = `(function(){var d=document.documentElement;d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('fx')})()`;
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={garamond.variable} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: boot }} /></head>
-      <body>{children}</body>
+      <body>{children}<EndBounce /></body>
     </html>
   );
 }

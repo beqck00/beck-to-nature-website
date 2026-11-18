@@ -266,3 +266,22 @@ Contract templates (mutual and one-way NDA, master services agreement, EU and US
 - The landing after the flight now shows one centred sentence ("Put your product in front of American buyers *before* you commit to America."); the "One booth. One week. A clear answer." heading beside it was removed (the three statements still play during the flight).
 - The map's fade at the bottom of the flight is now a mask on the map canvas, not a dark overlay, so there is no visible seam where the flight meets the next section.
 - Some items in the Fable task list above (journey zoom tuning) no longer apply.
+
+## Added on 2026-11-18: animation rules and grey dark mode (from the owner; apply them to every UI)
+
+**Animation rules**
+- Entrances start from scale 0.97 and opacity 0, never from scale 0 (section blocks, the "thank you" card, the answer chips).
+- Buttons scale to 0.97 while pressed (`transition: transform 150ms ease-out`). No bounce on everyday UI.
+- A wrong answer shakes the step (translateX 0, -10, 10, -6, 6, -3, 0px over 360ms) *and* turns the field red (`.step.bad`).
+- Steppers slide the next step in from the direction you are going (the form already does: `stepIn` / `stepBack`).
+- Accordions: `:root { interpolate-size: allow-keywords }` is set, so `height: auto` animates.
+- Move things with transform, never top or left (the skip link now slides with transform).
+- Theme switches: turn transitions off while switching (`.theme-switching * { transition: none !important }`). The site has no theme switch today.
+- Tooltips: delay only the first one; once one is open, show the rest instantly. (No tooltips today.)
+- Flicks and drags hand off to a spring that keeps the release speed, not a fixed-length tween: the month dial does this (`spring()` in `lib/dial.ts`).
+- Past either end of a drag (the dial, any future carousel), resistance grows the further you pull, then it springs back (`band()` in `lib/dial.ts`).
+- **The end of every page gives a little:** scroll past the bottom and the last part lifts with growing resistance, then springs back, so the page reads as ended, not frozen (`lib/fx/endBounce.ts`, elements marked `data-bounce`). Apple devices do this natively, so it is left to them there; off with reduced motion.
+
+**Dark mode: grey, not black.** White text on pure black seems to vibrate and shadows vanish. The field is now dark grey (`--k1` #121211, page gradient #0F0F0E to #161514). Layers get lighter the higher they sit, like stacked layers under a flashlight: page `--k1`, cards `--k3` (#1C1B1A), things on a card `--k4` (#242321: answer chips, inputs), selected chips and sheets `--k5` (#2E2C29: the "thank you" card), with the page dimmed behind a sheet. Shadows may stay, but they never separate layers on their own.
+
+**Other notes from the same message:** a play button's triangle should be nudged slightly right so it looks centred (none on the site yet). For settings-style lists: group rows under titles, show the current value in the row, an arrow means "opens a screen", and a destructive action (such as delete account) is red, at the bottom, with no arrow.

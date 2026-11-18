@@ -70,7 +70,7 @@ export default function Home() {
         </section>
 
         {/* below the flight: an ordinary page; the gold line draws itself down it as you scroll */}
-        <svg className="thread" aria-hidden="true">
+        <svg className="thread" aria-hidden="true" data-bounce>
           <path className="t-glow" /><path className="t-core" /><g className="t-end" />
           <g className="t-head"><circle r="12" fill="url(#cityglow)" opacity=".7" /></g>
         </svg>
@@ -113,7 +113,7 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="scene" id="close">
+        <div className="scene" id="close" data-bounce>
         <section className="sec frame" id="cases" aria-labelledby="cs-h">
           <div className="sec-head"><h2 id="cs-h">Selected engagements.</h2></div>
           {STORIES.map((st) => (

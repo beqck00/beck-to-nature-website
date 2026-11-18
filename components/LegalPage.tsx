@@ -21,7 +21,7 @@ export default function LegalPage({ title, updated, children }: { title: string;
           <nav aria-label="Site"><a href={at("/")}>Back to the site</a></nav>
         </div>
       </header>
-      <main className="legal-doc">
+      <main className="legal-doc" data-bounce>
         <p className="eyebrow">Website policy</p>
         <h1>{title}</h1>
         <p className="updated">Last updated: {updated}</p>
@@ -32,7 +32,7 @@ export default function LegalPage({ title, updated, children }: { title: string;
           and General Legal has not reviewed, and takes no position on, any changes made to it.
         </p>
       </main>
-      <footer className="legal-foot">
+      <footer className="legal-foot" data-bounce>
         <div className="foot">
           <span>© 2026 Beck To Nature LLC · Wake Forest, North Carolina · {EMAIL}</span>
           <nav aria-label="Legal"><a href={at("/privacy")}>Privacy policy</a><a href={at("/cookies")}>Cookie notice</a><a href={at("/terms")}>Terms</a></nav>

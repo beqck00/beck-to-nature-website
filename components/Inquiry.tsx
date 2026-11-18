@@ -46,7 +46,7 @@ export default function Inquiry() {
   const formRef = useRef<HTMLFormElement>(null);
   const advance = useRef(0);
   const stepEl = useRef<HTMLDivElement>(null);
-  const nudge = () => { const el = stepEl.current; if (!el) return; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); buzz([10, 40, 10]); };
+  const nudge = () => { buzz([10, 40, 10]); requestAnimationFrame(() => { const el = stepEl.current; if (!el) return; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }); };   // after React has re-rendered the step red
   const set = <K extends keyof Answers>(k: K, v: Answers[K]) => { setError(""); setA((s) => ({ ...s, [k]: v })); };
 
   const problem = useCallback((i: number, s: Answers): string => {
@@ -158,7 +158,7 @@ export default function Inquiry() {
   const mailto = useMemo(() => `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Inquiry from ${a.company.trim() || a.name.trim()}`)}&body=${encodeURIComponent(
     [`Name: ${a.name.trim()}`, `Email: ${a.email.trim()}`, `Phone: ${a.phone.trim()}`, ...rows.map(([k, v]) => `${k}: ${v}`)].join("\n"))}`, [a]); // eslint-disable-line react-hooks/exhaustive-deps
   const map = useMemo(() => [...EUROPE].sort((x, y) => Number(x.name === a.country) - Number(y.name === a.country)), [a.country]);
-  const stepClass = `step${dir < 0 ? " back" : ""}`;
+  const stepClass = `step${dir < 0 ? " back" : ""}${error ? " bad" : ""}`;
   const trail = ([[0, a.industry], [1, a.name.trim()], [2, a.stage], [3, a.us], [4, step > 4 ? `In ${a.months} months` : ""]] as [number, string][]).filter(([i, v]) => i < step && v);
   const okPhone = a.phone.replace(/\D/g, "").length >= 6, okEmail = isEmail(a.email);
 

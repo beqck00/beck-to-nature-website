@@ -4,13 +4,14 @@
    closing signature. Motion is added by JavaScript (html.fx); without it every section reads as a plain page. */
 :root{
   color-scheme:dark;
-  --k0:#050505;--k1:#0A0A0A;--k2:#111110;--k3:#161514;--k4:#1D1C1B;--k5:#252321;
+  --k0:#0E0E0D;--k1:#121211;--k2:#171716;--k3:#1C1B1A;--k4:#242321;--k5:#2E2C29;   /* dark grey, not black: k1 page, k3 cards, k4 things on cards, k5 sheets */
   --ink:#F1EADD;--ink-2:#D6CCBC;--ink-3:#B4A996;
   --cream:#EBD3A6;--cream-hi:#FBF1DE;--glow:240,198,130;
   --on-brass:#17120C;--signal:#E8B4A0;
   --font:var(--font-garamond),"EB Garamond",Garamond,"Times New Roman",serif;
   --r-pill:999px;--r-xl:28px;--r-lg:20px;--r-md:14px;
   --ease:cubic-bezier(.16,1,.3,1);
+  interpolate-size:allow-keywords;              /* lets height:auto animate (accordions) */
   --gl:max(20px,env(safe-area-inset-left,0px));--gr:max(20px,env(safe-area-inset-right,0px));
   --sec:clamp(120px,14vw,200px);--head:clamp(48px,6vw,80px);  /* space between sections; between a section's heading and its content */
   --flen:3.6;                                   /* how many screens of scrolling the opening flight takes */
@@ -19,7 +20,7 @@
 @media (max-width:700px){:root{--flen:3.1}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{overflow-x:clip;scroll-padding-top:96px;scrollbar-color:#2C2A27 #0A0A0A;-webkit-text-size-adjust:100%}
+html{overflow-x:clip;scroll-padding-top:96px;scrollbar-color:#3A3834 #121211;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--k1);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.5;font-variant-numeric:lining-nums;-webkit-font-smoothing:antialiased;overflow-x:clip}
 ::selection{background:var(--cream);color:#1A1006}
 :focus-visible{outline:2px solid var(--cream);outline-offset:3px;border-radius:8px}
@@ -34,18 +35,17 @@ button{font:inherit}
 .ph{color:var(--ink-3)}
 .ic{width:22px;height:22px;flex:none;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .muted{color:var(--ink-2)}
-.skip{position:fixed;left:16px;top:-80px;z-index:90;padding:10px 16px;border-radius:12px;background:var(--cream);color:var(--on-brass);text-decoration:none;transition:top 150ms}
-.skip:focus{top:16px}
+.skip{position:fixed;left:16px;top:16px;z-index:90;padding:10px 16px;border-radius:12px;background:var(--cream);color:var(--on-brass);text-decoration:none;transform:translateY(-120px);transition:transform 150ms ease-out}
+.skip:focus{transform:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 /* page field */
-.page{position:relative;isolation:isolate;overflow-x:clip;background:linear-gradient(180deg,#050505 0%,#0A0A0A 12%,#100F0E 34%,#0A0A0A 52%,#100F0E 72%,#0A0A0A 88%,#050505 100%)}
+.page{position:relative;isolation:isolate;overflow-x:clip;background:linear-gradient(180deg,#0F0F0E 0%,#121211 12%,#161514 34%,#121211 52%,#161514 72%,#121211 88%,#0F0F0E 100%)}
 .flight,.scene{position:relative;z-index:2}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:var(--r-pill);border:0;font:inherit;font-size:18px;cursor:pointer;text-decoration:none;white-space:nowrap;
   transition:transform 200ms var(--ease),box-shadow 250ms var(--ease),background-color 150ms var(--ease)}
-.btn:active{transform:translateY(1px) scale(.98)}
 .btn[disabled]{opacity:.6;cursor:progress}
 .btn .ic{transition:transform 250ms var(--ease)}
 .btn:hover .ic{transform:translateX(3px)}
@@ -55,15 +55,15 @@ button{font:inherit}
 .btn-main:hover{background:var(--cream-hi)}
 .btn-quiet{color:var(--ink);background:var(--k4);box-shadow:inset 0 1px 0 rgba(255,240,210,.06)}
 .btn-quiet:hover{background:var(--k5)}
-.btn-ghost{color:var(--ink);background:#0B0A09;box-shadow:inset 0 0 0 1px rgba(235,211,166,.24)}
-.btn-ghost:hover{background:#12110F;box-shadow:inset 0 0 0 1px rgba(235,211,166,.5)}
+.btn-ghost{color:var(--ink);background:var(--k2);box-shadow:inset 0 0 0 1px rgba(235,211,166,.24)}
+.btn-ghost:hover{background:var(--k3);box-shadow:inset 0 0 0 1px rgba(235,211,166,.5)}
 .text-cta{display:inline-flex;align-items:center;gap:12px;font-size:clamp(19px,1.6vw,22px);color:var(--cream);text-decoration:none}
 .text-cta .ic{width:24px;height:24px;transition:transform 300ms var(--ease)}
 .text-cta:hover .ic{transform:translateX(6px)}
 
 /* nav */
 .nav{position:fixed;left:0;right:0;top:0;z-index:50;width:100%;max-width:none;padding-top:calc(env(safe-area-inset-top,0px) + 12px);padding-bottom:28px;pointer-events:none;
-  background:linear-gradient(180deg,rgba(5,5,5,.96) 0%,rgba(5,5,5,.9) 58%,rgba(5,5,5,0) 100%)}
+  background:linear-gradient(180deg,rgba(18,18,17,.96) 0%,rgba(18,18,17,.9) 58%,rgba(18,18,17,0) 100%)}
 .nav-inner{display:flex;align-items:center;gap:24px;min-height:56px;max-width:calc(1240px - var(--gl) - var(--gr));margin-inline:auto;pointer-events:auto}
 .brand{display:flex;align-items:center;gap:10px;min-height:44px;text-decoration:none}
 .brand .fig{width:22px;height:auto}
@@ -118,7 +118,7 @@ button{font:inherit}
 .thread{position:absolute;left:0;top:0;z-index:1;pointer-events:none;overflow:visible}
 /* with motion, a section's parts rise in one after another as it scrolls into view (and go back when scrolled past upwards) */
 .fx .scene [data-r]{transition:opacity 900ms var(--ease),transform 900ms var(--ease);transition-delay:calc(var(--i,0) * 70ms + 120ms)}
-.fx .scene:not(.in) [data-r]{opacity:0;transform:translateY(32px);transition-delay:0ms}
+.fx .scene:not(.in) [data-r]{opacity:0;transform:translateY(24px) scale(.97);transition-delay:0ms}
 .fx .scene .wi{transition:transform 1000ms var(--ease);transition-delay:calc(var(--i,0) * 70ms)}
 .fx .scene:not(.in) .wi{transform:translateY(118%);transition-delay:0ms}
 .t-end .c{stroke:#F6E6C2;stroke-width:1.8}
@@ -162,15 +162,18 @@ button{font:inherit}
 form.wiz{position:relative;z-index:3;padding:clamp(24px,3vw,48px);display:grid;gap:24px;align-content:start;border-radius:28px;background:var(--k3);box-shadow:inset 0 0 0 1px rgba(240,220,180,.12)}
 .wiz-top{display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--ink-2);white-space:nowrap;margin-bottom:-8px}
 .dots{list-style:none;display:flex;gap:6px;margin:0;padding:0}
-.dots li{width:28px;height:4px;border-radius:2px;background:#2C2A27;transition:background-color 240ms var(--ease)}
+.dots li{width:28px;height:4px;border-radius:2px;background:#3A3834;transition:background-color 240ms var(--ease)}
 .dots li.cur{background:#7A6748}.dots li.done{background:var(--cream)}
 .step{display:grid;gap:16px;min-width:0;animation:stepIn 280ms var(--ease) both}
 .set{border:0;margin:0;padding:0;min-width:0}
 .step.back{animation-name:stepBack}
 @keyframes stepIn{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
 @keyframes stepBack{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
-.step.shake{animation:shake 420ms cubic-bezier(.36,.07,.19,.97)}
-@keyframes shake{20%,80%{transform:translateX(-4px)}35%,65%{transform:translateX(6px)}50%{transform:translateX(-6px)}}
+.step.shake{animation:shake 360ms ease-out}
+@keyframes shake{0%{transform:translateX(0)}16%{transform:translateX(-10px)}33%{transform:translateX(10px)}50%{transform:translateX(-6px)}66%{transform:translateX(6px)}83%{transform:translateX(-3px)}100%{transform:translateX(0)}}
+/* a wrong answer turns its field red as well as shaking it */
+.step.bad .fld input,.step.bad .fld select{box-shadow:inset 0 0 0 1.5px var(--signal)}
+.step.bad .chip span{box-shadow:inset 0 0 0 1px rgba(232,180,160,.55)}
 .q{font-size:clamp(28px,2.8vw,40px);letter-spacing:-.01em;line-height:1.15;margin:0 0 8px;padding:0}
 legend.q{float:left;width:100%;margin-bottom:24px}
 legend.q+*{clear:both}
@@ -178,20 +181,19 @@ legend.q+*{clear:both}
 .chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .chip{position:relative}
 .chip input{position:absolute;opacity:0;width:1px;height:1px}
-.chip span{position:relative;display:grid;gap:3px;align-content:center;min-height:84px;padding:16px 52px 16px 20px;border-radius:16px;background:#121110;box-shadow:inset 0 0 0 1px rgba(240,220,180,.1);cursor:pointer;transition:box-shadow 160ms,background-color 160ms,transform 200ms var(--ease)}
+.chip span{position:relative;display:grid;gap:3px;align-content:center;min-height:84px;padding:16px 52px 16px 20px;border-radius:16px;background:var(--k4);box-shadow:inset 0 0 0 1px rgba(240,220,180,.1);cursor:pointer;transition:box-shadow 160ms,background-color 160ms,transform 200ms var(--ease)}
 .chip span b{font-weight:400;color:var(--ink)}
 .chip span small{font-size:18px;color:var(--ink-3)}
 .chip span:hover{box-shadow:inset 0 0 0 1px rgba(240,220,180,.26)}
-.chip span:active{transform:scale(.98)}
 .chip .mark{position:absolute;top:16px;right:16px;width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(240,220,180,.25);transition:background-color 160ms,box-shadow 160ms}
-.chip input:checked+span{background:#1A1816;box-shadow:inset 0 0 0 1.5px rgba(235,211,166,.7)}
+.chip input:checked+span{background:var(--k5);box-shadow:inset 0 0 0 1.5px rgba(235,211,166,.7)}
 .chip input:checked+span .mark{box-shadow:none;background:var(--cream)}
 .chip input:checked+span .mark::after{content:"";position:absolute;left:7px;top:5px;width:6px;height:10px;border:solid #1A1006;border-width:0 2px 2px 0;transform:rotate(45deg)}
 .chip input:focus-visible+span{outline:2px solid var(--cream);outline-offset:3px}
 @media (max-width:560px){.chips{grid-template-columns:1fr}.chip span{min-height:72px}}
 .fld{display:grid;gap:8px;min-width:0}
 .fld label{color:var(--ink-3)}
-.fld input,.fld select{width:100%;min-height:48px;border-radius:14px;border:0;padding:12px 16px;font:inherit;color:var(--ink);background:#121110;box-shadow:inset 0 1px 2px rgba(0,0,0,.7),inset 0 0 0 1px rgba(240,220,180,.1);transition:box-shadow 150ms}
+.fld input,.fld select{width:100%;min-height:48px;border-radius:14px;border:0;padding:12px 16px;font:inherit;color:var(--ink);background:var(--k4);box-shadow:inset 0 1px 2px rgba(0,0,0,.45),inset 0 0 0 1px rgba(240,220,180,.1);transition:box-shadow 150ms}
 .fld input:focus,.fld select:focus{outline:none;box-shadow:inset 0 1px 2px rgba(0,0,0,.7),inset 0 0 0 1.5px rgba(235,211,166,.7)}
 .fld input::placeholder{color:#8F8573}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -228,8 +230,8 @@ legend.q+*{clear:both}
 /* country map */
 .eumap{position:relative;border-radius:var(--r-md);background:#0E0E0D;box-shadow:inset 0 0 0 1px rgba(240,220,180,.08);overflow:hidden}
 .eumap svg{display:block;width:100%;height:auto}
-.cty{fill:#141312;stroke:#0A0A0A;stroke-width:.8;transition:fill 150ms}
-.cty.sel{fill:#24221F;cursor:pointer}.cty.sel.c{fill:#2E2A25}.cty.sel:hover{fill:#5C4F3D}
+.cty{fill:#262422;stroke:var(--k3);stroke-width:.8;transition:fill 150ms}
+.cty.sel{fill:#3A3733;cursor:pointer}.cty.sel.c{fill:#46413A}.cty.sel:hover{fill:#5C4F3D}
 .cty.on{fill:#EBD3A6;stroke:#FFF4DC}
 .eu-picked{position:absolute;left:16px;bottom:12px;color:var(--ink-2);pointer-events:none}
 .eu-picked b{font-weight:400;color:var(--cream);font-size:20px}
@@ -237,7 +239,7 @@ legend.q+*{clear:both}
 .reward{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:24px;background:rgba(5,5,5,.78);opacity:0;transition:opacity 400ms var(--ease)}
 .reward.show{opacity:1}
 .reward canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.reward-card{position:relative;max-width:480px;width:100%;padding:44px 32px;display:grid;justify-items:center;text-align:center;gap:14px;transform:scale(.92) translateY(12px);transition:transform 600ms var(--ease)}
+.reward-card{position:relative;max-width:480px;width:100%;padding:44px 32px;display:grid;justify-items:center;text-align:center;gap:14px;transform:scale(.97);transition:transform 400ms var(--ease);background:var(--k5);border-radius:28px}
 .reward.show .reward-card{transform:none}
 .reward-card svg{width:84px;height:84px;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .reward-card circle{stroke:#C9A86E;stroke-width:2.5;stroke-dasharray:176;stroke-dashoffset:176;transition:stroke-dashoffset 700ms var(--ease) 150ms}
@@ -301,7 +303,7 @@ legend.q+*{clear:both}
 .tbl table{width:100%;border-collapse:collapse;font-size:18px}
 .tbl th,.tbl td{text-align:left;vertical-align:top;padding:12px 16px;border-bottom:1px solid rgba(240,220,180,.08)}
 .tbl tr:last-child td{border-bottom:0}
-.tbl th{background:#141312;font-weight:500}
+.tbl th{background:var(--k3);font-weight:500}
 .credit{margin-top:64px;padding-top:22px;border-top:1px solid rgba(240,220,180,.1);color:var(--ink-3);font-size:16px;line-height:1.5}
 .legal-foot{padding:28px var(--gr) 40px var(--gl);border-top:1px solid rgba(240,220,180,.08)}
 .legal-foot .foot{max-width:1344px;margin:0 auto}
@@ -312,23 +314,23 @@ legend.q+*{clear:both}
 /* less flat: a fine speckle over the black, drawn in the page (no image file, no request) */
 body::after{content:"";position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.07;mix-blend-mode:screen;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .86 0 0 0 0 .7 0 0 0 1.6 -.55'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
-/* buttons: a quick squash when pressed, a spring back when released (anticipation, follow-through), under 300ms */
-.btn{transition:transform 260ms cubic-bezier(.34,1.56,.64,1),box-shadow 200ms var(--ease),background-color 150ms var(--ease)}
-.btn:active{transform:scale(.95);transition-duration:90ms}
+/* buttons: press down to 0.97 and come back, ease-out, no bounce (everyday UI) */
+.btn{transition:transform 150ms ease-out,box-shadow 200ms var(--ease),background-color 150ms var(--ease)}
+.btn:active{transform:scale(.97)}
 /* bigger hit areas than they look */
 .nav-links a,.foot a{position:relative}
 .nav-links a::after,.foot a::after{content:"";position:absolute;inset:-8px -6px}
 /* the check pops when an answer is picked (squash and stretch, exaggerated feedback) */
 .chip input:checked+span .mark{animation:pop 300ms cubic-bezier(.34,1.56,.64,1)}
 @keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
-.chip span{transition:box-shadow 160ms,background-color 160ms,transform 260ms cubic-bezier(.34,1.56,.64,1)}
-.chip span:active{transform:scale(.97);transition-duration:90ms}
+.chip span{transition:box-shadow 160ms,background-color 160ms,transform 150ms ease-out}
+.chip span:active{transform:scale(.97)}
 /* answers so far: one quiet row of values above the question; each reopens its question */
 .trail{list-style:none;margin:0 0 -6px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.trail button{min-height:36px;padding:0 14px;border:0;border-radius:999px;background:#1E1C1A;color:var(--ink-2);font:inherit;font-size:16px;cursor:pointer;transition:background-color 150ms,color 150ms}
-.trail button:hover{background:#2A2724;color:var(--ink)}
-.trail li{animation:trailIn 260ms cubic-bezier(.34,1.56,.64,1) both}
-@keyframes trailIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.trail button{min-height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--k5);color:var(--ink-2);font:inherit;font-size:16px;cursor:pointer;transition:background-color 150ms,color 150ms}
+.trail button:hover{background:#383632;color:var(--ink)}
+.trail li{animation:trailIn 220ms ease-out both}
+@keyframes trailIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
 /* a field shows a small check once what is in it will work */
 .ok-wrap{position:relative;display:block}
 .okmark{position:absolute;right:14px;top:50%;width:20px;height:20px;margin-top:-10px;border-radius:50%;background:var(--cream);animation:pop 300ms cubic-bezier(.34,1.56,.64,1)}
