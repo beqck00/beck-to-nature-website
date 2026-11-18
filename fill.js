@@ -38,9 +38,11 @@ await pick('Language', L.language);
 await pick('Condition', L.condition);
 const price=await waitFor(()=>document.querySelector('input[name=price]'));
 price.focus(); setVal(price,String(L.price)); await sleep(500);
-const small=[...document.querySelectorAll('button')].find(b=>/^Small\b/.test(b.innerText.trim())); if(small){fireAll(small); log.push('small');}
+const small=[...document.querySelectorAll('[role=button],button')].find(b=>/^Small/.test((b.innerText||'').trim())); if(small){fireAll(small); await sleep(500); const rd=small.querySelector('input[type=radio]')||small.parentElement.querySelector('input[type=radio]'); log.push('small '+(rd&&rd.checked?'ok':'?'));}
 await sleep(800);
 const txt=document.querySelector('main').innerText;
+const okAll=!log.some(x=>/FAILED|no /.test(x));
+if(L.publish && okAll){const up=[...document.querySelectorAll('button')].find(b=>b.innerText.trim()==='Upload'); setTimeout(()=>up.click(),400); log.push('publishing');}
 return {log, summary:(txt.match(/Category\n.*|Language\n.*|Condition\n.*/g)||[]).join(' / '), price:price.value, errors:[...document.querySelectorAll('[class*=error], [class*=Error]')].map(e=>e.innerText).filter(Boolean).slice(0,5)};
 };
 'loaded'
