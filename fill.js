@@ -38,7 +38,7 @@ await pick('Language', L.language);
 await pick('Condition', L.condition);
 const price=await waitFor(()=>document.querySelector('input[name=price]'));
 price.focus(); setVal(price,String(L.price)); await sleep(500);
-const small=[...document.querySelectorAll('[role=button],button')].find(b=>/^Small/.test((b.innerText||'').trim())); if(small){fireAll(small); await sleep(500); const rd=small.querySelector('input[type=radio]')||small.parentElement.querySelector('input[type=radio]'); log.push('small '+(rd&&rd.checked?'ok':'?'));}
+const small=[...document.querySelectorAll('[role=button],button')].find(b=>new RegExp('^'+(L.parcel||'Small')).test((b.innerText||'').trim())); if(small){fireAll(small); await sleep(500); const rd=small.querySelector('input[type=radio]')||small.parentElement.querySelector('input[type=radio]'); log.push('small '+(rd&&rd.checked?'ok':'?'));}
 await sleep(800);
 const txt=document.querySelector('main').innerText;
 const okAll=!log.some(x=>/FAILED|no /.test(x));
