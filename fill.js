@@ -14,7 +14,7 @@ async function pick(fieldLabel, optionText, search){
     if(shown()===optionText){log.push(fieldLabel+' = '+optionText); return true;}
     const btn=wrap.querySelector('button');
     if(btn.getAttribute('aria-expanded')!=='true'){fireAll(btn); await sleep(900);}
-    if(search){const s=[...document.querySelectorAll('input')].find(i=>/Search for a|Find a/.test(i.placeholder||'')&&i.offsetParent); if(s){setVal(s,search); await sleep(900);}}
+    const srch=search||(attempt>0?optionText:null); if(srch){const s=[...document.querySelectorAll('input')].find(i=>/Search for a|Find a/.test(i.placeholder||'')&&i.offsetParent); if(s){setVal(s,srch); await sleep(1200);}}
     const opt=await waitFor(()=>[...document.querySelectorAll('[role=radio]')].find(el=>el.offsetParent&&el.innerText.trim().split('\n')[0].trim()===optionText),3000);
     if(opt){opt.scrollIntoView({block:'center'}); fireAll(opt); await sleep(900); if(shown()===optionText){log.push(fieldLabel+' -> '+optionText); return true;}}
     await sleep(800);
@@ -23,6 +23,8 @@ async function pick(fieldLabel, optionText, search){
 }
 // photos
 const input=await waitFor(()=>document.querySelector('input[type=file]'));
+await sleep(1200);
+if([...document.querySelectorAll('img')].some(i=>/Uploaded photo/i.test(i.alt))||document.querySelector('input[name=title]').value){return {log:['STALE FORM - aborted'],summary:'',price:'',errors:[]};}
 const dt=new DataTransfer();
 for(const n of L.photos){const b=await (await fetch(base+n)).blob(); dt.items.add(new File([b],n,{type:'image/jpeg'}));}
 input.files=dt.files; input.dispatchEvent(new Event('change',{bubbles:true}));
@@ -38,10 +40,10 @@ await pick('Language', L.language);
 await pick('Condition', L.condition);
 const price=await waitFor(()=>document.querySelector('input[name=price]'));
 price.focus(); setVal(price,String(L.price)); await sleep(500);
-const small=[...document.querySelectorAll('[role=button],button')].find(b=>new RegExp('^'+(L.parcel||'Small')).test((b.innerText||'').trim())); if(small){fireAll(small); await sleep(500); const rd=small.querySelector('input[type=radio]')||small.parentElement.querySelector('input[type=radio]'); log.push('small '+(rd&&rd.checked?'ok':'?'));}
+const small=[...document.querySelectorAll('[role=button],button')].find(b=>new RegExp('^'+(L.parcel||'Small')).test((b.innerText||'').trim())); if(small){fireAll(small); await sleep(500); const rd=small.querySelector('input[type=radio]')||small.parentElement.querySelector('input[type=radio]'); log.push('parcel '+(rd&&rd.checked?'ok':'FAILED'));} else log.push('parcel FAILED');
 await sleep(800);
 const txt=document.querySelector('main').innerText;
-const okAll=!log.some(x=>/FAILED|no /.test(x));
+const okAll=!log.some(x=>/FAILED|no |STALE/.test(x)) && log.some(x=>x==='parcel ok');
 if(L.publish && okAll){const up=[...document.querySelectorAll('button')].find(b=>b.innerText.trim()==='Upload'); setTimeout(()=>up.click(),400); log.push('publishing');}
 return {log, summary:(txt.match(/Category\n.*|Language\n.*|Condition\n.*/g)||[]).join(' / '), price:price.value, errors:[...document.querySelectorAll('[class*=error], [class*=Error]')].map(e=>e.innerText).filter(Boolean).slice(0,5)};
 };
