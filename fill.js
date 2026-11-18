@@ -3,6 +3,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const log=[];
 const setVal=(el,v)=>{const proto=el.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype; Object.getOwnPropertyDescriptor(proto,'value').set.call(el,v); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); el.dispatchEvent(new Event('blur',{bubbles:true}));};
 const waitFor=async(fn,ms=8000)=>{for(let t=0;t<ms;t+=250){const v=fn(); if(v) return v; await sleep(250);} return null;};
+const fireAll=el=>{for(const [t,C] of [['pointerdown',PointerEvent],['mousedown',MouseEvent],['pointerup',PointerEvent],['mouseup',MouseEvent],['click',MouseEvent]]) el.dispatchEvent(new C(t,{bubbles:true,cancelable:true,view:window,button:0}));};
 const btnByLabel=lbl=>[...document.querySelectorAll('button')].find(b=>(b.getAttribute('aria-label')||'')===lbl||b.closest('label, div')?.querySelector('label')?.innerText?.trim()===lbl&&b.getAttribute('aria-expanded')!==null)||document.querySelector(`[data-testid*="${lbl.toLowerCase()}"] button`);
 async function pick(fieldLabel, optionText, search){
   const label=[...document.querySelectorAll('label')].find(l=>l.innerText.trim()===fieldLabel);
@@ -10,12 +11,11 @@ async function pick(fieldLabel, optionText, search){
   const wrap=label.parentElement; const cur=wrap.innerText;
   if(cur.includes(optionText)){log.push(fieldLabel+' already '+optionText); return;}
   const btn=wrap.querySelector('button')||wrap.querySelector('[role=button]');
-  btn.click(); await sleep(600);
+  fireAll(btn); await sleep(700);
   if(search){const s=await waitFor(()=>[...document.querySelectorAll('input')].find(i=>/Search for a|Find a/.test(i.placeholder||'')&&i.offsetParent)); if(s){setVal(s,search); await sleep(800);}}
-  const opt=await waitFor(()=>[...document.querySelectorAll('[role=radio], input[type=radio]')].map(r=>r.closest('label,li,[role=button],div'))
-     .find(el=>el&&el.offsetParent&&el.innerText.trim().split('\n')[0].trim()===optionText));
+  const opt=await waitFor(()=>[...document.querySelectorAll('[role=radio]')].find(el=>el.offsetParent&&el.innerText.trim().split('\n')[0].trim()===optionText));
   if(!opt){log.push(fieldLabel+' option not found: '+optionText); document.body.click(); return;}
-  opt.click(); await sleep(700);
+  fireAll(opt); await sleep(700);
   log.push(fieldLabel+' -> '+(label.parentElement.innerText.includes(optionText)?'ok':'?'));
 }
 // photos
@@ -35,7 +35,7 @@ await pick('Language', L.language, L.language);
 await pick('Condition', L.condition);
 const price=await waitFor(()=>document.querySelector('input[name=price]'));
 price.focus(); setVal(price,String(L.price)); await sleep(500);
-const small=[...document.querySelectorAll('button')].find(b=>/^Small\b/.test(b.innerText.trim())); if(small){small.click(); log.push('small');}
+const small=[...document.querySelectorAll('button')].find(b=>/^Small\b/.test(b.innerText.trim())); if(small){fireAll(small); log.push('small');}
 await sleep(800);
 const txt=document.querySelector('main').innerText;
 return {log, summary:(txt.match(/Category\n.*|Language\n.*|Condition\n.*/g)||[]).join(' / '), price:price.value, errors:[...document.querySelectorAll('[class*=error], [class*=Error]')].map(e=>e.innerText).filter(Boolean).slice(0,5)};
