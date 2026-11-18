@@ -15,7 +15,7 @@ const garamond = localFont({
 export const metadata: Metadata = {
   title: "Beck To Nature",
   description: "Beck To Nature takes Central European manufacturers to US trade shows: the right show, buyers booked before you fly, and every lead followed up.",
-  icons: { icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/logo/beck-to-nature-icon.svg` },
+  icons: { icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/logo/favicon-gold.svg` },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#0A0A0A", colorScheme: "dark" };

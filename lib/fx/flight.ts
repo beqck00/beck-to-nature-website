@@ -1,5 +1,5 @@
 // The opening flight. One pinned stage holds a dotted world map (canvas) and the gold line (SVG) under one camera.
-// At rest it is the hero: the map with a few slow routes, the headline, and the "Beck" signature writing itself.
+// At rest it is the hero: the map with three lines that fly from Europe to America, each time between new cities, the headline, and the "Beck" signature writing itself.
 // As the page scrolls, the signature unwinds into the line, the line rises to Budapest, the camera closes in and
 // rides the line across the Atlantic while three statements appear, and it pulls back out over America, where the
 // "why" block lands and the line drops off the bottom of the stage to carry on down the page.
@@ -16,7 +16,16 @@ const CITIES: Record<string, Pt> = {
   budapest: geo(19.04, 47.5), london: geo(-0.13, 51.51), paris: geo(2.35, 48.86), berlin: geo(13.4, 52.52), vienna: geo(16.37, 48.21),
   chicago: geo(-87.63, 41.88), newyork: geo(-74.01, 40.71), orlando: geo(-81.38, 28.54), lasvegas: geo(-115.14, 36.17),
 };
-const ROUTES: [string, string, number][] = [["budapest", "chicago", 30], ["london", "newyork", 18], ["paris", "orlando", 22], ["berlin", "chicago", 27], ["vienna", "lasvegas", 33]];
+// The hero's three lines each fly from a European city to an American one, then make way for a new pair, never the same
+// pair twice in a row and never a city another line is using. HUBS are the possible ends; only CITIES warm the dots.
+const HUBS: Record<string, Pt> = {
+  ...CITIES, prague: geo(14.42, 50.08), warsaw: geo(21.01, 52.23), milan: geo(9.19, 45.46), madrid: geo(-3.7, 40.42),
+  boston: geo(-71.06, 42.36), atlanta: geo(-84.39, 33.75), dallas: geo(-96.8, 32.78), losangeles: geo(-118.24, 34.05), denver: geo(-104.99, 39.74),
+};
+const EU = ["budapest", "london", "paris", "berlin", "vienna", "prague", "warsaw", "milan", "madrid"];
+const US = ["chicago", "newyork", "orlando", "lasvegas", "boston", "atlanta", "dallas", "losangeles", "denver"];
+const STILL_PAIRS: [string, string][] = [["budapest", "chicago"], ["london", "orlando"], ["vienna", "lasvegas"]];
+const LANES = 3, GROW = 2600, HOLD = 600, SHRINK = 2200;   // ms: the line draws across, rests, then its tail follows it home
 const FROM = "budapest", TO = "chicago", LIFT = 30;
 
 // Scroll progress (0..1) at which each beat of the flight happens.
@@ -101,7 +110,8 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   // geometry, filled in by layout()
   let W = 0, H = 0, dpr = 1, s = 1, offX = 0, offY = 0, band = false, r0 = 1, rClose = 5, Z = 3.4;
   let cities: Record<string, Pt> = {};
-  let routes: { pts: Pt[]; cum: number[]; len: number; delay: number; period: number }[] = [];
+  type Lane = { a: string; b: string; pts: Pt[]; cum: number[]; len: number; at: number; gap: number };
+  const lanes: Lane[] = [];
   let segs: ReturnType<typeof strokePaths> = [], Lsig = 0;
   let L = 0, LB = 0, LU = 0, xOut = 0, anchor: Pt = [0, 0];
   const mp = (mx: number, my: number): Pt => [offX + (mx + 3) * s, offY + (my + 1) * s];
@@ -152,11 +162,6 @@ export function createFlight(root: HTMLElement, still = false): Flight {
       const a = CITIES[from], b = CITIES[to], c: Pt = [(a[0] + b[0]) / 2, Math.min(a[1], b[1]) - lift];
       return Array.from({ length: steps + 1 }, (_, i) => { const m = quad(a, c, b, i / steps); return mp(m[0], m[1]); });
     };
-    routes = ROUTES.map(([a, b, lift], i) => {
-      const pts = arc(a, b, lift, 48), cum = [0];
-      for (let j = 1; j < pts.length; j++) cum.push(cum[j - 1] + Math.hypot(pts[j][0] - pts[j - 1][0], pts[j][1] - pts[j - 1][1]));
-      return { pts, cum, len: cum[cum.length - 1], delay: 300 + i * 450, period: 4200 + i * 600 };
-    });
 
     // the signature, bottom centre
     const sw = Math.min(250, W * 0.4), k = sw / SIG_W, ox = W / 2 - sw / 2, oy = H - SIG_H * k - (W < 700 ? W * 0.05 : 70);
@@ -214,6 +219,30 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   const onMove = (e: PointerEvent) => { const r = sky.getBoundingClientRect(); pointer = [e.clientX - r.left, e.clientY - r.top]; };
   const onLeave = () => { pointer = null; };
   if (hover) { sky.addEventListener("pointermove", onMove, { passive: true }); sky.addEventListener("pointerleave", onLeave); }
+
+  // a curve between two hubs, in map units, rising higher the further it flies
+  function lane(a: string, b: string, at: number): Lane {
+    const A = HUBS[a], B = HUBS[b], dx = Math.abs(A[0] - B[0]), C: Pt = [(A[0] + B[0]) / 2, Math.min(A[1], B[1]) - (0.3 + 0.08 * Math.random()) * dx];
+    const pts = Array.from({ length: 49 }, (_, i) => { const t = i / 48; return [(1 - t) ** 2 * A[0] + 2 * (1 - t) * t * C[0] + t * t * B[0], (1 - t) ** 2 * A[1] + 2 * (1 - t) * t * C[1] + t * t * B[1]] as Pt; });
+    const cum = [0]; for (let j = 1; j < pts.length; j++) cum.push(cum[j - 1] + Math.hypot(pts[j][0] - pts[j - 1][0], pts[j][1] - pts[j - 1][1]));
+    return { a, b, pts, cum, len: cum[cum.length - 1], at, gap: 300 + Math.random() * 900 };
+  }
+  function pick(prev?: Lane): [string, string] {
+    const busy = new Set(lanes.filter((l) => l !== prev).flatMap((l) => [l.a, l.b]));
+    const free = (list: string[]) => list.filter((c) => !busy.has(c) && c !== prev?.a && c !== prev?.b);
+    const eu = free(EU), us = free(US);
+    return [eu[Math.floor(Math.random() * eu.length)], us[Math.floor(Math.random() * us.length)]];
+  }
+  // keeps three lines in the air, each starting over somewhere new once its tail has gone
+  function tend(el: number, still: boolean) {
+    if (!lanes.length) {
+      if (still) { STILL_PAIRS.forEach(([a, b]) => lanes.push(lane(a, b, 0))); return; }
+      for (let i = 0; i < LANES; i++) { const [a, b] = pick(); lanes.push(lane(a, b, 300 + i * 1500)); }
+      return;
+    }
+    if (still) return;
+    lanes.forEach((ln, i) => { if (el > ln.at + GROW + HOLD + SHRINK + ln.gap) { const [a, b] = pick(ln); lanes[i] = lane(a, b, el); } });
+  }
 
   function draw(p: number, now: number, still: boolean) {
     const dt = Math.min(64, now - lastNow || 16); lastNow = now;
@@ -277,33 +306,36 @@ export function createFlight(root: HTMLElement, still = false): Flight {
       ctx.fill();
     }
 
-    // routes, comets and cities: all five while the hero is up, then only the two ends of our route
+    // the hero's lines and their cities, then only the two ends of our route
     const ra = 1 - sstep(0.02, T.heroOut, p), comets: { x: number; y: number; o: number }[] = [];
     const glowAt = (x: number, y: number, r: number, a: number) => { if (a > 0.01) { ctx.globalAlpha = a; ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2); } };
+    const lit: Record<string, number> = {};
     if (ra > 0.01) {
-      ctx.lineCap = "round"; ctx.lineWidth = Math.max(1, 0.3 * s) * (1 + 0.4 * zc); ctx.strokeStyle = "#F0D9AE";
-      routes.forEach((r) => {
-        const f = still ? 1 : e3(clamp((el - r.delay) / 1500)); if (f <= 0) return;
-        const upto = r.len * f;
-        ctx.globalAlpha = 0.65 * ra * fade; ctx.beginPath(); ctx.moveTo(sx(r.pts[0][0]), sy(r.pts[0][1]));
-        for (let j = 1; j < r.pts.length; j++) {
-          if (r.cum[j] <= upto) ctx.lineTo(sx(r.pts[j][0]), sy(r.pts[j][1]));
-          else { const t = (upto - r.cum[j - 1]) / (r.cum[j] - r.cum[j - 1]); ctx.lineTo(sx(lerp(r.pts[j - 1][0], r.pts[j][0], t)), sy(lerp(r.pts[j - 1][1], r.pts[j][1], t))); break; }
+      tend(el, still);
+      ctx.lineCap = "round"; ctx.lineWidth = Math.max(1, 0.3 * s); ctx.strokeStyle = "#F0D9AE";
+      for (const ln of lanes) {
+        const t = el - ln.at; if (t < 0) continue;
+        // head: fast, then slower; tail: slow, fast, slower
+        const hd = still ? 1 : expoOut(clamp(t / GROW)), tl0 = still ? 0 : expoInOut(clamp((t - GROW - HOLD) / SHRINK));
+        const from = ln.len * tl0, upto = ln.len * hd;
+        if (upto - from > 0.01) {
+          const at = (d: number): Pt => { let j = 1; while (j < ln.cum.length - 1 && ln.cum[j] < d) j++; const k = (d - ln.cum[j - 1]) / (ln.cum[j] - ln.cum[j - 1] || 1); const m = mp(lerp(ln.pts[j - 1][0], ln.pts[j][0], k), lerp(ln.pts[j - 1][1], ln.pts[j][1], k)); return [sx(m[0]), sy(m[1])]; };
+          ctx.globalAlpha = 0.7 * ra * fade * state.dim; ctx.beginPath();
+          const a0 = at(from); ctx.moveTo(a0[0], a0[1]);
+          for (let j = 1; j < ln.pts.length; j++) if (ln.cum[j] > from && ln.cum[j] < upto) { const m = mp(ln.pts[j][0], ln.pts[j][1]); ctx.lineTo(sx(m[0]), sy(m[1])); }
+          const a1 = at(upto); ctx.lineTo(a1[0], a1[1]); ctx.stroke();
+          if (hd < 1) comets.push({ x: a1[0], y: a1[1], o: ra * Math.sin(hd * Math.PI) });
         }
-        ctx.stroke();
-        const t = el - r.delay - 1500; if (still || t < 0) return;
-        const kk = (t % r.period) / r.period, ff = clamp(kk / 0.85), at = r.len * eio(ff), o = kk < 0.85 ? Math.sin(ff * Math.PI) : 0;
-        let j = 1; while (j < r.cum.length - 1 && r.cum[j] < at) j++;
-        const tt = (at - r.cum[j - 1]) / (r.cum[j] - r.cum[j - 1] || 1), x = sx(lerp(r.pts[j - 1][0], r.pts[j][0], tt)), y = sy(lerp(r.pts[j - 1][1], r.pts[j][1], tt));
-        glowAt(x, y, 3.4 * s, o * 0.6 * ra);
-        ctx.globalAlpha = o * ra; ctx.fillStyle = "#FFF3D6"; ctx.beginPath(); ctx.arc(x, y, 0.8 * s, 0, 6.2832); ctx.fill();
-        comets.push({ x, y, o: o * ra });
-      });
+        // the cities: the origin as the line leaves it, the destination as the line arrives; both go with the tail
+        const out = 1 - tl0;
+        lit[ln.a] = Math.max(lit[ln.a] ?? 0, Math.min(e3(clamp(t / 500)), out));
+        lit[ln.b] = Math.max(lit[ln.b] ?? 0, Math.min(sstep(0.86, 1, hd), out));
+      }
     }
-    Object.entries(cities).forEach(([name, c], i) => {
-      const a = (name === FROM || name === TO ? Math.max(ra, sstep(0.03, T.heroOut, p)) : ra) * fade * state.dim;
+    Object.entries(HUBS).forEach(([name, c], i) => {
+      const a = Math.max((lit[name] ?? 0) * ra, name === FROM || name === TO ? sstep(0.03, T.heroOut, p) : 0) * fade * state.dim;
       if (a < 0.01) return;
-      const x = sx(c[0]), y = sy(c[1]), u = s * (1 + 0.5 * zc);
+      const m = mp(c[0], c[1]), x = sx(m[0]), y = sy(m[1]), u = s * (1 + 0.5 * zc);
       glowAt(x, y, 2.6 * u, 0.8 * a);
       if (!still) {
         const k = ((el / 1000 + 4 - i * 0.5) % 4) / 4, e = e3(clamp(k / 0.7));

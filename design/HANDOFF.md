@@ -252,3 +252,9 @@ Contract templates (mutual and one-way NDA, master services agreement, EU and US
 - Email provider for inquiries: Resend is wired in; needs an account and a verified domain.
 - Texts: no SMS provider is connected. The form records consent; any texts would be sent by hand until one is.
 - Founder texts, photo, the two case stories, the show names on the specialty cards: all still placeholders.
+
+## Added on 2026-11-18: hero lines and tab icon
+
+- The hero now has three gold lines instead of five routes with moving dots. Each line draws itself from a European city to an American one (head fast then slower, tail slow, fast, slower), rests, and its tail follows it home; then it starts again between two new cities, never a city another line is using (`HUBS`, `EU`, `US`, `lane()`, `pick()`, `tend()` in `lib/fx/flight.ts`). Only the ends of a live line glow.
+- The browser-tab icon is the gold figure on a black rounded square: `public/logo/favicon-gold.svg`.
+- `npm run build` sometimes stops once with a Next.js "known security vulnerability" notice (a moderate advisory for `next` up to 16.4.4, about `use cache`, which this site does not use); running it again builds. Upgrading `next` is a pending decision for the owner.
