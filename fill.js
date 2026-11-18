@@ -6,17 +6,20 @@ const waitFor=async(fn,ms=8000)=>{for(let t=0;t<ms;t+=250){const v=fn(); if(v) r
 const fireAll=el=>{for(const [t,C] of [['pointerdown',PointerEvent],['mousedown',MouseEvent],['pointerup',PointerEvent],['mouseup',MouseEvent],['click',MouseEvent]]) el.dispatchEvent(new C(t,{bubbles:true,cancelable:true,view:window,button:0}));};
 const btnByLabel=lbl=>[...document.querySelectorAll('button')].find(b=>(b.getAttribute('aria-label')||'')===lbl||b.closest('label, div')?.querySelector('label')?.innerText?.trim()===lbl&&b.getAttribute('aria-expanded')!==null)||document.querySelector(`[data-testid*="${lbl.toLowerCase()}"] button`);
 async function pick(fieldLabel, optionText, search){
-  const label=[...document.querySelectorAll('label')].find(l=>l.innerText.trim()===fieldLabel);
-  if(!label){log.push('no '+fieldLabel); return;}
-  const wrap=label.parentElement; const cur=wrap.innerText;
-  if(cur.includes(optionText)){log.push(fieldLabel+' already '+optionText); return;}
-  const btn=wrap.querySelector('button')||wrap.querySelector('[role=button]');
-  fireAll(btn); await sleep(700);
-  if(search){const s=await waitFor(()=>[...document.querySelectorAll('input')].find(i=>/Search for a|Find a/.test(i.placeholder||'')&&i.offsetParent)); if(s){setVal(s,search); await sleep(800);}}
-  const opt=await waitFor(()=>[...document.querySelectorAll('[role=radio]')].find(el=>el.offsetParent&&el.innerText.trim().split('\n')[0].trim()===optionText));
-  if(!opt){log.push(fieldLabel+' option not found: '+optionText); document.body.click(); return;}
-  fireAll(opt); await sleep(700);
-  log.push(fieldLabel+' -> '+(label.parentElement.innerText.includes(optionText)?'ok':'?'));
+  for(let attempt=0; attempt<4; attempt++){
+    const label=await waitFor(()=>[...document.querySelectorAll('label')].find(l=>l.innerText.trim()===fieldLabel),6000);
+    if(!label){log.push('no '+fieldLabel); return false;}
+    const wrap=label.parentElement;
+    const shown=()=>(wrap.querySelector('button')?.innerText||'').trim();
+    if(shown()===optionText){log.push(fieldLabel+' = '+optionText); return true;}
+    const btn=wrap.querySelector('button');
+    if(btn.getAttribute('aria-expanded')!=='true'){fireAll(btn); await sleep(900);}
+    if(search){const s=[...document.querySelectorAll('input')].find(i=>/Search for a|Find a/.test(i.placeholder||'')&&i.offsetParent); if(s){setVal(s,search); await sleep(900);}}
+    const opt=await waitFor(()=>[...document.querySelectorAll('[role=radio]')].find(el=>el.offsetParent&&el.innerText.trim().split('\n')[0].trim()===optionText),3000);
+    if(opt){fireAll(opt); await sleep(900); if(shown()===optionText){log.push(fieldLabel+' -> '+optionText); return true;}}
+    await sleep(800);
+  }
+  log.push(fieldLabel+' FAILED '+optionText); return false;
 }
 // photos
 const input=await waitFor(()=>document.querySelector('input[type=file]'));
