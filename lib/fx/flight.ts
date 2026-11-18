@@ -62,7 +62,7 @@ export type Flight = {
 /** still: the visitor asked for reduced motion; nothing is animated and no text is hidden. */
 export function createFlight(root: HTMLElement, still = false): Flight {
   const q = <E extends Element>(s: string) => root.querySelector(s) as E;
-  const sky = q<HTMLElement>(".flight-sky"), canvas = q<HTMLCanvasElement>(".flight-map"), veil = q<HTMLElement>(".flight-veil");
+  const sky = q<HTMLElement>(".flight-sky"), canvas = q<HTMLCanvasElement>(".flight-map");
   const svg = q<SVGSVGElement>(".flight-line"), glow = q<SVGPathElement>(".t-glow"), core = q<SVGPathElement>(".t-core");
   const sigG = q<SVGGElement>(".t-sig"), head = q<SVGGElement>(".t-head");
   const h1 = q<HTMLElement>("h1"), cue = q<HTMLElement>(".cue"), land = q<HTMLElement>(".flight-land");
@@ -113,6 +113,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   type Lane = { a: string; b: string; pts: Pt[]; cum: number[]; len: number; at: number; gap: number };
   const lanes: Lane[] = [];
   let segs: ReturnType<typeof strokePaths> = [], Lsig = 0;
+  let fadeMask = (k: number) => String(k), maskK = -1;
   let L = 0, LB = 0, LU = 0, xOut = 0, anchor: Pt = [0, 0];
   const mp = (mx: number, my: number): Pt => [offX + (mx + 3) * s, offY + (my + 1) * s];
 
@@ -134,8 +135,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     });
     const lines = splitWords(land.querySelector("h2")!, "rise");
     t.fromTo(land, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.004 }, T.land);
-    t.fromTo(lines, { yPercent: 118 }, { yPercent: 0, duration: 0.07, stagger: 0.012, ease: "expo.out" }, T.land + 0.005);
-    t.fromTo(land.querySelector(".why2-lead"), { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.06, ease: "expo.out" }, T.land + 0.045);
+    t.fromTo(lines, { yPercent: 118 }, { yPercent: 0, duration: 0.07, stagger: 0.005, ease: "expo.out" }, T.land + 0.005);
     t.to(state, { dim: band ? 0.3 : 0.55, duration: 0.09 }, T.land - 0.01);
     t.set({}, {}, 1);
     tl = t;
@@ -152,9 +152,14 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     cities = Object.fromEntries(Object.entries(CITIES).map(([k, [x, y]]) => [k, mp(x, y)]));
     // the map fades into the page at its edges while the camera is wide
     const mh = 84 * s;
-    veil.style.background = band
-      ? `linear-gradient(180deg, var(--k1) 0, transparent ${(mh * 0.16).toFixed(0)}px, transparent ${(mh * 0.84).toFixed(0)}px, var(--k1) ${(H - offY).toFixed(0)}px) 0 ${offY.toFixed(0)}px / 100% ${(H - offY).toFixed(0)}px no-repeat`
-      : "linear-gradient(180deg, transparent 66%, var(--k1) 99%)";
+    // (a mask, not a dark overlay, so the page's own background shows through and there is no seam with the next section)
+    fadeMask = (k: number) => {
+      const o = `rgba(0,0,0,${k.toFixed(2)})`;
+      return band
+        ? `linear-gradient(180deg, ${o} 0, ${o} ${offY.toFixed(0)}px, #000 ${(offY + mh * 0.16).toFixed(0)}px, #000 ${(offY + mh * 0.84).toFixed(0)}px, ${o} ${H.toFixed(0)}px)`
+        : `linear-gradient(180deg, #000 60%, ${o} 98%)`;
+    };
+    maskK = -1;
 
     // decorative routes, sampled
     const quad = (a: Pt, c: Pt, b: Pt, t: number): Pt => [(1 - t) ** 2 * a[0] + 2 * (1 - t) * t * c[0] + t * t * b[0], (1 - t) ** 2 * a[1] + 2 * (1 - t) * t * c[1] + t * t * b[1]];
@@ -272,7 +277,8 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     core.style.strokeWidth = (1.8 * thick).toFixed(3); glow.style.strokeWidth = (6 * thick).toFixed(3);
     head.classList.toggle("on", len > 2 && len < L - 2);
     if (len > 0) head.setAttribute("transform", `translate(${headPt[0].toFixed(1)} ${headPt[1].toFixed(1)}) scale(${thick.toFixed(3)})`);
-    veil.style.opacity = (1 - zc).toFixed(3);
+    const mk = Math.round(zc * 50) / 50;
+    if (mk !== maskK) { maskK = mk; const m = fadeMask(mk); canvas.style.maskImage = m; canvas.style.webkitMaskImage = m; }
 
     // heat: dots near the pointer (wide shot) and near the head of the line warm up, then cool
     const cool = Math.exp(-dt / 420);

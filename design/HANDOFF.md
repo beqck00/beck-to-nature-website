@@ -258,3 +258,11 @@ Contract templates (mutual and one-way NDA, master services agreement, EU and US
 - The hero now has three gold lines instead of five routes with moving dots. Each line draws itself from a European city to an American one (head fast then slower, tail slow, fast, slower), rests, and its tail follows it home; then it starts again between two new cities, never a city another line is using (`HUBS`, `EU`, `US`, `lane()`, `pick()`, `tend()` in `lib/fx/flight.ts`). Only the ends of a live line glow.
 - The browser-tab icon is the gold figure on a black rounded square: `public/logo/favicon-gold.svg`.
 - `npm run build` sometimes stops once with a Next.js "known security vulnerability" notice (a moderate advisory for `next` up to 16.4.4, about `use cache`, which this site does not use); running it again builds. Upgrading `next` is a pending decision for the owner.
+
+## Changed on 2026-11-18: back to a plain scroll (the journey is gone)
+
+- **The owner asked to remove the zoom-in line transition between sections.** Below the flight the page is again an ordinary page that scrolls straight down. The gold line draws itself down it as you scroll (faster when you scroll faster) and still ends by writing the closing signature, joined at the B. Code: `lib/fx/thread.ts` (restored from before the journey and fitted to the Ildi sections: through her photo, down the edge beside her expertise, behind the form, between a story and its facts; slow S-curves on phones). `lib/fx/journey.ts` was deleted. Older notes in this file about the journey, its camera and its zoom are history.
+- Sections rise in as they scroll into view (headings word by word, then their blocks) and go back when scrolled past upwards; done with an IntersectionObserver in `thread.ts` and the `.scene` rules in `app/globals.css`.
+- The landing after the flight now shows one centred sentence ("Put your product in front of American buyers *before* you commit to America."); the "One booth. One week. A clear answer." heading beside it was removed (the three statements still play during the flight).
+- The map's fade at the bottom of the flight is now a mask on the map canvas, not a dark overlay, so there is no visible seam where the flight meets the next section.
+- Some items in the Fable task list above (journey zoom tuning) no longer apply.

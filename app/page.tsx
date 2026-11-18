@@ -49,7 +49,6 @@ export default function Home() {
           <div className="flight-stage">
             <div className="flight-sky">
               <canvas className="flight-map" aria-hidden="true" />
-              <div className="flight-veil" aria-hidden="true" />
               <svg className="flight-line" aria-hidden="true">
                 <path className="t-glow" /><path className="t-core" /><g className="t-sig" />
                 <g className="t-head"><circle r="12" fill="url(#cityglow)" opacity=".7" /></g>
@@ -64,20 +63,13 @@ export default function Home() {
             </div>
             <div className="flight-land frame" id="why">
               <div className="why2">
-                <h2><span>One booth.</span> <span>One week.</span> <span>A clear answer.</span></h2>
-                <div className="why2-body">
-                  <p className="why2-lead">Put your product in front of American buyers before you commit to America.</p>
-                </div>
+                <h2>Put your product in front of American buyers <em>before</em> you commit to America.</h2>
               </div>
             </div>
           </div>
         </section>
 
-        {/* the journey: the sections sit on one wide dark world; the line strays from one to the next and the camera follows it */}
-        <div className="journey">
-        <div className="journey-stage">
-        <canvas className="journey-dots" aria-hidden="true" />
-        <div className="world">
+        {/* below the flight: an ordinary page; the gold line draws itself down it as you scroll */}
         <svg className="thread" aria-hidden="true">
           <path className="t-glow" /><path className="t-core" /><g className="t-end" />
           <g className="t-head"><circle r="12" fill="url(#cityglow)" opacity=".7" /></g>
@@ -140,10 +132,6 @@ export default function Home() {
             <nav aria-label="Legal"><a href={at("/privacy")}>Privacy policy</a><a href={at("/cookies")}>Cookie notice</a><a href={at("/terms")}>Terms</a></nav>
           </div>
         </footer>
-        </div>
-
-        </div>
-        </div>
         </div>
       </div>
 
