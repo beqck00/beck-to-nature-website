@@ -16,7 +16,7 @@ async function pick(fieldLabel, optionText, search){
     if(btn.getAttribute('aria-expanded')!=='true'){fireAll(btn); await sleep(900);}
     if(search){const s=[...document.querySelectorAll('input')].find(i=>/Search for a|Find a/.test(i.placeholder||'')&&i.offsetParent); if(s){setVal(s,search); await sleep(900);}}
     const opt=await waitFor(()=>[...document.querySelectorAll('[role=radio]')].find(el=>el.offsetParent&&el.innerText.trim().split('\n')[0].trim()===optionText),3000);
-    if(opt){fireAll(opt); await sleep(900); if(shown()===optionText){log.push(fieldLabel+' -> '+optionText); return true;}}
+    if(opt){opt.scrollIntoView({block:'center'}); fireAll(opt); await sleep(900); if(shown()===optionText){log.push(fieldLabel+' -> '+optionText); return true;}}
     await sleep(800);
   }
   log.push(fieldLabel+' FAILED '+optionText); return false;
@@ -34,7 +34,7 @@ await sleep(2500);
 await pick('Category', L.category);
 const isbn=await waitFor(()=>document.querySelector('input[name=isbn]'),5000);
 if(isbn&&L.isbn){ if(isbn.value!==L.isbn){ isbn.focus(); setVal(isbn,L.isbn); await sleep(2500);} log.push('isbn '+isbn.value);}
-await pick('Language', L.language, L.language);
+await pick('Language', L.language);
 await pick('Condition', L.condition);
 const price=await waitFor(()=>document.querySelector('input[name=price]'));
 price.focus(); setVal(price,String(L.price)); await sleep(500);
