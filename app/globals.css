@@ -50,6 +50,9 @@ button{font:inherit}
 .btn .ic{transition:transform 250ms var(--ease)}
 .btn:hover .ic{transform:translateX(3px)}
 .btn-sm{min-height:44px;padding:0 20px}
+/* the navigation button: a little smaller than the others; its tap area stays 44px tall */
+.nav-cta{position:relative;min-height:38px;padding:0 16px;font-size:16px}
+.nav-cta::after{content:"";position:absolute;inset:-3px 0}
 /* the main button: one flat cream pill */
 .btn-main{color:var(--on-brass);font-weight:500;background:var(--cream)}
 .btn-main:hover{background:var(--cream-hi)}

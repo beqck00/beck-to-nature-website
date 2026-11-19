@@ -38,7 +38,7 @@ export default function Home() {
           <nav className="nav-links" aria-label="Sections">
             <a href="#why">Why trade shows</a><a href="#ildi">Ildi Beck</a><a href="#expertise">Expertise</a><a href="#inquiry">Inquiry</a><a href="#cases">Track record</a>
           </nav>
-          <a className="btn btn-main btn-sm" href="#inquiry">Start your inquiry</a>
+          <a className="btn btn-main btn-sm nav-cta" href="#inquiry">Start your inquiry</a>
         </div>
       </header>
 
