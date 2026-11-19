@@ -25,7 +25,9 @@ const HUBS: Record<string, Pt> = {
 const EU = ["budapest", "london", "paris", "berlin", "vienna", "prague", "warsaw", "milan", "madrid"];
 const US = ["chicago", "newyork", "orlando", "lasvegas", "boston", "atlanta", "dallas", "losangeles", "denver"];
 const STILL_PAIRS: [string, string][] = [["budapest", "chicago"], ["london", "orlando"], ["vienna", "lasvegas"]];
-const LANES = 3, GROW = 2600, HOLD = 600, SHRINK = 2200;   // ms: the line draws across, rests, then its tail follows it home
+const LANES = 3, GROW = 2600, HOLD = 600, SHRINK = 2200, GAP = 200;   // ms: the line draws across, rests, its tail follows it home, then a short pause
+// The lines run on one fixed cycle, a third of a cycle apart, so a line is always moving somewhere on the map.
+const CYCLE = GROW + HOLD + SHRINK + GAP;
 const FROM = "budapest", TO = "chicago", LIFT = 30;
 
 // Scroll progress (0..1) at which each beat of the flight happens.
@@ -110,7 +112,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   // geometry, filled in by layout()
   let W = 0, H = 0, dpr = 1, s = 1, offX = 0, offY = 0, band = false, r0 = 1, rClose = 5, Z = 3.4;
   let cities: Record<string, Pt> = {};
-  type Lane = { a: string; b: string; pts: Pt[]; cum: number[]; len: number; at: number; gap: number };
+  type Lane = { a: string; b: string; pts: Pt[]; cum: number[]; len: number; at: number };
   const lanes: Lane[] = [];
   let segs: ReturnType<typeof strokePaths> = [], Lsig = 0;
   let fadeMask = (k: number) => String(k), maskK = -1;
@@ -230,7 +232,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const A = HUBS[a], B = HUBS[b], dx = Math.abs(A[0] - B[0]), C: Pt = [(A[0] + B[0]) / 2, Math.min(A[1], B[1]) - (0.3 + 0.08 * Math.random()) * dx];
     const pts = Array.from({ length: 49 }, (_, i) => { const t = i / 48; return [(1 - t) ** 2 * A[0] + 2 * (1 - t) * t * C[0] + t * t * B[0], (1 - t) ** 2 * A[1] + 2 * (1 - t) * t * C[1] + t * t * B[1]] as Pt; });
     const cum = [0]; for (let j = 1; j < pts.length; j++) cum.push(cum[j - 1] + Math.hypot(pts[j][0] - pts[j - 1][0], pts[j][1] - pts[j - 1][1]));
-    return { a, b, pts, cum, len: cum[cum.length - 1], at, gap: 300 + Math.random() * 900 };
+    return { a, b, pts, cum, len: cum[cum.length - 1], at };
   }
   function pick(prev?: Lane): [string, string] {
     const busy = new Set(lanes.filter((l) => l !== prev).flatMap((l) => [l.a, l.b]));
@@ -242,11 +244,11 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   function tend(el: number, still: boolean) {
     if (!lanes.length) {
       if (still) { STILL_PAIRS.forEach(([a, b]) => lanes.push(lane(a, b, 0))); return; }
-      for (let i = 0; i < LANES; i++) { const [a, b] = pick(); lanes.push(lane(a, b, 300 + i * 1500)); }
+      for (let i = 0; i < LANES; i++) { const [a, b] = pick(); lanes.push(lane(a, b, (i * CYCLE) / LANES)); }
       return;
     }
     if (still) return;
-    lanes.forEach((ln, i) => { if (el > ln.at + GROW + HOLD + SHRINK + ln.gap) { const [a, b] = pick(ln); lanes[i] = lane(a, b, el); } });
+    lanes.forEach((ln, i) => { if (el > ln.at + CYCLE) { const [a, b] = pick(ln); lanes[i] = lane(a, b, ln.at + CYCLE * Math.max(1, Math.floor((el - ln.at) / CYCLE))); } });
   }
 
   function draw(p: number, now: number, still: boolean) {
