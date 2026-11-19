@@ -28,6 +28,8 @@ const STILL_PAIRS: [string, string][] = [["budapest", "chicago"], ["london", "or
 const LANES = 3, GROW = 2600, HOLD = 600, SHRINK = 2200, GAP = 200;   // ms: the line draws across, rests, its tail follows it home, then a short pause
 // The lines run on one fixed cycle, a third of a cycle apart, so a line is always moving somewhere on the map.
 const CYCLE = GROW + HOLD + SHRINK + GAP;
+// On scroll: each line takes RUN_ONE ms to fly on into its end city, and they leave RUN_GAP ms apart.
+const RUN_ONE = 1300, RUN_GAP = 260, RUN_ALL = RUN_ONE + RUN_GAP * (LANES - 1);
 const FROM = "budapest", TO = "chicago", LIFT = 30;
 
 // Scroll progress (0..1) at which each beat of the flight happens.
@@ -118,7 +120,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   let fadeMask = (k: number) => String(k), maskK = -1;
   // when scrolling starts the hero's lines stop where they are and run into the signature's tail, where the main line
   // leaves from; scrolled back to the top, they come back out and carry on from the same moment
-  let frozenAt: number | null = null;
+  let frozenAt: number | null = null, runT = 0;          // runT: ms into the lines' run to their end cities (see RUN)
   let L = 0, LB = 0, LU = 0, xOut = 0, anchor: Pt = [0, 0];
   const mp = (mx: number, my: number): Pt => [offX + (mx + 3) * s, offY + (my + 1) * s];
 
@@ -321,29 +323,33 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const ra = 1 - sstep(0.05, T.heroOut, p), comets: { x: number; y: number; o: number }[] = [];
     const glowAt = (x: number, y: number, r: number, a: number) => { if (a > 0.01) { ctx.globalAlpha = a; ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2); } };
     const lit: Record<string, number> = {};
-    // q: how far the lines have run on to their end cities (0 at the top of the page, 1 a little way into the scroll)
-    const q = still ? 0 : clamp(p / 0.06);
+    // Once the visitor scrolls, the lines run on to their end cities one after another, in time rather than tied to the
+    // scroll, so each keeps its own graceful pace however fast the page moves. Back at the top they return, a fifth faster.
+    if (!still) runT = p > 0.0005 ? Math.min(RUN_ALL, runT + dt) : Math.max(0, runT - dt * 1.25);
+    const q = still ? 0 : runT / RUN_ALL;
     if (!still) {
       if (p > 0.0005 && frozenAt === null) frozenAt = el;
       else if (p <= 0.0005 && frozenAt !== null) { const d = el - frozenAt; lanes.forEach((ln) => (ln.at += d)); frozenAt = null; }
     }
     const tNow = frozenAt ?? el;
+    const left = (ln: Lane) => { const t = tNow - ln.at; return t < 0 ? 2 : 1 - expoOut(clamp(t / GROW)) + (t > GROW + HOLD ? -1 : 0); };   // tails already leaving go first
+    const order = [...lanes].sort((x, y) => left(x) - left(y)), rank = (ln: Lane) => order.indexOf(ln);
     if (q < 1) {
       if (frozenAt === null) tend(el, still);
       ctx.lineCap = "round"; ctx.lineWidth = Math.max(1, 0.3 * s); ctx.strokeStyle = "#F0D9AE";
       for (const ln of lanes) {
         const t = tNow - ln.at; if (t < 0 && q === 0) continue;
+        const u = clamp((runT - rank(ln) * RUN_GAP) / RUN_ONE);      // this line's own share of the run, 0..1
         // head: fast, then slower; tail: slow, fast, slower
         // On scroll each line runs on to its end city: the head finishes its flight first, then the tail follows it in,
         // so every line ends in America (slow, fast, slower). Lines that had not left yet fly the whole way.
-        const run = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-        const qh = run(clamp(q / 0.6)), qt = run(clamp((q - 0.35) / 0.65));
+        const qh = expoInOut(clamp(u / 0.62)), qt = expoInOut(clamp((u - 0.38) / 0.62));
         const hd0 = still ? 1 : t < 0 ? 0 : expoOut(clamp(t / GROW)), tl00 = still || t < 0 ? 0 : expoInOut(clamp((t - GROW - HOLD) / SHRINK));
         const hd = hd0 + (1 - hd0) * qh, tl0 = tl00 + (1 - tl00) * qt;
         const from = ln.len * tl0, upto = ln.len * hd;
         const at = (d: number): Pt => { let j = 1; while (j < ln.cum.length - 1 && ln.cum[j] < d) j++; const k = (d - ln.cum[j - 1]) / (ln.cum[j] - ln.cum[j - 1] || 1); const m = mp(lerp(ln.pts[j - 1][0], ln.pts[j][0], k), lerp(ln.pts[j - 1][1], ln.pts[j][1], k)); return [sx(m[0]), sy(m[1])]; };
         if (upto - from > 0.01) {
-          ctx.globalAlpha = 0.7 * fade * state.dim; ctx.beginPath();
+          ctx.globalAlpha = 0.7 * fade * state.dim * (1 - sstep(T.heroOut, T.heroOut + 0.04, p)); ctx.beginPath();   // a quick scroll past the hero fades any line still in flight
           const a0 = at(from); ctx.moveTo(a0[0], a0[1]);
           for (let j = 1; j < ln.pts.length; j++) if (ln.cum[j] > from && ln.cum[j] < upto) { const m = mp(ln.pts[j][0], ln.pts[j][1]); ctx.lineTo(sx(m[0]), sy(m[1])); }
           const a1 = at(upto); ctx.lineTo(a1[0], a1[1]); ctx.stroke();
@@ -353,7 +359,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
         // tail, and while scrolling the destination stays lit as the line runs into it
         const out = 1 - tl0;
         if (t >= 0) lit[ln.a] = Math.max(lit[ln.a] ?? 0, Math.min(e3(clamp(t / 500)), out));
-        lit[ln.b] = Math.max(lit[ln.b] ?? 0, Math.min(sstep(0.86, 1, hd), q > 0 ? 1 : out));
+        lit[ln.b] = Math.max(lit[ln.b] ?? 0, Math.min(sstep(0.86, 1, hd), u > 0 ? 1 : out));
       }
     }
     Object.entries(HUBS).forEach(([name, c], i) => {
