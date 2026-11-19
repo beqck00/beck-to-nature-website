@@ -324,12 +324,16 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const glowAt = (x: number, y: number, r: number, a: number) => { if (a > 0.01) { ctx.globalAlpha = a; ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2); } };
     const lit: Record<string, number> = {};
     // Once the visitor scrolls, the lines run on to their end cities one after another, in time rather than tied to the
-    // scroll, so each keeps its own graceful pace however fast the page moves. Back at the top they return, a fifth faster.
-    if (!still) runT = p > 0.0005 ? Math.min(RUN_ALL, runT + dt) : Math.max(0, runT - dt * 1.25);
+    // scroll, so each keeps its own graceful pace however fast the page moves. A run that has started always finishes (it never
+    // runs backwards); back at the top the lines simply start their usual flights again, a third of a cycle apart.
+    if (!still && (p > 0.0005 || runT > 0)) runT = Math.min(RUN_ALL, runT + dt);
     const q = still ? 0 : runT / RUN_ALL;
     if (!still) {
       if (p > 0.0005 && frozenAt === null) frozenAt = el;
-      else if (p <= 0.0005 && frozenAt !== null) { const d = el - frozenAt; lanes.forEach((ln) => (ln.at += d)); frozenAt = null; }
+      else if (p <= 0.0005 && frozenAt !== null && runT >= RUN_ALL) {
+        lanes.forEach((ln, i) => { const [a, b] = pick(ln); lanes[i] = lane(a, b, el + (i * CYCLE) / LANES); });
+        frozenAt = null; runT = 0;
+      }
     }
     const tNow = frozenAt ?? el;
     const left = (ln: Lane) => { const t = tNow - ln.at; return t < 0 ? 2 : 1 - expoOut(clamp(t / GROW)) + (t > GROW + HOLD ? -1 : 0); };   // tails already leaving go first
