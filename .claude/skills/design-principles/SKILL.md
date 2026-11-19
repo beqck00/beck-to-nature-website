@@ -153,7 +153,10 @@ or from a skill they installed and asked to be used. The audit of the site's cod
 - **The header:** logo (figure + wordmark, cream), up to five section links, one small "Start your inquiry" button
   (38px tall, 16px text, a 44px tap area). The header fades out of the page; no floating pill.
 - **Phones get the same composition as the desktop** ("change the layout to be like the pc one"): the map sits behind
-  the centred headline, not in a strip at the bottom.
+  the centred headline, not in a strip at the bottom, and **fills the screen from top to bottom** when the page opens
+  ("I want the map to be from top to bottom everywhere"). To make that work on a portrait screen the phone map leaves
+  out the empty mid-Atlantic, so America's east coast and Western Europe sit side by side, zoomed in; it eases out to
+  the whole map as the visitor starts to scroll.
 - **Text the line passes through** is acceptable; the line may run behind text and under cards, but never wraps around
   the inquiry card.
 

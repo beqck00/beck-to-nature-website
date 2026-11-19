@@ -41,7 +41,10 @@ const T = {
   zoomOut: [0.7, 0.82] as const,    // camera pulls back over America (the line arrives at 0.70)
   land: 0.8,                        // the "why" block comes in
 };
-const BAND = "(max-width:700px), (max-aspect-ratio: 21/20)";   // phones and tall windows: the map is a band across the middle
+const BAND = "(max-width:700px), (max-aspect-ratio: 21/20)";
+// On phones and tall windows the empty mid-Atlantic between Newfoundland and Ireland (map units 56 to 82) is taken out,
+// so America's east coast and Western Europe sit side by side and the dots fill a portrait screen top to bottom.
+const CUT: Pt = [56, 82];   // phones and tall windows: the map is a band across the middle
 
 const DOT = [45, 43, 40], NEAR = [70, 62, 51], WARM = [156, 126, 82], HOT = [235, 211, 166];
 const mix = (a: number[], b: number[], t: number) => `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], t))).join(",")})`;
@@ -117,7 +120,13 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   type Lane = { a: string; b: string; pts: Pt[]; cum: number[]; len: number; at: number };
   const lanes: Lane[] = [];
   let segs: ReturnType<typeof strokePaths> = [], Lsig = 0;
-  let fadeMask = (k: number) => String(k), maskK = -1;
+  let fadeMask = (k: number, top: number, bot: number) => String(k + top + bot), maskK = "";
+  // phones: on the first screen the map is zoomed in to fill the screen top to bottom (HZ, about the point hf), and it
+  // eases out to the whole Atlantic as the visitor starts to scroll, before the line sets off
+  let HZ = 1, hf: Pt = [0, 0], cut = false;
+  // map x with the phone cut applied (NaN inside the cut: those dots are not drawn)
+  const tx = (mx: number) => (!cut || mx <= CUT[0] ? mx : mx >= CUT[1] ? mx - (CUT[1] - CUT[0]) : NaN);
+  const tp = (p: Pt): Pt => [tx(p[0]), p[1]];
   const cityA: Record<string, number> = {};               // how lit each city is on screen, so it can fade out gently
   let frozenAt: number | null = null, runT = 0;          // runT: ms into the lines' run to their end cities (see RUN)
   let L = 0, LB = 0, LU = 0, xOut = 0, anchor: Pt = [0, 0];
@@ -151,26 +160,32 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     W = sky.clientWidth; H = sky.clientHeight; dpr = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     band = matchMedia(BAND).matches;
-    // phones and tall windows: the map fills the width, America to Europe (map units 4 to 114), and sits behind the
-    // headline as on a desktop, with the North Atlantic at the headline's height
-    if (band) { s = W / 110; offX = -7 * s; offY = H * 0.44 - 40 * s; Z = 4.6; rClose = 3.2; }
+    if (cut !== band) { cut = band; lanes.length = 0; }        // the hero lines are rebuilt on the right map
+    // phones and tall windows: once scrolled, the map fills the width, America to Europe (map units 4 to 88 after the
+    // cut), and sits behind the headline as on a desktop, with the North Atlantic at the headline's height
+    if (band) { s = W / 84; offX = -7 * s; offY = H * 0.44 - 40 * s; Z = 4.6; rClose = 3.2; }
     else { s = Math.max(W / 124, H / 84); offX = (W - 124 * s) / 2; offY = 0; Z = 3.4; rClose = 5.2; }
     r0 = 0.34 * s; rClose = Math.max(rClose, r0);
-    for (let i = 0; i < n; i++) { const p = mp(dots[i].mx, dots[i].my); X[i] = p[0]; Y[i] = p[1]; }
+    for (let i = 0; i < n; i++) { const p = mp(tx(dots[i].mx), dots[i].my); X[i] = p[0]; Y[i] = p[1]; }
     // the map fades into the page at its edges while the camera is wide
     const mh = 84 * s;
     // (a mask, not a dark overlay, so the page's own background shows through and there is no seam with the next section)
-    fadeMask = (k: number) => {
-      const o = `rgba(0,0,0,${k.toFixed(2)})`;
+    // top/bot: where the map's top and bottom edges are on screen (they move while the phone hero zooms out)
+    fadeMask = (k: number, top: number, bot: number) => {
+      const o = `rgba(0,0,0,${k.toFixed(2)})`, h = bot - top;
       return band
-        ? `linear-gradient(180deg, ${o} 0, ${o} ${offY.toFixed(0)}px, #000 ${(offY + mh * 0.22).toFixed(0)}px, #000 ${(offY + mh * 0.78).toFixed(0)}px, ${o} ${(offY + mh).toFixed(0)}px, ${o} 100%)`
+        ? `linear-gradient(180deg, ${o} 0, ${o} ${top.toFixed(0)}px, #000 ${(top + h * 0.22).toFixed(0)}px, #000 ${(top + h * 0.78).toFixed(0)}px, ${o} ${bot.toFixed(0)}px, ${o} 100%)`
         : `linear-gradient(180deg, #000 60%, ${o} 98%)`;
     };
-    maskK = -1;
+    maskK = "";
+    // zoom that makes the map's height a little more than the screen's, centred between New York and London (map unit
+    // 52 once the mid-Atlantic is cut out) and on the map's middle latitude
+    HZ = band ? Math.max(1, (H / mh) * 1.08) : 1;
+    if (HZ > 1) { const c = mp(52, 41); hf = [(W / 2 - c[0] * HZ) / (1 - HZ), (H / 2 - c[1] * HZ) / (1 - HZ)]; }
 
     // the main route, sampled
     const arc = (from: string, to: string, lift: number, steps: number) => {
-      const a = CITIES[from], b = CITIES[to], c: Pt = [(a[0] + b[0]) / 2, Math.min(a[1], b[1]) - lift];
+      const a = tp(CITIES[from]), b = tp(CITIES[to]), c: Pt = [(a[0] + b[0]) / 2, Math.min(a[1], b[1]) - lift];
       return Array.from({ length: steps + 1 }, (_, i) => { const m = quad(a, c, b, i / steps); return mp(m[0], m[1]); });
     };
 
@@ -182,8 +197,8 @@ export function createFlight(root: HTMLElement, still = false): Flight {
 
     // the line: signature tail -> Budapest -> (the Budapest-Chicago route) -> Chicago -> off the bottom edge
     // It joins and leaves the route along the route's own direction, so there is no elbow at either city.
-    const B = mp(...CITIES[FROM]), U = mp(...CITIES[TO]);
-    const ctrl = mp((CITIES[FROM][0] + CITIES[TO][0]) / 2, Math.min(CITIES[FROM][1], CITIES[TO][1]) - LIFT);
+    const cF = tp(CITIES[FROM]), cT = tp(CITIES[TO]), B = mp(...cF), U = mp(...cT);
+    const ctrl = mp((cF[0] + cT[0]) / 2, Math.min(cF[1], cT[1]) - LIFT);
     const unit = (a: Pt, b: Pt): Pt => { const d = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; return [(b[0] - a[0]) / d, (b[1] - a[1]) / d]; };
     const d0 = unit(B, ctrl), d1 = unit(ctrl, U);
     const post: Pt = [U[0] + d1[0] * 0.05 * W, U[1] + d1[1] * 0.05 * W];
@@ -233,7 +248,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
 
   // a curve between two hubs, in map units, rising higher the further it flies
   function lane(a: string, b: string, at: number): Lane {
-    const A = HUBS[a], B = HUBS[b], dx = Math.abs(A[0] - B[0]), C: Pt = [(A[0] + B[0]) / 2, Math.min(A[1], B[1]) - (0.3 + 0.08 * Math.random()) * dx];
+    const A = tp(HUBS[a]), B = tp(HUBS[b]), dx = Math.abs(A[0] - B[0]), C: Pt = [(A[0] + B[0]) / 2, Math.min(A[1], B[1]) - (0.3 + 0.08 * Math.random()) * dx];
     const pts = Array.from({ length: 49 }, (_, i) => quad(A, C, B, i / 48));
     const cum = [0]; for (let j = 1; j < pts.length; j++) cum.push(cum[j - 1] + Math.hypot(pts[j][0] - pts[j - 1][0], pts[j][1] - pts[j - 1][1]));
     return { a, b, pts, cum, len: cum[cum.length - 1], at };
@@ -270,7 +285,9 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     // the head of the line glides from where it sits in the wide shot to the anchor as the camera closes in, so it never leaves the screen
     const ax = lerp(headPt[0], anchor[0], zc), ay = lerp(headPt[1], anchor[1], zc);
     const cx = headPt[0] - (ax - W / 2) / z, cy = headPt[1] - (ay - H / 2) / z;
-    const sx = (x: number) => (x - cx) * z + W / 2, sy = (y: number) => (y - cy) * z + H / 2;
+    // the map canvas also carries the phone hero's zoom (zh), which eases out (slow, fast, slower) over the first bit of scroll
+    const zh = HZ > 1 && !still ? lerp(HZ, 1, expoInOut(clamp(p / 0.06))) : HZ;
+    const sx = (x: number) => ((x - cx) * z + W / 2 - hf[0]) * zh + hf[0], sy = (y: number) => ((y - cy) * z + H / 2 - hf[1]) * zh + hf[1];
 
     // the line and the signature
     svg.setAttribute("viewBox", `${(cx - W / (2 * z)).toFixed(2)} ${(cy - H / (2 * z)).toFixed(2)} ${(W / z).toFixed(2)} ${(H / z).toFixed(2)}`);
@@ -282,14 +299,14 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     core.style.strokeWidth = (1.8 * thick).toFixed(3); glow.style.strokeWidth = (6 * thick).toFixed(3);
     head.classList.toggle("on", len > 2 && len < L - 2);
     if (len > 0) head.setAttribute("transform", `translate(${headPt[0].toFixed(1)} ${headPt[1].toFixed(1)}) scale(${thick.toFixed(3)})`);
-    const mk = Math.round(zc * 50) / 50;
-    if (mk !== maskK) { maskK = mk; const m = fadeMask(mk); canvas.style.maskImage = m; canvas.style.webkitMaskImage = m; }
+    const top = sy(offY), bot = sy(offY + 84 * s), mk = `${Math.round(zc * 50)} ${Math.round(top)} ${Math.round(bot)}`;
+    if (mk !== maskK) { maskK = mk; const m = fadeMask(Math.round(zc * 50) / 50, top, bot); canvas.style.maskImage = m; canvas.style.webkitMaskImage = m; }
 
     // heat: dots near the pointer (wide shot) and near the head of the line warm up, then cool
     const cool = Math.exp(-dt / 420);
-    const pw: Pt | null = pointer && zc < 0.05 ? [(pointer[0] - W / 2) / z + cx, (pointer[1] - H / 2) / z + cy] : null;
+    const pw: Pt | null = pointer && zc < 0.05 ? [((pointer[0] - hf[0]) / zh + hf[0] - W / 2) / z + cx, ((pointer[1] - hf[1]) / zh + hf[1] - H / 2) / z + cy] : null;
     const Rp = 5.5 * s, Rh = (band ? 5 : 3.6) * s, lineOn = len > 4 && p < 0.985;
-    const rs = lerp(r0, rClose, zc), pad = rs + 2;
+    const rs = lerp(r0, rClose, zc) * zh, pad = rs + 2;
     const vis: number[] = [];
     for (let i = 0; i < n; i++) {
       let h = heat[i] * cool;
@@ -370,7 +387,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
       const was = cityA[name] ?? 0, a = still || want >= was ? want : was + (want - was) * (1 - Math.exp(-dt / 130));
       cityA[name] = a;
       if (a < 0.01) return;
-      const m = mp(c[0], c[1]), x = sx(m[0]), y = sy(m[1]), u = s * (1 + 0.5 * zc);
+      const m = mp(...tp(c)), x = sx(m[0]), y = sy(m[1]), u = s * (1 + 0.5 * zc);
       glowAt(x, y, 2.6 * u, 0.8 * a);
       if (!still) {
         const k = ((el / 1000 + 4 - i * 0.5) % 4) / 4, e = e3(clamp(k / 0.7));
