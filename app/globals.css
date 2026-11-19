@@ -1,7 +1,7 @@
 /* Beck To Nature.
-   One dark field. The founder's signature unwinds into a single gold line; the opening "flight" rides that line from
-   Budapest to America, and the line then runs down the page, lighting what it passes, to the inquiry form and the
-   closing signature. Motion is added by JavaScript (html.fx); without it every section reads as a plain page. */
+   One dark grey field. The founder's signature unwinds into a single gold line; the opening "flight" rides that line
+   from Budapest to America, and the line then draws itself down the page to the inquiry form and the closing
+   signature. The rules behind every value here are in .claude/skills/design-principles/SKILL.md. Motion is added by JavaScript (html.fx); without it every section reads as a plain page. */
 :root{
   color-scheme:dark;
   --k0:#0E0E0D;--k1:#121211;--k2:#171716;--k3:#1C1B1A;--k4:#242321;--k5:#2E2C29;   /* dark grey, not black: k1 page, k3 cards, k4 things on cards, k5 sheets */
@@ -37,7 +37,6 @@ button{font:inherit}
 .muted{color:var(--ink-2)}
 .skip{position:fixed;left:16px;top:16px;z-index:90;padding:10px 16px;border-radius:12px;background:var(--cream);color:var(--on-brass);text-decoration:none;transform:translateY(-120px);transition:transform 150ms ease-out}
 .skip:focus{transform:none}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 /* page field */
 .page{position:relative;isolation:isolate;overflow-x:clip;background:linear-gradient(180deg,#0F0F0E 0%,#121211 12%,#161514 34%,#121211 52%,#161514 72%,#121211 88%,#0F0F0E 100%)}
@@ -45,7 +44,8 @@ button{font:inherit}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:var(--r-pill);border:0;font:inherit;font-size:18px;cursor:pointer;text-decoration:none;white-space:nowrap;
-  transition:transform 200ms var(--ease),box-shadow 250ms var(--ease),background-color 150ms var(--ease)}
+  transition:transform 150ms ease-out,box-shadow 200ms var(--ease),background-color 150ms var(--ease)}
+.btn:active{transform:scale(.97)}                /* press: down to 0.97, ease-out, no bounce (everyday UI) */
 .btn[disabled]{opacity:.6;cursor:progress}
 .btn .ic{transition:transform 250ms var(--ease)}
 @media (hover:hover) and (pointer:fine){.btn:hover .ic{transform:translateX(3px)}}
@@ -58,8 +58,6 @@ button{font:inherit}
 @media (hover:hover) and (pointer:fine){.btn-main:hover{background:var(--cream-hi)}}
 .btn-quiet{color:var(--ink);background:var(--k4);box-shadow:inset 0 1px 0 rgba(255,240,210,.06)}
 @media (hover:hover) and (pointer:fine){.btn-quiet:hover{background:var(--k5)}}
-.btn-ghost{color:var(--ink);background:var(--k2);box-shadow:inset 0 0 0 1px rgba(235,211,166,.24)}
-@media (hover:hover) and (pointer:fine){.btn-ghost:hover{background:var(--k3);box-shadow:inset 0 0 0 1px rgba(235,211,166,.5)}}
 .text-cta{display:inline-flex;align-items:center;gap:12px;font-size:clamp(19px,1.6vw,22px);color:var(--cream);text-decoration:none}
 .text-cta .ic{width:24px;height:24px;transition:transform 300ms var(--ease)}
 @media (hover:hover) and (pointer:fine){.text-cta:hover .ic{transform:translateX(6px)}}
@@ -78,7 +76,6 @@ button{font:inherit}
 @media (max-width:980px){.nav-links{display:none}.nav-inner .btn{margin-left:auto}}
 
 /* ── the opening flight ───────────────────────────────────────────────────────────────────────────── */
-.flight{position:relative}
 .flight-sky{position:relative;min-height:100svh;display:grid;place-items:center;overflow:hidden}
 .flight-map,.flight-line{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
 .flight-line{overflow:visible}
@@ -131,31 +128,12 @@ button{font:inherit}
 .sec{padding-block:var(--sec) 0}
 .sec-head{display:grid;gap:16px;max-width:760px}
 .sec-head p{font-size:19px;color:var(--ink-2);max-width:52ch}
-.sec-head.center{margin-inline:auto;text-align:center;justify-items:center}
 
-/* specialties: three tiers */
-.ok{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--cream)}
-.ok svg{width:13px;height:13px;fill:none;stroke:var(--on-brass);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-
-/* founder */
-.founder{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:end}
+/* Ildi's photo */
 .portrait{position:relative;aspect-ratio:4/5;max-width:420px;border-radius:8px;overflow:hidden;background:var(--k3);display:grid;place-items:end start;padding:24px}
 .portrait span{position:relative;font-size:18px;color:var(--ink-3)}
-.founder-text{display:grid;gap:24px}
-.f-name{font-size:clamp(22px,2vw,28px);display:grid;justify-items:start;gap:4px;letter-spacing:-.01em;line-height:1.1}
-.f-role{font-size:19px;color:var(--ink-3);letter-spacing:0}
-.f-quote{font-size:clamp(22px,2.2vw,32px);line-height:1.2;letter-spacing:-.01em;color:var(--cream)}
-.essay{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(32px,4vw,48px) clamp(32px,6vw,96px);margin-top:clamp(72px,8vw,112px)}
-.essay h3{color:var(--cream);font-size:clamp(21px,1.8vw,25px);margin-bottom:8px}
-.essay p{color:var(--ink-2);max-width:48ch;font-size:19px}
-.promise{margin-top:clamp(72px,8vw,112px);max-width:900px}
-.promise-k{color:var(--ink-3);font-size:20px}
-.promise-t{font-size:clamp(24px,2.6vw,38px);line-height:1.12;letter-spacing:-.015em;margin-top:12px}
-.f-links{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap}
-.f-links a{min-height:44px;display:inline-flex;align-items:center;text-decoration:none;color:var(--ink-2)}
-@media (hover:hover) and (pointer:fine){.f-links a:hover{color:var(--ink)}}
 .to-inquiry{margin-top:32px}
-@media (max-width:900px){.founder{grid-template-columns:1fr}.portrait{max-width:380px}.essay{grid-template-columns:1fr}}
+@media (max-width:900px){.portrait{max-width:380px}}
 
 /* ── inquiry: the destination ─────────────────────────────────────────────────────────────────────── */
 .iq{position:relative;display:grid;gap:var(--head);max-width:860px;margin-inline:auto}
@@ -184,7 +162,8 @@ legend.q+*{clear:both}
 .chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .chip{position:relative}
 .chip input{position:absolute;opacity:0;width:1px;height:1px}
-.chip span{position:relative;display:grid;gap:3px;align-content:center;min-height:84px;padding:16px 52px 16px 20px;border-radius:16px;background:var(--k4);box-shadow:inset 0 0 0 1px rgba(240,220,180,.1);cursor:pointer;transition:box-shadow 160ms,background-color 160ms,transform 200ms var(--ease)}
+.chip span{position:relative;display:grid;gap:3px;align-content:center;min-height:84px;padding:16px 52px 16px 20px;border-radius:16px;background:var(--k4);box-shadow:inset 0 0 0 1px rgba(240,220,180,.1);cursor:pointer;transition:box-shadow 160ms,background-color 160ms,transform 150ms ease-out}
+.chip span:active{transform:scale(.97)}
 .chip span b{font-weight:400;color:var(--ink)}
 .chip span small{font-size:18px;color:var(--ink-3)}
 @media (hover:hover) and (pointer:fine){.chip span:hover{box-shadow:inset 0 0 0 1px rgba(240,220,180,.26)}}
@@ -240,7 +219,9 @@ legend.q+*{clear:both}
 .eu-picked{position:absolute;left:16px;bottom:12px;color:var(--ink-2);pointer-events:none}
 .eu-picked b{font-weight:400;color:var(--cream);font-size:20px}
 /* after sending */
-.reward{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:24px;background:rgba(5,5,5,.78);opacity:0;transition:opacity 400ms var(--ease)}
+.reward{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;border:0;color:inherit;place-items:center;padding:24px;background:rgba(10,10,9,.78);opacity:0;transition:opacity 320ms var(--ease)}   /* a native <dialog>: the browser puts it above everything */
+.reward[open]{display:grid}
+.reward::backdrop{background:transparent}
 .reward.show{opacity:1}
 .reward canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .reward-card{position:relative;max-width:480px;width:100%;padding:44px 32px;display:grid;justify-items:center;text-align:center;gap:14px;transform:scale(.97);transition:transform 400ms var(--ease);background:var(--k5);border-radius:28px}
@@ -251,6 +232,7 @@ legend.q+*{clear:both}
 .reward.show .reward-card circle,.reward.show .reward-card path{stroke-dashoffset:0}
 .reward-card h3{font-size:30px;color:var(--cream)}
 .reward-card p{color:var(--ink-2)}
+.reward-card .btn-quiet{background:#3A3834}                 /* on the sheet, so a step lighter than the sheet */
 .summary{width:100%;text-align:left;margin:6px 0;padding:16px 18px;border-radius:var(--r-md);background:rgba(240,220,180,.05);display:grid;gap:6px}
 .summary div{display:flex;justify-content:space-between;gap:12px}.summary span{color:var(--ink-3)}.summary b{font-weight:400;text-align:right}
 .fallback{display:grid;gap:14px;justify-items:start;padding:18px 20px;border-radius:16px;background:rgba(240,220,180,.05);box-shadow:inset 0 0 0 1px rgba(240,220,180,.12)}
@@ -258,7 +240,7 @@ legend.q+*{clear:both}
 
 /* stories */
 .story{position:relative;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,6vw,96px);align-items:end;padding-block:clamp(44px,5vw,64px)}
-.story+.story::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:rgba(240,220,180,.1);transform-origin:left;transform:scaleX(var(--rule,1))}
+.story+.story::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:rgba(240,220,180,.1)}
 .story-result{font-size:clamp(26px,3vw,44px);line-height:1.04;letter-spacing:-.02em}
 .story-facts{display:grid;gap:4px}
 #cases .sec-head{margin-bottom:calc(var(--head) - clamp(44px,5vw,64px))}
@@ -279,14 +261,14 @@ legend.q+*{clear:both}
 .spot.on{opacity:1}
 @media (hover:none),(pointer:coarse){.spot{display:none}}
 
-/* scroll choreography helpers: a word that rises from behind a mask, and a word that lights up */
+/* scroll choreography helper: a word that rises from behind a mask */
 .w{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.14em;margin-bottom:-.14em}
 .wi{display:inline-block;will-change:transform}
 
 /* ── legal pages ──────────────────────────────────────────────────────────────────────────────────── */
 .legal-page{min-height:100svh;background:radial-gradient(60% 40% at 50% 0%,rgba(var(--glow),.07),transparent 70%) no-repeat,var(--k1);font-size:20px;line-height:1.55}
 .legal-top{position:sticky;top:0;z-index:5;padding:12px var(--gr) 0 var(--gl)}
-.legal-top-in{max-width:1344px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;padding:0 20px;border-radius:999px;background:#121110}
+.legal-top-in{max-width:1344px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;padding:0 20px;border-radius:999px;background:var(--k2)}
 .legal-top nav{display:flex;gap:22px;font-size:18px}
 .legal-top nav a{color:var(--ink-2);text-decoration:none}
 @media (hover:hover) and (pointer:fine){.legal-top nav a:hover{color:var(--ink)}}
@@ -318,17 +300,12 @@ legend.q+*{clear:both}
 /* less flat: a fine speckle over the black, drawn in the page (no image file, no request) */
 body::after{content:"";position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.07;mix-blend-mode:screen;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .86 0 0 0 0 .7 0 0 0 1.6 -.55'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
-/* buttons: press down to 0.97 and come back, ease-out, no bounce (everyday UI) */
-.btn{transition:transform 150ms ease-out,box-shadow 200ms var(--ease),background-color 150ms var(--ease)}
-.btn:active{transform:scale(.97)}
 /* bigger hit areas than they look */
 .nav-links a,.foot a{position:relative}
 .nav-links a::after,.foot a::after{content:"";position:absolute;inset:-8px -6px}
 /* the check pops when an answer is picked (squash and stretch, exaggerated feedback) */
 .chip input:checked+span .mark{animation:pop 300ms cubic-bezier(.34,1.56,.64,1)}
 @keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
-.chip span{transition:box-shadow 160ms,background-color 160ms,transform 150ms ease-out}
-.chip span:active{transform:scale(.97)}
 /* answers so far: one quiet row of values above the question; each reopens its question */
 .trail{list-style:none;margin:0 0 -6px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .trail button{min-height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--k5);color:var(--ink-2);font:inherit;font-size:16px;cursor:pointer;transition:background-color 150ms,color 150ms}

@@ -32,7 +32,7 @@ export function createThread(page: HTMLElement): Thread {
   // sections rise in as they come into view (headings word by word, then their blocks), and go back when scrolled past upwards
   const scenes = [...page.querySelectorAll<HTMLElement>(".scene")];
   scenes.forEach((sc) => {
-    sc.querySelectorAll("h2").forEach((h) => splitWords(h, "rise").forEach((w, i) => w.style.setProperty("--i", String(i))));
+    sc.querySelectorAll("h2").forEach((h) => splitWords(h).forEach((w, i) => w.style.setProperty("--i", String(i))));
     sc.querySelectorAll<HTMLElement>("[data-r]").forEach((el, i) => el.style.setProperty("--i", String(i)));
   });
   const io = new IntersectionObserver((es) => es.forEach((e) => {

@@ -27,8 +27,7 @@ export default function Experience() {
     document.addEventListener("click", (e) => {
       const link = (e.target as Element).closest?.<HTMLAnchorElement>('a[href^="#"]');
       if (!link) return;
-      const hash = link.getAttribute("href")!, industry = link.dataset.industry;
-      if (industry) window.dispatchEvent(new CustomEvent("btn:prefill", { detail: industry }));
+      const hash = link.getAttribute("href")!;
       let y: number | null = null;
       if (hash === "#top") y = 0;
       else if (hash === "#why" && !still) { const f = flightSpan(); y = f.top + f.len * 0.93; }

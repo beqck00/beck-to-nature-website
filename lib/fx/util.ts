@@ -15,8 +15,13 @@ export const sstep = (a: number, b: number, v: number) => {
 const K = 6.5, FLOOR = Math.pow(2, -K);
 /** Fast at first, then slower and slower. */
 export const expoOut = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : (1 - Math.pow(2, -K * t)) / (1 - FLOOR));
+/** Fast at first, then slower (a gentle cubic, for small fades). */
+export const easeOut3 = (t: number) => 1 - Math.pow(1 - t, 3);
 /** Slow, then fast, then slower again. */
 export const expoInOut = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? (0.5 * (Math.pow(2, K * (2 * t - 1)) - FLOOR)) / (1 - FLOOR) : 1 - (0.5 * (Math.pow(2, -K * (2 * t - 1)) - FLOOR)) / (1 - FLOOR));
+
+/** A point on the quadratic Bézier a -> (control c) -> b at t. */
+export const quad = (a: Pt, c: Pt, b: Pt, t: number): Pt => [(1 - t) ** 2 * a[0] + 2 * (1 - t) * t * c[0] + t * t * b[0], (1 - t) ** 2 * a[1] + 2 * (1 - t) * t * c[1] + t * t * b[1]];
 
 /** A smooth SVG path through the points (Catmull-Rom converted to cubic Béziers). */
 export function smoothPath(pts: Pt[]): string {
@@ -73,12 +78,11 @@ export function strokePaths(g: SVGGElement, ds: string[]) {
   });
 }
 
-/** Wrap each word of an element's text in spans (keeping inner elements such as placeholders). Safe to call twice.
-    kind "rise": <span class="w"><span class="wi">word</span></span>, for words that rise from behind a mask.
-    kind "light": <span class="lw">word</span>, for words that light up one by one. */
-export function splitWords(el: Element, kind: "rise" | "light"): HTMLElement[] {
+/** Wrap each word of an element's text in <span class="w"><span class="wi">word</span></span>, so the words can rise
+    from behind a mask (keeping inner elements such as placeholders). Safe to call twice; returns the inner spans. */
+export function splitWords(el: Element): HTMLElement[] {
   if (!(el as HTMLElement).dataset.split) {
-    (el as HTMLElement).dataset.split = kind;
+    (el as HTMLElement).dataset.split = "rise";
     const walk = (node: Node) => {
       for (const child of [...node.childNodes]) {
         if (child.nodeType === 3) {
@@ -86,13 +90,8 @@ export function splitWords(el: Element, kind: "rise" | "light"): HTMLElement[] {
           for (const part of parts) {
             if (!part) continue;
             if (/^\s+$/.test(part)) { frag.append(" "); continue; }
-            if (kind === "rise") {
-              const w = document.createElement("span"), wi = document.createElement("span");
-              w.className = "w"; wi.className = "wi"; wi.textContent = part; w.append(wi); frag.append(w);
-            } else {
-              const lw = document.createElement("span");
-              lw.className = "lw"; lw.textContent = part; frag.append(lw);
-            }
+            const w = document.createElement("span"), wi = document.createElement("span");
+            w.className = "w"; wi.className = "wi"; wi.textContent = part; w.append(wi); frag.append(w);
           }
           child.replaceWith(frag);
         } else if (child.nodeType === 1 && (child as Element).tagName !== "BR") walk(child);
@@ -100,7 +99,7 @@ export function splitWords(el: Element, kind: "rise" | "light"): HTMLElement[] {
     };
     walk(el);
   }
-  return [...el.querySelectorAll<HTMLElement>(kind === "rise" ? ".wi" : ".lw")];
+  return [...el.querySelectorAll<HTMLElement>(".wi")];
 }
 
 export const prefersReducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;

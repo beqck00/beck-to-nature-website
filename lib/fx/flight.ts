@@ -7,7 +7,7 @@
 import gsap from "gsap";
 import { WORLD_D, WORLD_DOTS } from "@/lib/data/world";
 import { SIG_H, SIG_STROKES, SIG_W } from "@/lib/data/signature";
-import { clamp, dashWindow, lerp, mapPath, type Pt, expoInOut, expoOut, smoothPath, splitWords, sstep, strokePaths, tangentPath } from "./util";
+import { clamp, dashWindow, easeOut3, lerp, mapPath, type Pt, expoInOut, expoOut, quad, smoothPath, splitWords, sstep, strokePaths, tangentPath } from "./util";
 
 // Map units, as in lib/data/world.ts.
 const K = Math.cos((44 * Math.PI) / 180);
@@ -45,6 +45,7 @@ const BAND = "(max-width:700px), (max-aspect-ratio: 21/20)";   // phones and tal
 
 const DOT = [45, 43, 40], NEAR = [70, 62, 51], WARM = [156, 126, 82], HOT = [235, 211, 166];
 const mix = (a: number[], b: number[], t: number) => `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], t))).join(",")})`;
+const DOT_FILL = mix(DOT, DOT, 0), NEAR_FILL = mix(NEAR, NEAR, 0);
 const HEAT_FILL = [0.18, 0.36, 0.54, 0.72, 0.9, 1].map((h) => (h < 0.5 ? mix(DOT, WARM, h * 2) : mix(WARM, HOT, (h - 0.5) * 2)));
 
 export type Flight = {
@@ -113,19 +114,16 @@ export function createFlight(root: HTMLElement, still = false): Flight {
 
   // geometry, filled in by layout()
   let W = 0, H = 0, dpr = 1, s = 1, offX = 0, offY = 0, band = false, r0 = 1, rClose = 5, Z = 3.4;
-  let cities: Record<string, Pt> = {};
   type Lane = { a: string; b: string; pts: Pt[]; cum: number[]; len: number; at: number };
   const lanes: Lane[] = [];
   let segs: ReturnType<typeof strokePaths> = [], Lsig = 0;
   let fadeMask = (k: number) => String(k), maskK = -1;
-  // when scrolling starts the hero's lines stop where they are and run into the signature's tail, where the main line
-  // leaves from; scrolled back to the top, they come back out and carry on from the same moment
   const cityA: Record<string, number> = {};               // how lit each city is on screen, so it can fade out gently
   let frozenAt: number | null = null, runT = 0;          // runT: ms into the lines' run to their end cities (see RUN)
   let L = 0, LB = 0, LU = 0, xOut = 0, anchor: Pt = [0, 0];
   const mp = (mx: number, my: number): Pt => [offX + (mx + 3) * s, offY + (my + 1) * s];
 
-  // scroll-linked timeline for everything that is ordinary DOM (headline, statements, labels, the landing block)
+  // scroll-linked timeline for everything that is ordinary DOM (headline, statements, the landing block)
   const state = { dim: 1 };
   let tl: gsap.core.Timeline | null = null;
   function timeline() {
@@ -136,12 +134,12 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     t.to(h1, { yPercent: -40, autoAlpha: 0, duration: T.heroOut - 0.01, ease: "expo.in" }, 0.004);
     t.to(cue, { autoAlpha: 0, duration: 0.03 }, 0);
     says.forEach((el, i) => {
-      const at = T.says[i], w = splitWords(el, "rise");
+      const at = T.says[i], w = splitWords(el);
       t.fromTo(el, { autoAlpha: 0, y: 0 }, { autoAlpha: 1, duration: 0.004 }, at);
       t.fromTo(w, { yPercent: 118 }, { yPercent: 0, duration: 0.05, stagger: 0.014, ease: "expo.out" }, at);
       t.to(el, { autoAlpha: 0, y: -36, duration: 0.035, ease: "expo.in" }, at + 0.115);
     });
-    const lines = splitWords(land.querySelector("h2")!, "rise");
+    const lines = splitWords(land.querySelector("h2")!);
     t.fromTo(land, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.004 }, T.land);
     t.fromTo(lines, { yPercent: 118 }, { yPercent: 0, duration: 0.07, stagger: 0.005, ease: "expo.out" }, T.land + 0.005);
     t.to(state, { dim: band ? 0.3 : 0.55, duration: 0.09 }, T.land - 0.01);
@@ -159,7 +157,6 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     else { s = Math.max(W / 124, H / 84); offX = (W - 124 * s) / 2; offY = 0; Z = 3.4; rClose = 5.2; }
     r0 = 0.34 * s; rClose = Math.max(rClose, r0);
     for (let i = 0; i < n; i++) { const p = mp(dots[i].mx, dots[i].my); X[i] = p[0]; Y[i] = p[1]; }
-    cities = Object.fromEntries(Object.entries(CITIES).map(([k, [x, y]]) => [k, mp(x, y)]));
     // the map fades into the page at its edges while the camera is wide
     const mh = 84 * s;
     // (a mask, not a dark overlay, so the page's own background shows through and there is no seam with the next section)
@@ -171,8 +168,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     };
     maskK = -1;
 
-    // decorative routes, sampled
-    const quad = (a: Pt, c: Pt, b: Pt, t: number): Pt => [(1 - t) ** 2 * a[0] + 2 * (1 - t) * t * c[0] + t * t * b[0], (1 - t) ** 2 * a[1] + 2 * (1 - t) * t * c[1] + t * t * b[1]];
+    // the main route, sampled
     const arc = (from: string, to: string, lift: number, steps: number) => {
       const a = CITIES[from], b = CITIES[to], c: Pt = [(a[0] + b[0]) / 2, Math.min(a[1], b[1]) - lift];
       return Array.from({ length: steps + 1 }, (_, i) => { const m = quad(a, c, b, i / steps); return mp(m[0], m[1]); });
@@ -186,7 +182,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
 
     // the line: signature tail -> Budapest -> (the Budapest-Chicago route) -> Chicago -> off the bottom edge
     // It joins and leaves the route along the route's own direction, so there is no elbow at either city.
-    const B = cities[FROM], U = cities[TO];
+    const B = mp(...CITIES[FROM]), U = mp(...CITIES[TO]);
     const ctrl = mp((CITIES[FROM][0] + CITIES[TO][0]) / 2, Math.min(CITIES[FROM][1], CITIES[TO][1]) - LIFT);
     const unit = (a: Pt, b: Pt): Pt => { const d = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; return [(b[0] - a[0]) / d, (b[1] - a[1]) / d]; };
     const d0 = unit(B, ctrl), d1 = unit(ctrl, U);
@@ -238,7 +234,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   // a curve between two hubs, in map units, rising higher the further it flies
   function lane(a: string, b: string, at: number): Lane {
     const A = HUBS[a], B = HUBS[b], dx = Math.abs(A[0] - B[0]), C: Pt = [(A[0] + B[0]) / 2, Math.min(A[1], B[1]) - (0.3 + 0.08 * Math.random()) * dx];
-    const pts = Array.from({ length: 49 }, (_, i) => { const t = i / 48; return [(1 - t) ** 2 * A[0] + 2 * (1 - t) * t * C[0] + t * t * B[0], (1 - t) ** 2 * A[1] + 2 * (1 - t) * t * C[1] + t * t * B[1]] as Pt; });
+    const pts = Array.from({ length: 49 }, (_, i) => quad(A, C, B, i / 48));
     const cum = [0]; for (let j = 1; j < pts.length; j++) cum.push(cum[j - 1] + Math.hypot(pts[j][0] - pts[j - 1][0], pts[j][1] - pts[j - 1][1]));
     return { a, b, pts, cum, len: cum[cum.length - 1], at };
   }
@@ -263,8 +259,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const dt = Math.min(64, now - lastNow || 16); lastNow = now;
     const el = still ? 1e7 : now - t0;
     if (intro && p > 0.02) intro = false;                                   // scrolling ends the opening early
-    const e3 = (t: number) => 1 - Math.pow(1 - t, 3), eio = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
-    const written = intro ? eio(clamp((el - 500) / 1700)) : 1;
+    const e3 = easeOut3, written = intro ? expoInOut(clamp((el - 500) / 1700)) : 1;   // the signature writes itself: slow, fast, slower
     if (intro && written >= 1) intro = false;
 
     // camera
@@ -313,8 +308,8 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     ctx.globalAlpha = fade * state.dim;
     const square = rs < 1.5;
     const put = (i: number) => { const px = sx(X[i]), py = sy(Y[i]); if (square) ctx.rect(Math.round((px - rs) * dpr) / dpr, Math.round((py - rs) * dpr) / dpr, rs * 2, rs * 2); /* tiny dots snap to whole device pixels, so they do not shimmer as the camera moves */ else { ctx.moveTo(px + rs, py); ctx.arc(px, py, rs, 0, 6.2832); } };
-    ctx.fillStyle = mix(DOT, DOT, 0); ctx.beginPath(); for (const i of vis) if (!heat[i] && !dots[i].near) put(i); ctx.fill();
-    ctx.fillStyle = mix(NEAR, NEAR, 0); ctx.beginPath(); for (const i of vis) if (!heat[i] && dots[i].near) put(i); ctx.fill();
+    ctx.fillStyle = DOT_FILL; ctx.beginPath(); for (const i of vis) if (!heat[i] && !dots[i].near) put(i); ctx.fill();
+    ctx.fillStyle = NEAR_FILL; ctx.beginPath(); for (const i of vis) if (!heat[i] && dots[i].near) put(i); ctx.fill();
     for (let b = 0; b < HEAT_FILL.length; b++) {
       const lo = b / HEAT_FILL.length, hi = (b + 1) / HEAT_FILL.length;
       ctx.fillStyle = HEAT_FILL[b]; ctx.beginPath();
@@ -385,8 +380,6 @@ export function createFlight(root: HTMLElement, still = false): Flight {
       ctx.globalAlpha = a; ctx.fillStyle = "#EBD3A6"; ctx.beginPath(); ctx.arc(x, y, 0.55 * u, 0, 6.2832); ctx.fill();
     });
     ctx.globalAlpha = 1;
-
-    const place = (elx: HTMLElement, c: Pt, dxp: number) => { elx.style.transform = `translate(${(sx(c[0]) + dxp).toFixed(1)}px, ${(sy(c[1]) - 34).toFixed(1)}px)`; };
 
     // headline letters catch the light of a passing comet (wide shot, pointer devices)
     if (hover && !still) {

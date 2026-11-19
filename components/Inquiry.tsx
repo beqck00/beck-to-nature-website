@@ -1,11 +1,10 @@
 "use client";
 
 // The inquiry: one question at a time, six steps. Contact details are sent to the team when the visitor continues past
-// step 2 (the form says so), and the full inquiry at the end. Other parts of the page can answer the first question
-// for the visitor by dispatching a "btn:prefill" event with an industry name.
+// step 2 (the form says so), and the full inquiry at the end. The "thank you" is a native <dialog> (shown with
+// showModal), so the browser gives it the top layer, keeps focus inside it and closes it with Esc.
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { EUROPE, EUROPE_VIEWBOX } from "@/lib/data/europe";
 import { CONTACT_EMAIL, INDUSTRIES, isEmail, STAGES, US_HISTORY } from "@/lib/inquiry";
 import { mountDial } from "@/lib/dial";
@@ -87,17 +86,6 @@ export default function Inquiry() {
   };
   useEffect(() => () => clearTimeout(advance.current), []);
 
-  // another part of the page answered the first question
-  useEffect(() => {
-    const on = (e: Event) => {
-      const industry = (e as CustomEvent<string>).detail;
-      if (!INDUSTRIES.some(([l]) => l === industry)) return;
-      setA((s) => ({ ...s, industry })); setError(""); setDir(1); setStep((cur) => (cur === 0 ? 1 : cur));
-    };
-    window.addEventListener("btn:prefill", on);
-    return () => window.removeEventListener("btn:prefill", on);
-  }, []);
-
   // move focus to the new step's first field (only after the visitor acted, and never scrolling the page)
   useEffect(() => {
     if (!dir) return;
@@ -125,11 +113,13 @@ export default function Inquiry() {
   };
   const close = () => {
     setShown(false);
+    window.setTimeout(() => dlg.current?.close(), 320);
     window.setTimeout(() => { if (outcome === "sent") { setA(blank); months.current = blank.months; visit.current = ""; show(0, -1); } setOutcome(null); }, 400);
   };
 
   // confetti in the brand's colours when an inquiry is sent
-  const burst = useRef<HTMLCanvasElement>(null), done = useRef<HTMLButtonElement>(null);
+  const burst = useRef<HTMLCanvasElement>(null), done = useRef<HTMLButtonElement>(null), dlg = useRef<HTMLDialogElement>(null);
+  useEffect(() => { if (outcome && dlg.current && !dlg.current.open) dlg.current.showModal(); }, [outcome]);
   useEffect(() => {
     if (!shown) return;
     done.current?.focus();
@@ -164,7 +154,7 @@ export default function Inquiry() {
 
   return (
     <>
-      <form className="card wiz" id="wiz" ref={formRef} noValidate onSubmit={submit}
+      <form className="wiz" id="wiz" ref={formRef} noValidate onSubmit={submit}
         onKeyDown={(e) => { if (e.key === "Enter" && step < STEPS - 1 && (e.target as HTMLElement).tagName === "INPUT" && (e.target as HTMLInputElement).type !== "radio") { e.preventDefault(); go(a, step); } }}>
         <div className="wiz-top">
           <span aria-live="polite">Question {step + 1} of {STEPS}</span>
@@ -186,10 +176,10 @@ export default function Inquiry() {
           {step === 1 && (<>
             <p className="q">Where can we reach you?<small>We save these details when you continue, so we can follow up even if you stop here.</small></p>
             <div className="row2">
-              <div className="fld"><label htmlFor={`${id}-name`}>Your name</label><input id={`${id}-name`} autoComplete="name" value={a.name} onChange={(e) => set("name", e.target.value)} /></div>
-              <div className="fld"><label htmlFor={`${id}-phone`}>Phone</label><span className="ok-wrap"><input id={`${id}-phone`} type="tel" autoComplete="tel" placeholder="+36 …" value={a.phone} onChange={(e) => set("phone", e.target.value)} />{okPhone && <i className="okmark" aria-hidden="true" />}</span></div>
+              <div className="fld"><label htmlFor={`${id}-name`}>Your name</label><input id={`${id}-name`} autoComplete="name" autoCapitalize="words" enterKeyHint="next" value={a.name} onChange={(e) => set("name", e.target.value)} /></div>
+              <div className="fld"><label htmlFor={`${id}-phone`}>Phone</label><span className="ok-wrap"><input id={`${id}-phone`} type="tel" autoComplete="tel" enterKeyHint="next" placeholder="+36 …" value={a.phone} onChange={(e) => set("phone", e.target.value)} />{okPhone && <i className="okmark" aria-hidden="true" />}</span></div>
             </div>
-            <div className="fld"><label htmlFor={`${id}-email`}>Work email</label><span className="ok-wrap"><input id={`${id}-email`} type="email" autoComplete="email" placeholder="name@company.com" value={a.email} onChange={(e) => set("email", e.target.value.trim())} />{okEmail && <i className="okmark" aria-hidden="true" />}</span></div>
+            <div className="fld"><label htmlFor={`${id}-email`}>Work email</label><span className="ok-wrap"><input id={`${id}-email`} type="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" placeholder="name@company.com" value={a.email} onChange={(e) => set("email", e.target.value.trim())} />{okEmail && <i className="okmark" aria-hidden="true" />}</span></div>
             <label className="consent"><input type="checkbox" checked={a.sms} onChange={(e) => set("sms", e.target.checked)} />
               <span>Text me about this inquiry.<small>Optional. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. Agreeing is not a condition of working with us.</small></span></label>
             <div className="hp" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={a.website} onChange={(e) => set("website", e.target.value)} /></label></div>
@@ -213,7 +203,7 @@ export default function Inquiry() {
           </>)}
           {step === 5 && (<>
             <p className="q">Last one: your company and where you make it.</p>
-            <div className="fld"><label htmlFor={`${id}-company`}>Company name</label><input id={`${id}-company`} autoComplete="organization" value={a.company} onChange={(e) => set("company", e.target.value)} /></div>
+            <div className="fld"><label htmlFor={`${id}-company`}>Company name</label><input id={`${id}-company`} autoComplete="organization" enterKeyHint="done" value={a.company} onChange={(e) => set("company", e.target.value)} /></div>
             <div className="eumap">
               <svg viewBox={EUROPE_VIEWBOX} aria-hidden="true">
                 {map.map((c) => <path key={c.name} d={c.d} className={`cty${c.pick ? " sel" : ""}${c.core ? " c" : ""}${c.name === a.country ? " on" : ""}`} onClick={c.pick ? () => { set("country", c.name); buzz(8); } : undefined} />)}
@@ -237,10 +227,10 @@ export default function Inquiry() {
         <p className="note">Your answers go to our founder, not to a mailing list. See our <a href={at("/privacy")}>privacy policy</a>.</p>
       </form>
 
-      {outcome && createPortal(
-        <div className={`reward${shown ? " show" : ""}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-done`}>
+      {outcome && (
+        <dialog ref={dlg} className={`reward${shown ? " show" : ""}`} aria-labelledby={`${id}-done`} onCancel={(e) => { e.preventDefault(); close(); }}>
           <canvas ref={burst} aria-hidden="true" />
-          <div className="card reward-card">
+          <div className="reward-card">
             {outcome === "sent" ? (<>
               <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" /><path d="M20 33l8 8 17-18" /></svg>
               <h3 id={`${id}-done`}>Thank you, {a.name.trim().split(" ")[0]}</h3>
@@ -256,8 +246,7 @@ export default function Inquiry() {
             </>)}
             <button className="btn btn-quiet btn-sm" type="button" ref={done} onClick={close}>{outcome === "sent" ? "Done" : "Back to the form"}</button>
           </div>
-        </div>,
-        document.body,     // above the menu bar and everything else
+        </dialog>
       )}
     </>
   );
