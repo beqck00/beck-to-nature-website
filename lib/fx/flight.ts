@@ -41,7 +41,7 @@ const T = {
   zoomOut: [0.7, 0.82] as const,    // camera pulls back over America (the line arrives at 0.70)
   land: 0.8,                        // the "why" block comes in
 };
-const BAND = "(max-width:700px), (max-aspect-ratio: 21/20)";   // phones and tall windows: the map is a band at the bottom
+const BAND = "(max-width:700px), (max-aspect-ratio: 21/20)";   // phones and tall windows: the map is a band across the middle
 
 const DOT = [45, 43, 40], NEAR = [70, 62, 51], WARM = [156, 126, 82], HOT = [235, 211, 166];
 const mix = (a: number[], b: number[], t: number) => `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], t))).join(",")})`;
@@ -153,7 +153,9 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     W = sky.clientWidth; H = sky.clientHeight; dpr = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     band = matchMedia(BAND).matches;
-    if (band) { s = W / 124; offX = 0; offY = H - 84 * s - (W < 700 ? 10 : 28); Z = 4.6; rClose = 3.2; }
+    // phones and tall windows: the map fills the width, America to Europe (map units 4 to 114), and sits behind the
+    // headline as on a desktop, with the North Atlantic at the headline's height
+    if (band) { s = W / 110; offX = -7 * s; offY = H * 0.44 - 40 * s; Z = 4.6; rClose = 3.2; }
     else { s = Math.max(W / 124, H / 84); offX = (W - 124 * s) / 2; offY = 0; Z = 3.4; rClose = 5.2; }
     r0 = 0.34 * s; rClose = Math.max(rClose, r0);
     for (let i = 0; i < n; i++) { const p = mp(dots[i].mx, dots[i].my); X[i] = p[0]; Y[i] = p[1]; }
@@ -164,7 +166,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     fadeMask = (k: number) => {
       const o = `rgba(0,0,0,${k.toFixed(2)})`;
       return band
-        ? `linear-gradient(180deg, ${o} 0, ${o} ${offY.toFixed(0)}px, #000 ${(offY + mh * 0.16).toFixed(0)}px, #000 ${(offY + mh * 0.84).toFixed(0)}px, ${o} ${H.toFixed(0)}px)`
+        ? `linear-gradient(180deg, ${o} 0, ${o} ${offY.toFixed(0)}px, #000 ${(offY + mh * 0.22).toFixed(0)}px, #000 ${(offY + mh * 0.78).toFixed(0)}px, ${o} ${(offY + mh).toFixed(0)}px, ${o} 100%)`
         : `linear-gradient(180deg, #000 60%, ${o} 98%)`;
     };
     maskK = -1;
@@ -310,7 +312,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const fade = still ? 1 : e3(clamp(el / 1200));
     ctx.globalAlpha = fade * state.dim;
     const square = rs < 1.5;
-    const put = (i: number) => { const px = sx(X[i]), py = sy(Y[i]); if (square) ctx.rect(px - rs, py - rs, rs * 2, rs * 2); else { ctx.moveTo(px + rs, py); ctx.arc(px, py, rs, 0, 6.2832); } };
+    const put = (i: number) => { const px = sx(X[i]), py = sy(Y[i]); if (square) ctx.rect(Math.round((px - rs) * dpr) / dpr, Math.round((py - rs) * dpr) / dpr, rs * 2, rs * 2); /* tiny dots snap to whole device pixels, so they do not shimmer as the camera moves */ else { ctx.moveTo(px + rs, py); ctx.arc(px, py, rs, 0, 6.2832); } };
     ctx.fillStyle = mix(DOT, DOT, 0); ctx.beginPath(); for (const i of vis) if (!heat[i] && !dots[i].near) put(i); ctx.fill();
     ctx.fillStyle = mix(NEAR, NEAR, 0); ctx.beginPath(); for (const i of vis) if (!heat[i] && dots[i].near) put(i); ctx.fill();
     for (let b = 0; b < HEAT_FILL.length; b++) {
