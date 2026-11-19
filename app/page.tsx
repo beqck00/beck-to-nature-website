@@ -94,7 +94,7 @@ export default function Home() {
         </section>
 
         <section className="sec frame scene" id="expertise" aria-labelledby="ex-h">
-          <div className="sec-head"><h2 id="ex-h">Where she goes deepest.</h2></div>
+          <div className="sec-head"><h2 id="ex-h">Areas of expertise.</h2></div>
           <ul className="rows">
             {DEPTH.map(([area, proof]) => <li key={area} data-r><h3>{area}</h3><p>{proof}</p></li>)}
           </ul>
