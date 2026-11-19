@@ -286,7 +286,7 @@ Contract templates (mutual and one-way NDA, master services agreement, EU and US
 
 **Other notes from the same message:** a play button's triangle should be nudged slightly right so it looks centred (none on the site yet). For settings-style lists: group rows under titles, show the current value in the row, an arrow means "opens a screen", and a destructive action (such as delete account) is red, at the bottom, with no arrow.
 
-## Changed on 2026-11-19: the hero's lines run into the signature
+## Changed on 2026-11-19: on scroll the hero's lines run to their end cities
 
-- When the visitor starts to scroll, the three hero lines stop where they are and, instead of fading out, bend like ropes down into the signature's tail (the point the main gold line leaves from): the front end of each line is drawn in first, the rest follows and pours in, so the lines "power" the main line. Scrolled back to the top, they come back out and carry on from the same moment. Bending blends smooth curves, so there are no corners or loops. Code: the `q` / `frozenAt` part of the hero drawing in `lib/fx/flight.ts`.
+- **Replaced the same day at the owner's request:** when the visitor starts to scroll, each of the three hero lines runs on to its own end city in America instead: the head finishes its flight first, then the tail follows it in (slow, fast, slower), and the destination city stays lit until the hero fades. Lines that had not left yet fly the whole way. Scrolled back to the top, they carry on from the same moment. Code: the `q` / `frozenAt` part of the hero drawing in `lib/fx/flight.ts`.
 - The three lines run on one fixed cycle, a third of a cycle apart, so one is always moving.

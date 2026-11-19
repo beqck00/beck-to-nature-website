@@ -115,7 +115,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   type Lane = { a: string; b: string; pts: Pt[]; cum: number[]; len: number; at: number };
   const lanes: Lane[] = [];
   let segs: ReturnType<typeof strokePaths> = [], Lsig = 0;
-  let fadeMask = (k: number) => String(k), maskK = -1, sigTail: Pt = [0, 0];
+  let fadeMask = (k: number) => String(k), maskK = -1;
   // when scrolling starts the hero's lines stop where they are and run into the signature's tail, where the main line
   // leaves from; scrolled back to the top, they come back out and carry on from the same moment
   let frozenAt: number | null = null;
@@ -178,7 +178,6 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     segs = strokePaths(sigG, SIG_STROKES.map((d) => mapPath(d, (x, y) => [ox + x * k, oy + y * k])));
     Lsig = segs.reduce((a, g) => a + g.len, 0);
     const start: Pt = [ox + 842 * k, oy + 292 * k];
-    sigTail = start;
 
     // the line: signature tail -> Budapest -> (the Budapest-Chicago route) -> Chicago -> off the bottom edge
     // It joins and leaves the route along the route's own direction, so there is no elbow at either city.
@@ -319,10 +318,10 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     }
 
     // the hero's lines and their cities, then only the two ends of our route
-    const ra = 1 - sstep(0.02, T.heroOut, p), comets: { x: number; y: number; o: number }[] = [];
+    const ra = 1 - sstep(0.05, T.heroOut, p), comets: { x: number; y: number; o: number }[] = [];
     const glowAt = (x: number, y: number, r: number, a: number) => { if (a > 0.01) { ctx.globalAlpha = a; ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2); } };
     const lit: Record<string, number> = {};
-    // q: how far the lines have run into the signature (0 at the top of the page, 1 a little way into the scroll)
+    // q: how far the lines have run on to their end cities (0 at the top of the page, 1 a little way into the scroll)
     const q = still ? 0 : clamp(p / 0.06);
     if (!still) {
       if (p > 0.0005 && frozenAt === null) frozenAt = el;
@@ -331,50 +330,30 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const tNow = frozenAt ?? el;
     if (q < 1) {
       if (frozenAt === null) tend(el, still);
-      ctx.lineCap = "round"; ctx.lineWidth = Math.max(1, 0.3 * s) * (1 + 0.4 * q); ctx.strokeStyle = "#F0D9AE";
+      ctx.lineCap = "round"; ctx.lineWidth = Math.max(1, 0.3 * s); ctx.strokeStyle = "#F0D9AE";
       for (const ln of lanes) {
         const t = tNow - ln.at; if (t < 0 && q === 0) continue;
         // head: fast, then slower; tail: slow, fast, slower
-        const hd = still ? 1 : expoOut(clamp(t / GROW)), tl0 = still ? 0 : expoInOut(clamp((t - GROW - HOLD) / SHRINK));
+        // On scroll each line runs on to its end city: the head finishes its flight first, then the tail follows it in,
+        // so every line ends in America (slow, fast, slower). Lines that had not left yet fly the whole way.
+        const run = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+        const qh = run(clamp(q / 0.6)), qt = run(clamp((q - 0.35) / 0.65));
+        const hd0 = still ? 1 : t < 0 ? 0 : expoOut(clamp(t / GROW)), tl00 = still || t < 0 ? 0 : expoInOut(clamp((t - GROW - HOLD) / SHRINK));
+        const hd = hd0 + (1 - hd0) * qh, tl0 = tl00 + (1 - tl00) * qt;
         const from = ln.len * tl0, upto = ln.len * hd;
         const at = (d: number): Pt => { let j = 1; while (j < ln.cum.length - 1 && ln.cum[j] < d) j++; const k = (d - ln.cum[j - 1]) / (ln.cum[j] - ln.cum[j - 1] || 1); const m = mp(lerp(ln.pts[j - 1][0], ln.pts[j][0], k), lerp(ln.pts[j - 1][1], ln.pts[j][1], k)); return [sx(m[0]), sy(m[1])]; };
-        // the visible part of the line as screen points; a line with nothing showing yet gets a short piece of its route
-        const vis = (lo: number, hi: number) => { const out: Pt[] = [at(lo)]; for (let j = 1; j < ln.pts.length; j++) if (ln.cum[j] > lo && ln.cum[j] < hi) { const m = mp(ln.pts[j][0], ln.pts[j][1]); out.push([sx(m[0]), sy(m[1])]); } out.push(at(hi)); return out; };
-        let poly: Pt[] = upto - from > 0.01 ? vis(from, upto) : q > 0 ? vis(t < 0 || tl0 < 0.5 ? 0 : ln.len * 0.6, t < 0 || tl0 < 0.5 ? ln.len * 0.4 * clamp(q / 0.3) : ln.len * (0.6 + 0.4 * (1 - clamp(q / 0.3)))) : [];
-        const headP = at(upto);
-        // While scrolling, each line bends like a rope: its front end is drawn down into the signature's tail first, the
-        // rest follows, and the whole line pours in. Blending smooth curves keeps it smooth: no corners, no loops.
-        if (q > 0 && poly.length > 1) {
-          const tx = sx(sigTail[0]), ty = sy(sigTail[1]), e = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);   // slow, fast, slower
-          const eh = e(clamp(q / 0.6)), g = e(clamp((q - 0.4) / 0.6));
-          const cum = [0]; for (let j = 1; j < poly.length; j++) cum.push(cum[j - 1] + Math.hypot(poly[j][0] - poly[j - 1][0], poly[j][1] - poly[j - 1][1]));
-          const tot = cum[cum.length - 1] || 1;
-          poly = poly.map(([x, y], j) => { const u = cum[j] / tot, w = lerp(u * u * (3 - 2 * u) * eh, 1, g); return [lerp(x, tx, w), lerp(y, ty, w)]; });
+        if (upto - from > 0.01) {
+          ctx.globalAlpha = 0.7 * fade * state.dim; ctx.beginPath();
+          const a0 = at(from); ctx.moveTo(a0[0], a0[1]);
+          for (let j = 1; j < ln.pts.length; j++) if (ln.cum[j] > from && ln.cum[j] < upto) { const m = mp(ln.pts[j][0], ln.pts[j][1]); ctx.lineTo(sx(m[0]), sy(m[1])); }
+          const a1 = at(upto); ctx.lineTo(a1[0], a1[1]); ctx.stroke();
+          if (q === 0 && hd < 1 && t >= 0) comets.push({ x: a1[0], y: a1[1], o: Math.sin(hd * Math.PI) });
         }
-        let len2 = 0; for (let j = 1; j < poly.length; j++) len2 += Math.hypot(poly[j][0] - poly[j - 1][0], poly[j][1] - poly[j - 1][1]);
-        const a = 0, b = len2;
-        if (b - a > 0.5 && poly.length > 1) {
-          ctx.globalAlpha = (0.7 + 0.3 * q) * (1 - sstep(0.75, 1, q)) * fade * state.dim; ctx.beginPath();   // the last of each line fades as it pours in
-          let acc = 0, started = false, last: Pt = poly[0];
-          for (let j = 1; j < poly.length; j++) {
-            const p0 = poly[j - 1], p1 = poly[j], sl = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
-            if (acc + sl >= a && acc <= b) {
-              const k0 = sl ? clamp((a - acc) / sl) : 0, k1 = sl ? clamp((b - acc) / sl) : 1;
-              const s0: Pt = [lerp(p0[0], p1[0], k0), lerp(p0[1], p1[1], k0)], s1: Pt = [lerp(p0[0], p1[0], k1), lerp(p0[1], p1[1], k1)];
-              if (!started) { ctx.moveTo(s0[0], s0[1]); started = true; }
-              ctx.lineTo(s1[0], s1[1]); last = s1;
-            }
-            acc += sl;
-          }
-          ctx.stroke();
-          if (q > 0 && q < 1) glowAt(last[0], last[1], 2.4 * s, 0.5 * Math.sin(q * Math.PI));
-          if (q === 0 && hd < 1 && t >= 0) comets.push({ x: headP[0], y: headP[1], o: Math.sin(hd * Math.PI) });
-        }
-        if (t < 0) continue;
-        // the cities: the origin as the line leaves it, the destination as the line arrives; both go with the tail
+        // the cities: the origin as the line leaves it, the destination as the line arrives; the origin goes with the
+        // tail, and while scrolling the destination stays lit as the line runs into it
         const out = 1 - tl0;
-        lit[ln.a] = Math.max(lit[ln.a] ?? 0, Math.min(e3(clamp(t / 500)), out));
-        lit[ln.b] = Math.max(lit[ln.b] ?? 0, Math.min(sstep(0.86, 1, hd), out));
+        if (t >= 0) lit[ln.a] = Math.max(lit[ln.a] ?? 0, Math.min(e3(clamp(t / 500)), out));
+        lit[ln.b] = Math.max(lit[ln.b] ?? 0, Math.min(sstep(0.86, 1, hd), q > 0 ? 1 : out));
       }
     }
     Object.entries(HUBS).forEach(([name, c], i) => {
