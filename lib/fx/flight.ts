@@ -120,6 +120,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   let fadeMask = (k: number) => String(k), maskK = -1;
   // when scrolling starts the hero's lines stop where they are and run into the signature's tail, where the main line
   // leaves from; scrolled back to the top, they come back out and carry on from the same moment
+  const cityA: Record<string, number> = {};               // how lit each city is on screen, so it can fade out gently
   let frozenAt: number | null = null, runT = 0;          // runT: ms into the lines' run to their end cities (see RUN)
   let L = 0, LB = 0, LU = 0, xOut = 0, anchor: Pt = [0, 0];
   const mp = (mx: number, my: number): Pt => [offX + (mx + 3) * s, offY + (my + 1) * s];
@@ -367,7 +368,10 @@ export function createFlight(root: HTMLElement, still = false): Flight {
       }
     }
     Object.entries(HUBS).forEach(([name, c], i) => {
-      const a = Math.max((lit[name] ?? 0) * ra, name === FROM || name === TO ? sstep(0.03, T.heroOut, p) : 0) * fade * state.dim;
+      // a city lights straight away but goes out gently (fast, then slower, about 400ms), never all at once
+      const want = Math.max((lit[name] ?? 0) * ra, name === FROM || name === TO ? sstep(0.03, T.heroOut, p) : 0) * fade * state.dim;
+      const was = cityA[name] ?? 0, a = still || want >= was ? want : was + (want - was) * (1 - Math.exp(-dt / 130));
+      cityA[name] = a;
       if (a < 0.01) return;
       const m = mp(c[0], c[1]), x = sx(m[0]), y = sy(m[1]), u = s * (1 + 0.5 * zc);
       glowAt(x, y, 2.6 * u, 0.8 * a);
