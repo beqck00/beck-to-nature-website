@@ -316,3 +316,8 @@ Measured on an iPhone-sized browser with the CPU slowed 4×, scrolling the whole
 - The hero's plain dots are drawn once and reused while the camera stands still.
 - Words that rise in no longer carry `will-change` (hundreds of layers).
 Still to confirm on a real iPhone.
+
+## Changed on 2026-11-20: phones skip the pinned flight
+
+- At the owner's request, phones (screens up to 700px wide; `html.lite`, set before first paint in `app/layout.tsx`) no longer get the pinned flight with its zoom across the Atlantic. The hero is one full screen (the full-height map, the three lines, the headline, the signature); the landing sentence is an ordinary section that rises in; and the gold line grows out of the signature's tail (a short run east, then down) and draws itself down the page as you scroll, to the closing signature. Desktop is unchanged. Code: `lite` in `components/Experience.tsx` and `createFlight`, the `from` knot in `thread.build`, and the `.fx.lite` rules in `app/globals.css`.
+- Measured at 4× CPU slowdown on an iPhone-sized screen: no frame over 33ms.

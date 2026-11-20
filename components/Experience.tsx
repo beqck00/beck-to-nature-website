@@ -16,7 +16,13 @@ export default function Experience() {
     if (!page || !flightEl || !stage) return;
     const still = prefersReducedMotion();
     root.classList.toggle("fx", !still);
-    const flight = createFlight(flightEl, still), thread = createThread(page);
+    // phones ("lite", set before first paint in app/layout.tsx): no pinned flight with its zoom; the hero stays, and the
+    // line simply grows out of the signature and draws itself down the page as you scroll. The landing sentence
+    // becomes an ordinary section that rises in.
+    const lite = !still && root.classList.contains("lite");
+    if (lite) flightEl.querySelector(".flight-land")?.classList.add("scene");
+    const flight = createFlight(flightEl, still, lite), thread = createThread(page);
+    const from = () => (lite ? { p: flight.sigTail(), d: [1, 0] as [number, number], out: 56 } : undefined);   // a short run east, then it turns down
     const ac = new AbortController(), on = { signal: ac.signal }, passive = { signal: ac.signal, passive: true };
     let raf = 0;
 
@@ -30,7 +36,7 @@ export default function Experience() {
       const hash = link.getAttribute("href")!;
       let y: number | null = null;
       if (hash === "#top") y = 0;
-      else if (hash === "#why" && !still) { const f = flightSpan(); y = f.top + f.len * 0.93; }
+      else if (hash === "#why" && !still && !lite) { const f = flightSpan(); y = f.top + f.len * 0.93; }
       else { const el = document.querySelector(hash); if (el) y = el.getBoundingClientRect().top + window.scrollY - (hash === "#inquiry" ? 100 : 84); }
       if (y === null) return;
       e.preventDefault();
@@ -61,7 +67,7 @@ export default function Experience() {
 
     // ── with motion ──
     flight.layout();
-    thread.build(flight.exitX());
+    thread.build(flight.exitX(), from());
 
     // The line eases after the scroll; the faster you scroll, the faster it catches up. P is the flight's progress,
     // h the length of line drawn below it. They hand over to each other so the line is always one unbroken stroke.
@@ -73,9 +79,9 @@ export default function Experience() {
       const k = 0.075 + Math.min(0.3, Math.max(0, sv - 0.35) * 0.13);      // follow rate per 60fps frame
       const f = 1 - Math.pow(1 - k, dt / 16.7);                            // same feel at any frame rate
       const r = flightEl.getBoundingClientRect(), span = flightEl.offsetHeight - stage.offsetHeight;
-      const pT = clamp(-r.top / span), hT = thread.target();
+      const pT = lite ? 0 : clamp(-r.top / span), hT = thread.target();
       if (first) { first = false; P = pT; h = pT >= 1 ? hT : 0; if (pT > 0.02) flight.skipIntro(); else flight.playIntro(); }
-      const pGoal = h > 1 ? 1 : pT, hGoal = P > 0.995 ? hT : 0;
+      const pGoal = lite ? 0 : h > 1 ? 1 : pT, hGoal = lite || P > 0.995 ? hT : 0;
       P = Math.abs(pGoal - P) < 0.0003 ? pGoal : P + (pGoal - P) * f;
       h = Math.abs(hGoal - h) < 0.3 ? hGoal : h + (hGoal - h) * f;
       if (r.bottom > -40) flight.render(P, now);
@@ -87,8 +93,8 @@ export default function Experience() {
     let rt = 0, lastW = window.innerWidth, lastPageH = page.offsetHeight;
     const relayout = (full: boolean) => {
       if (full) flight.layout();
-      thread.build(flight.exitX());
-      h = P > 0.995 ? thread.target() : 0; lastH = -1;
+      thread.build(flight.exitX(), from());
+      h = lite || P > 0.995 ? thread.target() : 0; lastH = -1;
     };
     window.addEventListener("resize", () => {
       clearTimeout(rt);

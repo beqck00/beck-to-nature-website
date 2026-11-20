@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#121211", colorScheme: "dark" };
 
 // Runs before the first paint: "fx" switches the scroll experience on, unless the visitor asked for reduced motion.
-const boot = `(function(){var d=document.documentElement;d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('fx')})()`;
+const boot = `(function(){var d=document.documentElement;d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('fx');if(matchMedia('(max-width: 700px)').matches)d.classList.add('lite')}})()`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

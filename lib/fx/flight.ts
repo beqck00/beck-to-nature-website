@@ -60,6 +60,8 @@ export type Flight = {
   renderStill(): void;
   /** Where the line leaves the bottom of the stage (x in px). */
   exitX(): number;
+  /** Where the signature's last stroke ends (px in the stage); on phones the page's line starts here. */
+  sigTail(): Pt;
   /** Play the opening: the headline rises and the signature writes itself. */
   playIntro(): void;
   /** Skip the opening animation (the page was loaded part-way down). */
@@ -68,7 +70,8 @@ export type Flight = {
 };
 
 /** still: the visitor asked for reduced motion; nothing is animated and no text is hidden. */
-export function createFlight(root: HTMLElement, still = false): Flight {
+/** lite (phones): no pinned flight; the hero stays as it is and the page's line grows out of the signature instead. */
+export function createFlight(root: HTMLElement, still = false, lite = false): Flight {
   const q = <E extends Element>(s: string) => root.querySelector(s) as E;
   const sky = q<HTMLElement>(".flight-sky"), canvas = q<HTMLCanvasElement>(".flight-map");
   const svg = q<SVGSVGElement>(".flight-line"), glow = q<SVGPathElement>(".t-glow"), core = q<SVGPathElement>(".t-core");
@@ -133,6 +136,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   const cityA: Record<string, number> = {};               // how lit each city is on screen, so it can fade out gently
   let frozenAt: number | null = null, runT = 0;          // runT: ms into the lines' run to their end cities (see RUN)
   let table: PathTable = { len: 0, xs: new Float32Array(2), ys: new Float32Array(2) };
+  let tail: Pt = [0, 0];
   let L = 0, LB = 0, LU = 0, xOut = 0, anchor: Pt = [0, 0];
   const mp = (mx: number, my: number): Pt => [offX + (mx + 3) * s, offY + (my + 1) * s];
 
@@ -189,6 +193,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     segs = strokePaths(sigG, SIG_STROKES.map((d) => mapPath(d, (x, y) => [ox + x * k, oy + y * k])));
     Lsig = segs.reduce((a, g) => a + g.len, 0);
     const start: Pt = [ox + 842 * k, oy + 292 * k];
+    tail = start;
 
     // the line: signature tail -> Budapest -> (the Budapest-Chicago route) -> Chicago -> off the bottom edge
     // It joins and leaves the route along the route's own direction, so there is no elbow at either city.
@@ -223,7 +228,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     }
     anchor = [W * 0.5, H * (band ? 0.64 : 0.6)];
     glyphAt = [];
-    if (!still) timeline();
+    if (!still && !lite) timeline();
   }
 
   // how much of the line is drawn at progress p
@@ -449,6 +454,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     render: (p, now) => draw(p, now, false),
     renderStill: () => { h1.classList.add("ready"); intro = false; draw(0, performance.now(), true); },
     exitX: () => xOut,
+    sigTail: () => tail,
     playIntro,
     skipIntro: () => { intro = false; t0 = performance.now() - 1e6; h1.classList.add("ready"); introTween?.progress(1); },
     destroy() {

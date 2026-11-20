@@ -114,6 +114,13 @@ button{font:inherit}
   .fx .flight-land{align-content:start;padding-top:108px}
 }
 
+/* phones ("lite"): no pinned flight; the hero is one screen, the landing sentence an ordinary section below it */
+.fx.lite .flight{height:auto}
+.fx.lite .flight-stage{position:relative;height:auto;overflow:visible}
+.fx.lite .flight-sky{position:relative;inset:auto;min-height:100svh}
+.fx.lite .flight-says{display:none}
+.fx.lite .flight-land{position:relative;inset:auto;visibility:visible;display:block;padding:var(--sec) var(--gr) 0 var(--gl)}
+
 /* ── the line down the page ───────────────────────────────────────────────────────────────────────── */
 .thread{position:absolute;left:0;top:0;z-index:1;pointer-events:none;overflow:visible}
 /* with motion, a section's parts rise in one after another as it scrolls into view (and go back when scrolled past upwards) */

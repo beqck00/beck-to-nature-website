@@ -218,6 +218,9 @@ signature detail; everything about it is deliberate.
   the line rises to Budapest, the camera closes in fast and settles, rides the line across the Atlantic while three
   statements appear ("One booth." "One week." "A clear answer."), then pulls back slowly over America (slow, fast,
   slower), where the landing sentence arrives and the line drops off to carry on down the page.
+- **On phones there is no pinned flight** ("skip the landing page zoom-in scroll animation, it's too buggy and won't look
+  clean, just keep the line scroll"): the hero is one full screen (map, three lines, headline, signature), the landing
+  sentence is an ordinary section, and the line grows out of the signature's tail and draws itself down the page.
 - **Below the flight, the page scrolls straight down** while the line draws itself. The zoom-in-and-out journey between
   sections was built and then **removed at the owner's request; don't bring it back**.
 - **Sections rise in as they arrive** (headings word by word from behind a mask, then their blocks, each from scale

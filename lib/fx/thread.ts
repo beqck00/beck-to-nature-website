@@ -13,7 +13,7 @@ const WRITING_ORDER = [SIG_STROKES[1], SIG_STROKES[0], s3a, SIG_STROKES[2], `M $
 
 export type Thread = {
   /** Lay the line out for the current page size. startX is where the flight's line leaves its stage. */
-  build(startX: number): void;
+  build(startX: number, from?: Knot): void;
   /** How much of the line should be drawn for the current scroll position. */
   target(): number;
   /** Draw the line up to length h. */
@@ -55,7 +55,8 @@ export function createThread(page: HTMLElement): Thread {
     return { ...r, left: r.left - dx, right: r.right - dx, top: r.top - dy, bottom: r.bottom - dy };
   };
 
-  function build(startX: number) {
+  // from: where the line starts instead (phones: the signature's tail, heading east), rather than straight down from startX
+  function build(startX: number, from?: Knot) {
     const W = page.clientWidth, H = page.offsetHeight, narrow = W < 700;
     svg.setAttribute("width", String(W)); svg.setAttribute("height", String(H)); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     const top = rel(flight).bottom;
@@ -69,7 +70,7 @@ export function createThread(page: HTMLElement): Thread {
     const DOWN: Pt = [0, 1], LEFT: Pt = [-1, 0], ARC = 0.5523;                  // ARC: handle length of a quarter circle, per unit radius
     const mid = (sel: string) => { const b = relRest(page.querySelector(sel)!); return b.top + b.h / 2; };
     const B = eS.B, under = eS.bottom + (narrow ? 36 : 52), rB = under - B[1];  // the line runs under the signature, then rises into the B
-    const knots: Knot[] = [{ p: [startX, top], d: DOWN }];
+    const knots: Knot[] = [from ?? { p: [startX, top], d: DOWN }];
     let rT: number;
     if (!narrow) {
       const sec = page.querySelector<HTMLElement>("#expertise")!, sb = rel(sec), cs = getComputedStyle(sec);
