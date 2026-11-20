@@ -4,7 +4,7 @@
 // has no corners and no tight turns.
 
 import { SIG_STROKES } from "@/lib/data/signature";
-import { clamp, dashWindow, type Knot, mapPath, type Pt, splitWords, strokePaths, tangentPath } from "./util";
+import { clamp, dashWindow, type Knot, mapPath, type PathTable, pathTable, pointAt, type Pt, splitWords, strokePaths, tangentPath } from "./util";
 
 
 // The signature in writing order: B bowls (from the lead-in on the far left), B stem, the two e's, k stem, k loop and tail.
@@ -27,7 +27,7 @@ export function createThread(page: HTMLElement): Thread {
   const svg = page.querySelector<SVGSVGElement>(".thread")!, core = svg.querySelector<SVGPathElement>(".t-core")!, glow = svg.querySelector<SVGPathElement>(".t-glow")!;
   const head = svg.querySelector<SVGGElement>(".t-head")!, endG = svg.querySelector<SVGGElement>(".t-end")!;
   const flight = page.querySelector<HTMLElement>(".flight")!, endSig = page.querySelector<HTMLElement>(".end-sig")!;
-  let eSegs: ReturnType<typeof strokePaths> = [], Lc = 0, Lt = 0, samples: { l: number; y: number }[] = [];
+  let eSegs: ReturnType<typeof strokePaths> = [], Lc = 0, Lt = 0, samples: { l: number; y: number }[] = [], table: PathTable = { len: 0, xs: new Float32Array(2), ys: new Float32Array(2) };
 
   // sections rise in as they come into view (headings word by word, then their blocks), and go back when scrolled past upwards
   const scenes = [...page.querySelectorAll<HTMLElement>(".scene")];
@@ -95,8 +95,10 @@ export function createThread(page: HTMLElement): Thread {
     eSegs = strokePaths(endG, eS.strokes);
     eSegs.forEach((g) => (g.off += Lc));
     Lt = Lc + eSegs.reduce((a, g) => a + g.len, 0);
-    samples = []; let maxY = -1e9; const N = Math.min(4000, Math.ceil(Lc / 5));
-    for (let i = 0; i <= N; i++) { const l = (Lc * i) / N, p = core.getPointAtLength(l); maxY = Math.max(maxY, p.y); samples.push({ l, y: maxY }); }
+    // one pass of measurements: the point table for the head, and how far down the page each length reaches
+    table = pathTable(core, Lc, Math.min(2000, Math.ceil(Lc / 6)));
+    samples = []; let maxY = -1e9;
+    for (let i = 0; i < table.xs.length; i++) { maxY = Math.max(maxY, table.ys[i]); samples.push({ l: (Lc * i) / (table.xs.length - 1), y: maxY }); }
   }
 
   const lenAt = (y: number) => {
@@ -118,8 +120,8 @@ export function createThread(page: HTMLElement): Thread {
     head.classList.toggle("on", th > 2 && th < Lt - 2);
     if (th > 0) {
       const g = th <= Lc ? null : eSegs.find((s) => th <= s.off + s.len) ?? eSegs[eSegs.length - 1];
-      const p = g ? g.els[1].getPointAtLength(clamp(th - g.off, 0, g.len)) : core.getPointAtLength(th);
-      head.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
+      const p = g ? g.els[1].getPointAtLength(clamp(th - g.off, 0, g.len)) : null, [x, y] = p ? [p.x, p.y] : pointAt(table, th);   // the signature strokes are short; only they are measured live
+      head.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
     }
   }
 

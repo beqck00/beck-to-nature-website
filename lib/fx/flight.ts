@@ -7,7 +7,7 @@
 import gsap from "gsap";
 import { WORLD_D, WORLD_DOTS } from "@/lib/data/world";
 import { SIG_H, SIG_STROKES, SIG_W } from "@/lib/data/signature";
-import { clamp, dashWindow, easeOut3, lerp, mapPath, type Pt, expoInOut, expoOut, quad, smoothPath, splitWords, sstep, strokePaths, tangentPath } from "./util";
+import { clamp, dashWindow, easeOut3, lerp, mapPath, type PathTable, pathTable, pointAt, type Pt, expoInOut, expoOut, quad, smoothPath, splitWords, sstep, strokePaths, tangentPath } from "./util";
 
 // Map units, as in lib/data/world.ts.
 const K = Math.cos((44 * Math.PI) / 180);
@@ -120,7 +120,10 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   type Lane = { a: string; b: string; pts: Pt[]; cum: number[]; len: number; at: number };
   const lanes: Lane[] = [];
   let segs: ReturnType<typeof strokePaths> = [], Lsig = 0;
-  let fadeMask = (k: number, top: number, bot: number) => String(k + top + bot), maskK = "";
+  // the plain map dots are drawn into their own canvas and reused while the camera stands still (most of the time on the
+  // hero), so a frame only redraws what moves: warm dots, the lines and the cities
+  const base = document.createElement("canvas"), bctx = base.getContext("2d")!;
+  let baseKey = "", lastKey = "";
   // phones: on the first screen the map is zoomed in to fill the screen top to bottom (HZ, about the point hf), and it
   // eases out to the whole Atlantic as the visitor starts to scroll, before the line sets off
   let HZ = 1, hf: Pt = [0, 0], cut = false;
@@ -129,6 +132,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
   const tp = (p: Pt): Pt => [tx(p[0]), p[1]];
   const cityA: Record<string, number> = {};               // how lit each city is on screen, so it can fade out gently
   let frozenAt: number | null = null, runT = 0;          // runT: ms into the lines' run to their end cities (see RUN)
+  let table: PathTable = { len: 0, xs: new Float32Array(2), ys: new Float32Array(2) };
   let L = 0, LB = 0, LU = 0, xOut = 0, anchor: Pt = [0, 0];
   const mp = (mx: number, my: number): Pt => [offX + (mx + 3) * s, offY + (my + 1) * s];
 
@@ -167,17 +171,8 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     else { s = Math.max(W / 124, H / 84); offX = (W - 124 * s) / 2; offY = 0; Z = 3.4; rClose = 5.2; }
     r0 = 0.34 * s; rClose = Math.max(rClose, r0);
     for (let i = 0; i < n; i++) { const p = mp(tx(dots[i].mx), dots[i].my); X[i] = p[0]; Y[i] = p[1]; }
-    // the map fades into the page at its edges while the camera is wide
     const mh = 84 * s;
-    // (a mask, not a dark overlay, so the page's own background shows through and there is no seam with the next section)
-    // top/bot: where the map's top and bottom edges are on screen (they move while the phone hero zooms out)
-    fadeMask = (k: number, top: number, bot: number) => {
-      const o = `rgba(0,0,0,${k.toFixed(2)})`, h = bot - top;
-      return band
-        ? `linear-gradient(180deg, ${o} 0, ${o} ${top.toFixed(0)}px, #000 ${(top + h * 0.22).toFixed(0)}px, #000 ${(top + h * 0.78).toFixed(0)}px, ${o} ${bot.toFixed(0)}px, ${o} 100%)`
-        : `linear-gradient(180deg, #000 60%, ${o} 98%)`;
-    };
-    maskK = "";
+    base.width = canvas.width; base.height = canvas.height; baseKey = "";
     // zoom that makes the map's height a little more than the screen's, centred between New York and London (map unit
     // 52 once the mid-Atlantic is cut out) and on the map's middle latitude
     HZ = band ? Math.max(1, (H / mh) * 1.08) : 1;
@@ -219,9 +214,10 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const route = smoothPath(pts), d = lead + route.slice(route.indexOf(" C")) + exit.slice(exit.indexOf(" C"));
     core.setAttribute("d", d); glow.setAttribute("d", d);
     L = core.getTotalLength();
+    table = pathTable(core, L, 900);                                  // measured once; frames look the head up here
     let bestB = 1e9, bestU = 1e9;
     for (let i = 0; i <= 900; i++) {
-      const l = (L * i) / 900, p = core.getPointAtLength(l), dB = Math.hypot(p.x - B[0], p.y - B[1]), dU = Math.hypot(p.x - U[0], p.y - U[1]);
+      const l = (L * i) / 900, x = table.xs[i], y = table.ys[i], dB = Math.hypot(x - B[0], y - B[1]), dU = Math.hypot(x - U[0], y - U[1]);
       if (dB < bestB) { bestB = dB; LB = l; }
       if (dU < bestU) { bestU = dU; LU = l; }
     }
@@ -281,7 +277,7 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const span = (a: readonly [number, number]) => clamp((p - a[0]) / (a[1] - a[0]));
     const zc = expoOut(span(T.zoomIn)) * (1 - expoInOut(span(T.zoomOut)));        // closes in fast and settles; pulls back slow, fast, slower
     const z = 1 + (Z - 1) * zc, len = still ? 0 : lineAt(p);
-    if (len > 0) { const hp = core.getPointAtLength(len); headPt = [hp.x, hp.y]; }
+    if (len > 0) headPt = pointAt(table, len);
     // the head of the line glides from where it sits in the wide shot to the anchor as the camera closes in, so it never leaves the screen
     const ax = lerp(headPt[0], anchor[0], zc), ay = lerp(headPt[1], anchor[1], zc);
     const cx = headPt[0] - (ax - W / 2) / z, cy = headPt[1] - (ay - H / 2) / z;
@@ -299,8 +295,6 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     core.style.strokeWidth = (1.8 * thick).toFixed(3); glow.style.strokeWidth = (6 * thick).toFixed(3);
     head.classList.toggle("on", len > 2 && len < L - 2);
     if (len > 0) head.setAttribute("transform", `translate(${headPt[0].toFixed(1)} ${headPt[1].toFixed(1)}) scale(${thick.toFixed(3)})`);
-    const top = sy(offY), bot = sy(offY + 84 * s), mk = `${Math.round(zc * 50)} ${Math.round(top)} ${Math.round(bot)}`;
-    if (mk !== maskK) { maskK = mk; const m = fadeMask(Math.round(zc * 50) / 50, top, bot); canvas.style.maskImage = m; canvas.style.webkitMaskImage = m; }
 
     // heat: dots near the pointer (wide shot) and near the head of the line warm up, then cool
     const cool = Math.exp(-dt / 420);
@@ -324,13 +318,23 @@ export function createFlight(root: HTMLElement, still = false): Flight {
     const fade = still ? 1 : e3(clamp(el / 1200));
     ctx.globalAlpha = fade * state.dim;
     const square = rs < 1.5;
-    const put = (i: number) => { const px = sx(X[i]), py = sy(Y[i]); if (square) ctx.rect(Math.round((px - rs) * dpr) / dpr, Math.round((py - rs) * dpr) / dpr, rs * 2, rs * 2); /* tiny dots snap to whole device pixels, so they do not shimmer as the camera moves */ else { ctx.moveTo(px + rs, py); ctx.arc(px, py, rs, 0, 6.2832); } };
-    ctx.fillStyle = DOT_FILL; ctx.beginPath(); for (const i of vis) if (!heat[i] && !dots[i].near) put(i); ctx.fill();
-    ctx.fillStyle = NEAR_FILL; ctx.beginPath(); for (const i of vis) if (!heat[i] && dots[i].near) put(i); ctx.fill();
+    const put = (c: CanvasRenderingContext2D, i: number) => { const px = sx(X[i]), py = sy(Y[i]); if (square) c.rect(Math.round((px - rs) * dpr) / dpr, Math.round((py - rs) * dpr) / dpr, rs * 2, rs * 2); /* tiny dots snap to whole device pixels, so they do not shimmer as the camera moves */ else { c.moveTo(px + rs, py); c.arc(px, py, rs, 0, 6.2832); } };
+    const key = `${z.toFixed(3)} ${cx.toFixed(1)} ${cy.toFixed(1)} ${zh.toFixed(3)} ${rs.toFixed(2)} ${(fade * state.dim).toFixed(2)}`;
+    const plain = (c: CanvasRenderingContext2D) => {
+      c.fillStyle = DOT_FILL; c.beginPath(); for (const i of vis) if (!dots[i].near) put(c, i); c.fill();
+      c.fillStyle = NEAR_FILL; c.beginPath(); for (const i of vis) if (dots[i].near) put(c, i); c.fill();
+    };
+    if (key !== lastKey) plain(ctx);                                       // the camera is moving: draw straight onto the screen
+    else {                                                                  // it stands still: reuse the cached dots
+      if (key !== baseKey) { baseKey = key; bctx.setTransform(dpr, 0, 0, dpr, 0, 0); bctx.clearRect(0, 0, W, H); bctx.globalAlpha = fade * state.dim; plain(bctx); }
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.drawImage(base, 0, 0);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = fade * state.dim;
+    }
+    lastKey = key;
     for (let b = 0; b < HEAT_FILL.length; b++) {
       const lo = b / HEAT_FILL.length, hi = (b + 1) / HEAT_FILL.length;
       ctx.fillStyle = HEAT_FILL[b]; ctx.beginPath();
-      for (const i of vis) if (heat[i] > lo && heat[i] <= hi + (b === HEAT_FILL.length - 1 ? 1 : 0)) put(i);
+      for (const i of vis) if (heat[i] > lo && heat[i] <= hi + (b === HEAT_FILL.length - 1 ? 1 : 0)) put(ctx, i);
       ctx.fill();
     }
 
@@ -396,6 +400,25 @@ export function createFlight(root: HTMLElement, still = false): Flight {
       }
       ctx.globalAlpha = a; ctx.fillStyle = "#EBD3A6"; ctx.beginPath(); ctx.arc(x, y, 0.55 * u, 0, 6.2832); ctx.fill();
     });
+    // the map fades into the page at its edges while the camera is wide. It is cut away inside the canvas, only over the
+    // two strips that fade (a full-screen composite or a CSS mask re-applied each frame is what made phones stutter), so
+    // the page's own background shows through and there is no seam with the next section
+    if (zc < 0.995) {
+      const cut = (y0: number, y1: number, a0: number, a1: number) => {
+        const t = Math.max(0, Math.min(H, y0)), b = Math.max(0, Math.min(H, y1)); if (b - t < 1) return;
+        const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, `rgba(0,0,0,${a0})`); g.addColorStop(1, `rgba(0,0,0,${a1})`);
+        ctx.fillStyle = g; ctx.fillRect(0, t, W, b - t);
+      };
+      const gone = (1 - zc).toFixed(3);                                    // how much of the edge is cut away (none once the camera is close)
+      ctx.globalCompositeOperation = "destination-out"; ctx.globalAlpha = 1;
+      if (band) {
+        const top = sy(offY), bot = sy(offY + 84 * s), h = bot - top;
+        if (top > 0) cut(0, top, +gone, +gone);
+        cut(top, top + h * 0.22, +gone, 0); cut(top + h * 0.78, bot, 0, +gone);
+        if (bot < H) cut(bot, H, +gone, +gone);
+      } else cut(H * 0.6, H * 0.98, 0, +gone), cut(H * 0.98, H, +gone, +gone);
+      ctx.globalCompositeOperation = "source-over";
+    }
     ctx.globalAlpha = 1;
 
     // headline letters catch the light of a passing comet (wide shot, pointer devices)

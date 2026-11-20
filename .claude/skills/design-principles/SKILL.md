@@ -462,6 +462,14 @@ underneath (the dial is `role="slider"` with arrow keys; the map has a `<select>
 - No allocation in per-frame loops that can be done once (colours and strings are precomputed).
 - On touch screens avoid filters and blend modes on large layers.
 - Coalesce pointer moves into one `requestAnimationFrame`; pause heavy drawing when it's off screen.
+- **Measure, don't guess.** Phone smoothness is checked with a phone-sized browser at 4× CPU slowdown, scrolling the
+  whole page and timing every frame (90% of frames should take 16.7ms, none over 50ms). A change that "should" help can
+  make it worse: a full-screen canvas composite each frame doubled the slow frames until it was cut to two thin strips.
+- Never measure an SVG path (`getPointAtLength`) per frame — measure once into a table when the line is built.
+- Never re-apply a CSS mask or filter every frame; draw the effect into the canvas over the smallest area.
+- Cache what stands still (the hero's dots are drawn once and reused until the camera moves).
+- Ignore resize events that only come from the phone's address bar (same width); rebuilding mid-scroll causes hitches.
+- No `will-change` on many elements (each becomes its own layer); only on the few that move continuously.
 - Prefer CSS transitions for UI; use JavaScript (and GSAP) only for scroll-driven or physics motion.
 
 ### Keep it readable for the next person

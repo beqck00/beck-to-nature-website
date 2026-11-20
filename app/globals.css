@@ -263,7 +263,7 @@ legend.q+*{clear:both}
 
 /* scroll choreography helper: a word that rises from behind a mask */
 .w{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.14em;margin-bottom:-.14em}
-.wi{display:inline-block;will-change:transform}
+.wi{display:inline-block}                     /* no will-change: hundreds of words each on their own layer strain phones */
 
 /* ── legal pages ──────────────────────────────────────────────────────────────────────────────────── */
 .legal-page{min-height:100svh;background:radial-gradient(60% 40% at 50% 0%,rgba(var(--glow),.07),transparent 70%) no-repeat,var(--k1);font-size:20px;line-height:1.55}

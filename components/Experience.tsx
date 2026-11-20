@@ -92,7 +92,13 @@ export default function Experience() {
     };
     window.addEventListener("resize", () => {
       clearTimeout(rt);
-      rt = window.setTimeout(() => { const w = window.innerWidth, full = w !== lastW || !matchMedia("(pointer: coarse)").matches; lastW = w; relayout(full); }, 160);
+      rt = window.setTimeout(() => {
+        const w = window.innerWidth, coarse = matchMedia("(pointer: coarse)").matches;
+        // on phones the address bar grows and shrinks while scrolling, which fires resize with the same width; nothing
+        // depends on it (the stage is 100svh), and rebuilding the line mid-scroll is what made scrolling hitch
+        if (coarse && w === lastW) return;
+        const full = w !== lastW || !coarse; lastW = w; relayout(full);
+      }, 160);
     }, on);
     const ro = new ResizeObserver(() => {
       const ph = page.offsetHeight; if (Math.abs(ph - lastPageH) < 2) return; lastPageH = ph;

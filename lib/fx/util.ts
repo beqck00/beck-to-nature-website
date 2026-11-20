@@ -47,6 +47,19 @@ export function tangentPath(knots: Knot[]): string {
   return d;
 }
 
+/** Points sampled evenly along a path, measured once when the line is built: reading a point on a long path every
+    frame (getPointAtLength) is slow on phones, especially in Safari, so frames look positions up in this table. */
+export type PathTable = { len: number; xs: Float32Array; ys: Float32Array };
+export function pathTable(path: SVGPathElement, len: number, n: number): PathTable {
+  const xs = new Float32Array(n + 1), ys = new Float32Array(n + 1);
+  for (let i = 0; i <= n; i++) { const p = path.getPointAtLength((len * i) / n); xs[i] = p.x; ys[i] = p.y; }
+  return { len, xs, ys };
+}
+export function pointAt(t: PathTable, l: number): Pt {
+  const n = t.xs.length - 1, f = clamp(l / (t.len || 1)) * n, i = Math.min(n - 1, Math.floor(f)), k = f - i;
+  return [t.xs[i] + (t.xs[i + 1] - t.xs[i]) * k, t.ys[i] + (t.ys[i + 1] - t.ys[i]) * k];
+}
+
 /** Map every "x y" number pair in an SVG path string through fn. */
 export const mapPath = (d: string, fn: (x: number, y: number) => Pt) =>
   d.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g, (_, x, y) => fn(+x, +y).map((v) => v.toFixed(2)).join(" "));

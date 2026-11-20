@@ -306,3 +306,13 @@ Contract templates (mutual and one-way NDA, master services agreement, EU and US
 ## Changed on 2026-11-19: the phone map fills the screen
 
 - On phones (and tall windows) the hero map now fills the screen top to bottom when the page opens. The empty mid-Atlantic between Newfoundland and Ireland (map units 56 to 82, `CUT` in `lib/fx/flight.ts`) is left out of the phone map, so America's east coast and Western Europe sit side by side; the map is zoomed in (`HZ`, about `hf`) and eases out to the whole map (slow, fast, slower) over the first bit of scroll, before the line sets off. Cities, hero lines and the flight route all use the same cut (`tx`/`tp`), so everything lines up. Desktop is unchanged.
+
+## Changed on 2026-11-20: smoother scrolling on phones
+
+Measured on an iPhone-sized browser with the CPU slowed 4×, scrolling the whole page: before, 90% of frames took up to 33ms (30 fps); now 16.8ms (60 fps), none over about 60ms. What changed:
+- The address bar's grow/shrink on phones fires resize with the same width; it no longer rebuilds the gold line mid-scroll (that was the visible hitch).
+- The line's head position is looked up in a table measured once (`pathTable`/`pointAt` in `lib/fx/util.ts`) instead of asking the SVG path every frame (slow in Safari).
+- The map's edge fade is cut away inside the canvas over two thin strips, instead of a CSS mask re-applied on scroll (a full-screen composite was tried first and was slower).
+- The hero's plain dots are drawn once and reused while the camera stands still.
+- Words that rise in no longer carry `will-change` (hundreds of layers).
+Still to confirm on a real iPhone.
